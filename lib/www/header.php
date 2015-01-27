@@ -82,7 +82,7 @@ if ( IS_JURY ) {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">TUMjudge</a>
+      <a class="navbar-brand" href="index.php">TUMjudge</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <?php

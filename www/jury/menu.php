@@ -1,5 +1,4 @@
 <ul class="nav navbar-nav">
-<li><a href="index.php" accesskey="h">home</a></li>
 <li class="dropdown">
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">system <span class="caret"></span></a>
 <ul class="dropdown-menu" role="menu">
@@ -8,6 +7,8 @@
 <?php	} ?>
 <?php	if ( checkrole('jury') ) { ?>
 <li><a href="problems.php" accesskey="p">problems</a></li>
+<li><a href="teams.php" accesskey="t">teams</a></li>
+<li><a href="users.php" accesskey="u">users</a></li>
 <?php	} ?>
 <?php	if ( IS_ADMIN ) {
 <li><a href="contests.php" accesskey="o">contests</a></li>
@@ -22,15 +23,7 @@
 <li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts</a></li>
 <?php	}
 	} ?>
-<?php	if ( checkrole('jury') ) { ?>
-<li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">teams <span class="caret"></span></a>
-<ul class="dropdown-menu" role="menu">
-<li><a href="teams.php" accesskey="t">teams</a></li>
-<li><a href="users.php" accesskey="u">users</a></li>
-</ul>
-</li>
-<?php
+<?php	if ( checkrole('jury') ) {
 	$nunread = count($updates['clarifications']);
 	if ( $nunread > 0 ) { ?>
 <li><a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications (<?php echo $nunread ?> new)</a></li>
