@@ -1,11 +1,19 @@
 <ul class="nav navbar-nav">
 <li><a href="index.php" accesskey="h">home</a></li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">system <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
 <?php	if ( checkrole('balloon') ) { ?>
 <li><a href="balloons.php" accesskey="b">balloons</a></li>
 <?php	} ?>
 <?php	if ( checkrole('jury') ) { ?>
 <li><a href="problems.php" accesskey="p">problems</a></li>
 <?php	} ?>
+<?php	if ( IS_ADMIN ) {
+<li><a href="contests.php" accesskey="o">contests</a></li>
+<?php	} ?>
+</ul>
+</li>
 <?php	if ( IS_ADMIN ) {
 	$ndown = count($updates['judgehosts']);
 	if ( $ndown > 0 ) { ?>
@@ -15,8 +23,13 @@
 <?php	}
 	} ?>
 <?php	if ( checkrole('jury') ) { ?>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">teams <span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
 <li><a href="teams.php" accesskey="t">teams</a></li>
 <li><a href="users.php" accesskey="u">users</a></li>
+</ul>
+</li>
 <?php
 	$nunread = count($updates['clarifications']);
 	if ( $nunread > 0 ) { ?>

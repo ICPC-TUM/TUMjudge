@@ -85,10 +85,12 @@ if ( IS_JURY ) {
       <a class="navbar-brand" href="#">TUMjudge</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
-      /* NOTE: here a local menu.php is included
-       *       both jury and team have their own menu.php
-       */
-      if ( $menu ) include("menu.php");
+      <?php
+        /* NOTE: here a local menu.php is included
+         *       both jury and team have their own menu.php
+         */
+        if ( $menu ) include("menu.php");
+      ?>
     </div>
   </div>
 </nav>

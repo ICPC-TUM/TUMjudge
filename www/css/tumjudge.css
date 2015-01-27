@@ -1,9 +1,12 @@
-@font-face {
-    font-family:"Frostbitten";
-    src: url("../fonts/frostbitten.ttf");
+body {
+	padding: top: 70px;
 }
 
 /* Contest 24: Christmas Week of Conpra WS14/15 */
+@font-face {
+	font-family:"Frostbitten";
+	src: url("../fonts/frostbitten.ttf");
+}
 .contest-24 h1, .contest-24 h2, .contest-24 h3, .contest-24 h4, .contest-24 #menutop *, .contest-24 .nodata, .contest-24 .scoreboard td, .contest-24 .scor
         font-family: "Frostbitten";
 }
