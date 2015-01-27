@@ -1,6 +1,6 @@
 @font-face {
     font-family:"Frostbitten";
-    src: url("images/frostbitten.ttf");
+    src: url("../fonts/frostbitten.ttf");
 }
 
 /* Contest 24: Christmas Week of Conpra WS14/15 */
@@ -8,9 +8,9 @@
         font-family: "Frostbitten";
 }
 .contest-24 .scoreboard .score_correct {
-        background-image: url('images/stars_silver.png') !important;
+        background-image: url('../images/stars_silver.png') !important;
         background-position: 0px -10px !important;
 }
 .contest-24 .scoreboard .score_correct.score_first {
-        background-image: url('images/stars_gold.png') !important;
+        background-image: url('../images/stars_gold.png') !important;
 }
