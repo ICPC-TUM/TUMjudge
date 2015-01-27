@@ -40,6 +40,7 @@ if(!isset($menu)) {
 <link rel="stylesheet" href="../css/tumjudge.css" type="text/css" />
 <link rel="stylesheet" href="../css/bootstrap.css" type="text/css" />
 <link rel="stylesheet" href="../css/bootstrap-theme.css" type="text/css" />
+<script type="text/javascript" src="../js/jquery.js"></script>
 <script type="text/javascript" src="../js/bootstrap.js"></script>
 <?php
 if ( IS_JURY ) {

@@ -10,7 +10,7 @@
 <li><a href="teams.php" accesskey="t">teams</a></li>
 <li><a href="users.php" accesskey="u">users</a></li>
 <?php	} ?>
-<?php	if ( IS_ADMIN ) {
+<?php	if ( IS_ADMIN ) { ?>
 <li><a href="contests.php" accesskey="o">contests</a></li>
 <?php	} ?>
 </ul>
