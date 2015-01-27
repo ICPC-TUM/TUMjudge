@@ -1,43 +1,43 @@
-<nav><div id="menutop">
-<a href="index.php" accesskey="h">home</a>
+<ul class="nav navbar-nav">
+<li><a href="index.php" accesskey="h">home</a></li>
 <?php	if ( checkrole('balloon') ) { ?>
-<a href="balloons.php" accesskey="b">balloons</a>
+<li><a href="balloons.php" accesskey="b">balloons</a></li>
 <?php	} ?>
 <?php	if ( checkrole('jury') ) { ?>
-<a href="problems.php" accesskey="p">problems</a>
+<li><a href="problems.php" accesskey="p">problems</a></li>
 <?php	} ?>
 <?php	if ( IS_ADMIN ) {
 	$ndown = count($updates['judgehosts']);
 	if ( $ndown > 0 ) { ?>
-<a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts (<?php echo $ndown ?> down)</a>
+<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts (<?php echo $ndown ?> down)</a></li>
 <?php	} else { ?>
-<a href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts</a>
+<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts</a></li>
 <?php	}
 	} ?>
 <?php	if ( checkrole('jury') ) { ?>
-<a href="teams.php" accesskey="t">teams</a>
-<a href="users.php" accesskey="u">users</a>
+<li><a href="teams.php" accesskey="t">teams</a></li>
+<li><a href="users.php" accesskey="u">users</a></li>
 <?php
 	$nunread = count($updates['clarifications']);
 	if ( $nunread > 0 ) { ?>
-<a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications (<?php echo $nunread ?> new)</a>
+<li><a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications (<?php echo $nunread ?> new)</a></li>
 <?php	} else { ?>
-<a href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications</a>
+<li><a href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications</a></li>
 <?php	} ?>
-<a href="submissions.php" accesskey="s">submissions</a>
+<li><a href="submissions.php" accesskey="s">submissions</a></li>
 <?php	} ?>
 <?php	if ( have_printing() ) { ?>
-<a href="print.php" accesskey="p">print</a>
+<li><a href="print.php" accesskey="p">print</a></li>
 <?php	} ?>
 <?php	if ( checkrole('jury') ) { ?>
-<a href="scoreboard.php" accesskey="b">scoreboard</a>
+<li><a href="scoreboard.php" accesskey="b">scoreboard</a></li>
 <?php	} ?>
 <?php
 if ( checkrole('team') ) {
-	echo "<a target=\"_top\" href=\"../team/\" accesskey=\"t\">→team</a>\n";
+	echo "<li><a target=\"_top\" href=\"../team/\" accesskey=\"t\">→team</a></li>\n";
 }
 ?>
-</div>
+</ul>
 
 <div id="menutopright">
 <?php

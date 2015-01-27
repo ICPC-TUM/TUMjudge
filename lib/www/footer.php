@@ -1,3 +1,5 @@
+</div>
+
 <?php
 /**
  * Common page footer
