@@ -37,7 +37,7 @@ if(!isset($menu)) {
 <title><?php echo $title?></title>
 <link rel="icon" href="../images/favicon.png" type="image/png" />
 <link rel="stylesheet" href="../style.css" type="text/css" />
-<link rel="stylesheet" href="../tumjudge.css" type="text/css" />
+<link rel="stylesheet" href="../styles/tumjudge.css" type="text/css" />
 <?php
 if ( IS_JURY ) {
 	echo "<link rel=\"stylesheet\" href=\"style_jury.css\" type=\"text/css\" />\n";
