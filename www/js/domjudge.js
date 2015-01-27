@@ -31,7 +31,7 @@ function updateMenu(doreload_clarifications, doreload_judgehosts)
 				if ( nclars == 0 ) {
 					elem.className = null;
 				} else {
-					newstr = ' ('+nclars+' new)';
+					newstr = ' <span class="label label-info">'+nclars+' new</span>';
 					elem.className = 'new';
 				}
 				if ( elem.innerHTML != 'clarifications' + newstr ) {
@@ -47,7 +47,7 @@ function updateMenu(doreload_clarifications, doreload_judgehosts)
 				if ( nhosts == 0 ) {
 					elem.className = null;
 				} else {
-					newstr = ' ('+nhosts+' down)';
+					newstr = ' <span class="label label-warning">'+nhosts+' down</span>';
 					elem.className = 'new';
 				}
 				if ( elem.innerHTML != 'judgehosts' + newstr ) {
