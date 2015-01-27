@@ -9,6 +9,7 @@
 <li><a href="problems.php" accesskey="p">problems</a></li>
 <li><a href="teams.php" accesskey="t">teams</a></li>
 <li><a href="users.php" accesskey="u">users</a></li>
+<li><a href="submissions.php" accesskey="s">submissions</a></li>
 <?php	} ?>
 <?php	if ( IS_ADMIN ) { ?>
 <li><a href="contests.php" accesskey="o">contests</a></li>
@@ -18,7 +19,7 @@
 <?php	if ( IS_ADMIN ) {
 	$ndown = count($updates['judgehosts']);
 	if ( $ndown > 0 ) { ?>
-<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts (<?php echo $ndown ?> down)</a></li>
+<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
 <?php	} else { ?>
 <li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts</a></li>
 <?php	}
@@ -26,11 +27,10 @@
 <?php	if ( checkrole('jury') ) {
 	$nunread = count($updates['clarifications']);
 	if ( $nunread > 0 ) { ?>
-<li><a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications (<?php echo $nunread ?> new)</a></li>
+<li><a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications <span class="label label-info"><?php echo $nunread ?> new<span></a></li>
 <?php	} else { ?>
 <li><a href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications</a></li>
 <?php	} ?>
-<li><a href="submissions.php" accesskey="s">submissions</a></li>
 <?php	} ?>
 <?php	if ( have_printing() ) { ?>
 <li><a href="print.php" accesskey="p">print</a></li>
