@@ -39,6 +39,8 @@ if ( checkrole('team') ) {
 ?>
 </ul>
 
+<?php
+/*
 <div id="menutopright">
 <?php
 
@@ -75,3 +77,4 @@ echo '<div id="notify" style="display: none">' .
 
 </div>
 </div></nav>
+*/

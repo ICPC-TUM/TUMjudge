@@ -71,6 +71,8 @@ if ( IS_JURY ) {
 	echo "<body class=\"contest-".$cid."\">\n";
 }
 
+?>
+
 <nav class="navbar navbar-default navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
