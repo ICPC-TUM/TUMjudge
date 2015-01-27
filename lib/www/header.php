@@ -37,6 +37,7 @@ if(!isset($menu)) {
 <title><?php echo $title?></title>
 <link rel="icon" href="../images/favicon.png" type="image/png" />
 <link rel="stylesheet" href="../style.css" type="text/css" />
+<link rel="stylesheet" href="../tumjudge.css" type="text/css" />
 <?php
 if ( IS_JURY ) {
 	echo "<link rel=\"stylesheet\" href=\"style_jury.css\" type=\"text/css\" />\n";
@@ -59,12 +60,12 @@ if ( ! empty($extrahead) ) echo $extrahead;
 
 if ( IS_JURY ) {
 	global $pagename;
-	echo "<body onload=\"setInterval('updateMenu(" .
+	echo "<body class=\"contest-".$cid."\" onload=\"setInterval('updateMenu(" .
 		(int)($pagename=='clarifications.php' && $refresh_cookie) . ", " .
 		(int)($pagename=='judgehosts.php' && $refresh_cookie) . ")', 20000); " .
 		"updateMenu(0,0)\">\n";
 } else {
-	echo "<body>\n";
+	echo "<body class=\"contest-".$cid."\">\n";
 }
 
 /* NOTE: here a local menu.php is included
