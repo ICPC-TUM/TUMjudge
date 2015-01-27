@@ -1,6 +1,23 @@
 body {
 	padding-top: 70px;
 }
+a, a:hover, a:focus, a:link, a:visited {
+	color: #002143;
+}
+
+.navbar-default {
+	background-color: #002143;
+}
+.navbar > .container .navbar-brand, .navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+	color: #ffffff;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+	color: #002143;
+	background-color: #ffffff;
+}
+.dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+	color: #002143;
+}
 
 /* Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
