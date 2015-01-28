@@ -352,7 +352,6 @@ function putTeam($teamid) {
 function putClock() {
 	global $cdata, $username;
 
-	// echo '<div id="clock">';
 	// timediff to end of contest
 	if ( difftime(now(), $cdata['starttime']) >= 0 &&
 	     difftime(now(), $cdata['endtime'])   <  0 ) {
@@ -365,27 +364,33 @@ function putClock() {
 	}
 	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\">" . $left . "</p>";
 
-	//<ul class="nav navbar-nav navbar-right">
 	global $cid, $cdatas;
 	// Show a contest selection form, if there are contests
 	if ( count($cdatas) > 1 ) {
-		//echo "<div id=\"selectcontest\">\n";
 		echo addForm('change_contest.php', 'get', 'selectcontestform');
 		$contests = array_map(function($c) { return $c['shortname']; }, $cdatas);
-		echo 'contest: ' . addSelect('cid', $contests, $cid, true);
+		echo addHidden('cid', $cid);
 		echo addEndForm();
 		echo "<script type=\"text/javascript\">
-		      document.getElementById('cid').addEventListener('change', function() {
-		      document.getElementById('selectcontestform').submit();
-	});
-</script>
-";
-		//echo "</div>\n";
+		      function chooseContest(cid) {
+		        document.getElementById('selectcontestform').cid.value = cid;
+		        document.getElementById('selectcontestform').submit();
+	              };
+                      </script>";
+		echo "<ul class=\"nav navbar-nav navbar-right\">";
+		echo "<li class=\"dropdown\">";
+		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">contest <span class=\"caret\"></span></a>";
+		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
+		foreach($contests AS $tcid => $tcname) {
+			echo "<li><a click=\"javascript: chooseContest(".$tcid.");\">".$tcname."</a></li>";
+		}
+		echo "</ul>";
+		echo "</ul>";
 	} elseif ( count($cdatas) == 1 && IS_JURY ) {
-		echo "<div id=\"selectcontest\">\n";
+		echo "<p class=\"navbar-text navbar-right\">\n";
 		$contest = $cdatas[$cid];
 		echo 'contest: ' . $contest['shortname'];
-		echo "</div>\n";
+		echo "</p>\n";
 	}
 
 	if ( logged_in() ) {
@@ -394,7 +399,6 @@ function putClock() {
 			. "</p>";
 	}
 
-	//echo "</div>";
 
 	echo "<script type=\"text/javascript\">
 	var initial = " . time() . ";
