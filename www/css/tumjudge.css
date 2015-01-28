@@ -11,8 +11,24 @@ input[type="checkbox"], input[type="radio"] {
 .form-control {
 	margin-top: 10px;
 }
-table {
+.checkbox + label, .checkbox, .radio + label, .radio {
+	margin-left: 25px;
+}
+table:not(.scoreboard) {
 	width: 100%;
+}
+th, .scoreboard th a {
+	background-color: #002143;
+	color: #ffffff;
+}
+th {
+	padding: 10px;
+}
+td, th {
+	vertical-align: middle;
+}
+.scoreboard td, .scoreboard th {
+	border-color: #002143;
 }
 
 .navbar-default {
