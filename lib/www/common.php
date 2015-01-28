@@ -351,19 +351,6 @@ function putTeam($teamid) {
  */
 function putClock() {
 	global $cdata, $username;
-
-	// timediff to end of contest
-	if ( difftime(now(), $cdata['starttime']) >= 0 &&
-	     difftime(now(), $cdata['endtime'])   <  0 ) {
-		$left = "time left: " . printtimediff(now(),$cdata['endtime']);
-	} else if ( difftime(now(), $cdata['activatetime']) >= 0 &&
-	            difftime(now(), $cdata['starttime'])    <  0 ) {
-		$left = "time to start: " . printtimediff(now(),$cdata['starttime']);
-	} else {
-		$left = "";
-	}
-	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\">" . $left . "</p>";
-
 	global $cid, $cdatas;
 	// Show a contest selection form, if there are contests
 	if ( count($cdatas) > 1 ) {
@@ -382,7 +369,7 @@ function putClock() {
 		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">contest <span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
 		foreach($contests AS $tcid => $tcname) {
-			echo "<li><a click=\"javascript: chooseContest(".$tcid.");\">".$tcname."</a></li>";
+			echo "<li><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$tcname."</a></li>";
 		}
 		echo "</ul>";
 		echo "</ul>";
@@ -392,6 +379,18 @@ function putClock() {
 		echo 'contest: ' . $contest['shortname'];
 		echo "</p>\n";
 	}
+
+	// timediff to end of contest
+	if ( difftime(now(), $cdata['starttime']) >= 0 &&
+	     difftime(now(), $cdata['endtime'])   <  0 ) {
+		$left = "time left: " . printtimediff(now(),$cdata['endtime']);
+	} else if ( difftime(now(), $cdata['activatetime']) >= 0 &&
+	            difftime(now(), $cdata['starttime'])    <  0 ) {
+		$left = "time to start: " . printtimediff(now(),$cdata['starttime']);
+	} else {
+		$left = "";
+	}
+	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\">" . $left . "</p>";
 
 	if ( logged_in() ) {
 		echo "<p id=\"username\" class=\"navbar-text navbar-right\">logged in as " . $username
