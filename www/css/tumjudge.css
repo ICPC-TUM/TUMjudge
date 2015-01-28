@@ -20,6 +20,7 @@ table:not(.scoreboard) {
 th, .scoreboard th a, h3.teamoverview {
 	background-color: #002143;
 	color: #ffffff;
+	font-size: inherit;
 }
 th, h3.teamoverview {
 	padding: 10px;
