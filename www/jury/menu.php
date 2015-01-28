@@ -49,11 +49,9 @@ if ( checkrole('team') ) {
 ?>
 </ul>
 
-<ul class="nav navbar-nav navbar-right">
 <?php
 putClock();
 ?>
-</ul>
 
 <?php
 $notify_flag  =  isset($_COOKIE["domjudge_notify"])  && (bool)$_COOKIE["domjudge_notify"];

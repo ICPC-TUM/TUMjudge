@@ -19,10 +19,5 @@ if ( checkrole('jury') || checkrole('balloon') ) {
 </ul>
 
 <?php
-/*
-echo "</div>\n\n<div id=\"menutopright\">\n";
-
 putClock();
-
-echo "</div></nav>\n\n";
-*/
+?>

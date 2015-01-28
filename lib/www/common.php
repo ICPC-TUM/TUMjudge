@@ -352,7 +352,7 @@ function putTeam($teamid) {
 function putClock() {
 	global $cdata, $username;
 
-	echo '<div id="clock">';
+	// echo '<div id="clock">';
 	// timediff to end of contest
 	if ( difftime(now(), $cdata['starttime']) >= 0 &&
 	     difftime(now(), $cdata['endtime'])   <  0 ) {
@@ -363,12 +363,13 @@ function putClock() {
 	} else {
 		$left = "";
 	}
-	echo "<span id=\"timeleft\">" . $left . "</span>";
+	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\">" . $left . "</p>";
 
+	//<ul class="nav navbar-nav navbar-right">
 	global $cid, $cdatas;
 	// Show a contest selection form, if there are contests
 	if ( count($cdatas) > 1 ) {
-		echo "<div id=\"selectcontest\">\n";
+		//echo "<div id=\"selectcontest\">\n";
 		echo addForm('change_contest.php', 'get', 'selectcontestform');
 		$contests = array_map(function($c) { return $c['shortname']; }, $cdatas);
 		echo 'contest: ' . addSelect('cid', $contests, $cid, true);
@@ -379,7 +380,7 @@ function putClock() {
 	});
 </script>
 ";
-		echo "</div>\n";
+		//echo "</div>\n";
 	} elseif ( count($cdatas) == 1 && IS_JURY ) {
 		echo "<div id=\"selectcontest\">\n";
 		$contest = $cdatas[$cid];
@@ -388,12 +389,12 @@ function putClock() {
 	}
 
 	if ( logged_in() ) {
-		echo "<div id=\"username\">logged in as " . $username
+		echo "<p id=\"username\" class=\"navbar-text navbar-right\">logged in as " . $username
 			. ( have_logout() ? " <a href=\"../auth/logout.php\">×</a>" : "" )
-			. "</div>";
+			. "</p>";
 	}
 
-	echo "</div>";
+	//echo "</div>";
 
 	echo "<script type=\"text/javascript\">
 	var initial = " . time() . ";

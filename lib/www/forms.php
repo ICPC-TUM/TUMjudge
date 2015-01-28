@@ -19,10 +19,10 @@ function addInputField($type, $name = null, $value = null, $attributes = '') {
         $id = '';
     }
 
-	return '<div class="form-group"><input type="'.$type.'"'.
+	return '<input type="'.$type.'"'.
 		($name  !== null ? ' name="'.htmlspecialchars($name).'"' : '') . $id .
 		($value !== null ? ' value="'.htmlspecialchars($value).'"' : '') .
-		$attributes . 'class=\"form-control\" /></div>\n';
+		$attributes . " class=\"form-control\" />\n";
 }
 
 /**
@@ -37,8 +37,8 @@ function addPwField($name , $value = null) {
  * Form checkbox
  */
 function addCheckBox($name, $checked = false, $value = null) {
-	return addInputField('checkbox', $name, $value,
-	                     ($checked ? ' checked="checked"' : ''));
+	return '<div class="checkbox">'.addInputField('checkbox', $name, $value,
+	                     ($checked ? ' checked="checked"' : '')).'</div>';
 }
 
 
@@ -46,8 +46,8 @@ function addCheckBox($name, $checked = false, $value = null) {
  * Form radio button
  */
 function addRadioButton($name, $checked = false, $value = null) {
-	return addInputField('radio', $name, $value,
-	                     ($checked ? ' checked="checked"' : ''));
+	return '<div class="radio">'.addInputField('radio', $name, $value,
+	                     ($checked ? ' checked="checked"' : '')).'</div>';
 }
 
 /**
@@ -103,7 +103,7 @@ function addSelect($name, $values, $default = null, $usekeys = false, $multi = f
 
 	$ret = '<select name="' . htmlspecialchars($name) . '"' .
 		($multi ? " multiple=\"multiple\" size=\"$size\"" : '') .
-		' id="' . htmlspecialchars(strtr($name,'[]','__')) . "\">\n";
+		' id="' . htmlspecialchars(strtr($name,'[]','__')) . "\" class=\"form-control\">\n";
 	foreach ($values as $k => $v) {
 		if ( ! $usekeys ) $k = $v;
 		$ret .= '<option value="' .	htmlspecialchars( $k ) . '"' .
@@ -139,7 +139,7 @@ function addTextArea($name, $text = '', $cols = 40, $rows = 10, $attr = '') {
 	return '<textarea name="'.htmlspecialchars($name).'" '.
 		'rows="'.(int)$rows .'" cols="'.(int)$cols.'" '.
 		'id="' . htmlspecialchars(strtr($name,'[]','__')).'" ' .
-		$attr . '>'.htmlspecialchars($text) ."</textarea>\n";
+		$attr . ' class="form-control">'.htmlspecialchars($text) ."</textarea>\n";
 }
 
 /**
