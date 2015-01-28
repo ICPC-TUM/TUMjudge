@@ -355,7 +355,7 @@ function putClock() {
 	// Show a contest selection form, if there are contests
 	if ( count($cdatas) > 1 ) {
 		echo addForm('change_contest.php', 'get', 'selectcontestform');
-		$contests = array_map(function($c) { return $c['shortname']; }, $cdatas);
+		$contests = array_map(function($c) { return $c['contestname']; }, $cdatas);
 		echo addHidden('cid', $cid);
 		echo addEndForm();
 		echo "<script type=\"text/javascript\">
