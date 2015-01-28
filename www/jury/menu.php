@@ -3,23 +3,23 @@
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">system <span class="caret"></span></a>
 <ul class="dropdown-menu" role="menu">
 <?php	if ( checkrole('balloon') ) { ?>
-<li><a href="balloons.php">Balloon Status</a></li>
+<li><a href="balloons.php">balloon status</a></li>
 <?php	} ?>
 <?php if ( checkrole('jury') ) { ?>
-<li><a href="clarifications.php">Clarifications</a></li>
-<li><a href="contests.php">Contests</a></li>
-<li><a href="executables.php">Executables</a></li>
-<li><a href="judgehosts.php">Judgehosts</a></li>
-<li><a href="judgehost_restrictions.php">Judgehost Restrictions</a></li>
-<li><a href="languages.php">Languages</a></li>
-<li><a href="problems.php">Problems</a></li>
-<li><a href="scoreboard.php">Scoreboard</a></li>  
-<li><a href="statistics.php">Statistics</a></li>  
-<li><a href="submissions.php">Submissions</a></li>
-<li><a href="users.php">Users</a></li>
-<li><a href="teams.php">Teams</a></li>
-<li><a href="team_categories.php">Team Categories</a></li>
-<li><a href="team_affiliations.php">Team Affiliations</a></li>
+<li><a href="clarifications.php">clarifications</a></li>
+<li><a href="contests.php">contests</a></li>
+<li><a href="executables.php">executables</a></li>
+<li><a href="judgehosts.php">judgehosts</a></li>
+<li><a href="judgehost_restrictions.php">judgehost restrictions</a></li>
+<li><a href="languages.php">languages</a></li>
+<li><a href="problems.php">problems</a></li>
+<li><a href="scoreboard.php">scoreboard</a></li>  
+<li><a href="statistics.php">statistics</a></li>  
+<li><a href="submissions.php">submissions</a></li>
+<li><a href="users.php">users</a></li>
+<li><a href="teams.php">teams</a></li>
+<li><a href="team_categories.php">team categories</a></li>
+<li><a href="team_affiliations.php">team affiliations</a></li>
 <?php } ?>
 </ul>
 </li>
@@ -39,6 +39,8 @@
 <li><a href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications</a></li>
 <?php	} ?>
 <?php	} ?>
+<li><a href="submissions.php">submissions</a></li>
+<li><a href="scoreboard.php">scoreboard</a></li>  
 <?php	if ( have_printing() ) { ?>
 <li><a href="print.php" accesskey="p">print</a></li>
 <?php	} ?>
