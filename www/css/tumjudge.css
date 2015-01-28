@@ -1,5 +1,5 @@
 body {
-	padding-top: 70px;
+	padding-top: 80px;
 }
 a, a:hover, a:focus, a:link, a:visited {
 	color: #002143;
@@ -21,11 +21,12 @@ th, .scoreboard th a, h3.teamoverview {
 	background-color: #002143;
 	color: #ffffff;
 	font-size: inherit;
+	font-weight: bold;
 }
 th, h3.teamoverview {
 	padding: 10px;
 }
-#submitform .form-control {
+#submitform .form-control, input#comment {
 	width: inherit;
 	height: inherit;
 	display: inline;
