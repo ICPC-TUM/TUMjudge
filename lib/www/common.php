@@ -369,7 +369,7 @@ function putClock() {
 		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">contest <span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
 		foreach($contests AS $tcid => $tcname) {
-			echo "<li><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$tcname."</a></li>";
+			echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$tcname."</a></li>";
 		}
 		echo "</ul>";
 		echo "</ul>";

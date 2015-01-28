@@ -40,6 +40,9 @@ td, th {
 .scoreboard td, .scoreboard th {
 	border-color: #002143;
 }
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+	background-color: #002143;
+}
 
 .navbar-default {
 	background-color: #002143;
