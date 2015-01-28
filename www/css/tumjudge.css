@@ -17,12 +17,17 @@ input[type="checkbox"], input[type="radio"] {
 table:not(.scoreboard) {
 	width: 100%;
 }
-th, .scoreboard th a {
+th, .scoreboard th a, h3.teamoverview {
 	background-color: #002143;
 	color: #ffffff;
 }
-th {
+th, h3.teamoverview {
 	padding: 10px;
+}
+#submitform .form-control {
+	width: inherit;
+	height: inherit;
+	display: inline;
 }
 td, th {
 	vertical-align: middle;

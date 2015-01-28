@@ -129,7 +129,7 @@ function addSubmit($value, $name = null, $onclick = null, $enable = true, $extra
  * Form reset button, $value = caption
  */
 function addReset($value) {
-	return addInputField('reset', null, $value);
+	return addInputField('reset', null, $value, ' class="btn btn-default" ');
 }
 
 /**
