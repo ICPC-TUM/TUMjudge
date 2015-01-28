@@ -4,6 +4,16 @@ body {
 a, a:hover, a:focus, a:link, a:visited {
 	color: #002143;
 }
+input[type="checkbox"], input[type="radio"] {
+	width: inherit;
+	height: inherit;
+}
+.form-control {
+	margin-top: 10px;
+}
+table {
+	width: 100%;
+}
 
 .navbar-default {
 	background-color: #002143;
@@ -18,6 +28,7 @@ a, a:hover, a:focus, a:link, a:visited {
 .dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
 	color: #002143;
 }
+
 
 /* Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
