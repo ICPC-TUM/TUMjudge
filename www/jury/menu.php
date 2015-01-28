@@ -3,17 +3,24 @@
 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">system <span class="caret"></span></a>
 <ul class="dropdown-menu" role="menu">
 <?php	if ( checkrole('balloon') ) { ?>
-<li><a href="balloons.php" accesskey="b">balloons</a></li>
+<li><a href="balloons.php">Balloon Status</a></li>
 <?php	} ?>
-<?php	if ( checkrole('jury') ) { ?>
-<li><a href="problems.php" accesskey="p">problems</a></li>
-<li><a href="teams.php" accesskey="t">teams</a></li>
-<li><a href="users.php" accesskey="u">users</a></li>
-<li><a href="submissions.php" accesskey="s">submissions</a></li>
-<?php	} ?>
-<?php	if ( IS_ADMIN ) { ?>
-<li><a href="contests.php" accesskey="o">contests</a></li>
-<?php	} ?>
+<?php if ( checkrole('jury') ) { ?>
+<li><a href="clarifications.php">Clarifications</a></li>
+<li><a href="contests.php">Contests</a></li>
+<li><a href="executables.php">Executables</a></li>
+<li><a href="judgehosts.php">Judgehosts</a></li>
+<li><a href="judgehost_restrictions.php">Judgehost Restrictions</a></li>
+<li><a href="languages.php">Languages</a></li>
+<li><a href="problems.php">Problems</a></li>
+<li><a href="scoreboard.php">Scoreboard</a></li>  
+<li><a href="statistics.php">Statistics</a></li>  
+<li><a href="submissions.php">Submissions</a></li>
+<li><a href="users.php">Users</a></li>
+<li><a href="teams.php">Teams</a></li>
+<li><a href="team_categories.php">Team Categories</a></li>
+<li><a href="team_affiliations.php">Team Affiliations</a></li>
+<?php } ?>
 </ul>
 </li>
 <?php	if ( IS_ADMIN ) {
@@ -34,9 +41,6 @@
 <?php	} ?>
 <?php	if ( have_printing() ) { ?>
 <li><a href="print.php" accesskey="p">print</a></li>
-<?php	} ?>
-<?php	if ( checkrole('jury') ) { ?>
-<li><a href="scoreboard.php" accesskey="b">scoreboard</a></li>
 <?php	} ?>
 <?php
 if ( checkrole('team') ) {
