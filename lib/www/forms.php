@@ -19,10 +19,10 @@ function addInputField($type, $name = null, $value = null, $attributes = '') {
         $id = '';
     }
 
-	return '<input type="'.$type.'"'.
+	return '<div class="form-group"><input type="'.$type.'"'.
 		($name  !== null ? ' name="'.htmlspecialchars($name).'"' : '') . $id .
 		($value !== null ? ' value="'.htmlspecialchars($value).'"' : '') .
-		$attributes . " />\n";
+		$attributes . 'class=\"form-control\" /></div>\n';
 }
 
 /**
@@ -123,7 +123,7 @@ function addSubmit($value, $name = null, $onclick = null, $enable = true, $extra
 	return addInputField('submit', $name, $value,
 		(empty($onclick) ? null : ' onclick="'.htmlspecialchars($onclick).'"') .
 		($enable ? '' : ' disabled="disabled"') .
-		(empty($extraattrs) ? '' : " $extraattrs"));
+		' class="btn btn-default" '.(empty($extraattrs) ? '' : " $extraattrs"));
 }
 /**
  * Form reset button, $value = caption
