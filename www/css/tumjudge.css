@@ -14,6 +14,9 @@ input[type="checkbox"], input[type="radio"] {
 .checkbox + label, .checkbox, .radio + label, .radio {
 	margin-left: 25px;
 }
+label .checkbox, label .radio {/*edit user has another nesting...*/
+	margin-left: 0;
+}
 table:not(.scoreboard) {
 	width: 100%;
 }
