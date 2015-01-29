@@ -64,7 +64,7 @@ td, th {
 	font-family:"Frostbitten";
 	src: url("../fonts/frostbitten.ttf");
 }
-.contest-24 h1, .contest-24 h2, .contest-24 h3, .contest-24 h4, .contest-24 #menutop *, .contest-24 .nodata, .contest-24 .scoreboard td, .contest-24 .scor
+.contest-24 h1, .contest-24 h2, .contest-24 h3, .contest-24 h4, .contest-24 #menutop *, .contest-24 .nodata, .contest-24 .scoreboard td, .contest-24 .scoreboard th {
         font-family: "Frostbitten";
 }
 .contest-24 .scoreboard .score_correct {
