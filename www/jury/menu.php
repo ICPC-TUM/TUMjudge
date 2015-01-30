@@ -1,6 +1,6 @@
 <ul class="nav navbar-nav">
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">system <span class="caret"></span></a>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span> <span class="caret"></span></a>
 <ul class="dropdown-menu" role="menu">
 <?php	if ( checkrole('balloon') ) { ?>
 <li><a href="balloons.php">balloon status</a></li>
@@ -72,12 +72,12 @@ if ( isset($refresh) ) {
 <ul class="nav navbar-nav navbar-right">
 <?php
 if ( isset($refresh) ) {
-echo    '<li>' . ($refresh_flag ? '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-lock"></span></a>') . '</li>';
+echo    '<li>' . ($refresh_flag ? '<a href="#" onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a href="#" onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-lock"></span></a>') . '</li>';
 }
 
 // Default hide this from view, only show when javascript and
 // notifications are available:
-echo	'<li id="notify" style="display: none">' .($notify_flag ? '<a onclick="toggleNotifications(false);"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a onclick="toggleNotifications(true);"><span class="glyphicon glyphicon-volume-off"></span></a>') . '</li>';
+echo	'<li id="notify_li" style="display: none">' .($notify_flag ? '<a href="#" onclick="toggleNotifications(false);"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a href="#" onclick="toggleNotifications(true);"><span class="glyphicon glyphicon-volume-off"></span></a>') . '</li>';
 
 ?>
 </ul>
@@ -85,7 +85,7 @@ echo	'<li id="notify" style="display: none">' .($notify_flag ? '<a onclick="togg
 <script type="text/javascript">
 <!--
     if ( 'Notification' in window ) {
-		document.getElementById('notify').style.display = 'block';
+		document.getElementById('notify_li').style.display = 'block';
 	}
 // -->
 </script>
