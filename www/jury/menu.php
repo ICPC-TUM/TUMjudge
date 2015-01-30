@@ -26,21 +26,21 @@
 <?php	if ( IS_ADMIN ) {
 	$ndown = count($updates['judgehosts']);
 	if ( $ndown > 0 ) { ?>
-<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
+<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-briefcase"></span> <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
 <?php	} else { ?>
-<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts">judgehosts</a></li>
+<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-briefcase"></span></a></li>
 <?php	}
 	} ?>
 <?php	if ( checkrole('jury') ) {
 	$nunread = count($updates['clarifications']);
 	if ( $nunread > 0 ) { ?>
-<li><a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications <span class="label label-info"><?php echo $nunread ?> new<span></a></li>
+<li><a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications"><span class="glyphicon glyphicon-envelope"></span> <span class="label label-info"><?php echo $nunread ?> new<span></a></li>
 <?php	} else { ?>
-<li><a href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications</a></li>
+<li><a href="clarifications.php" accesskey="c" id="menu_clarifications"><span class="glyphicon glyphicon-envelope"></span></a></li>
 <?php	} ?>
 <?php	} ?>
-<li><a href="submissions.php">submissions</a></li>
-<li><a href="scoreboard.php">scoreboard</a></li>  
+<li><a href="submissions.php"><span class="glyphicon glyphicon-file"></span></a></li>
+<li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span></a></li>  
 <?php	if ( have_printing() ) { ?>
 <li><a href="print.php" accesskey="p">print</a></li>
 <?php	} ?>

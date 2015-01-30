@@ -383,17 +383,17 @@ function putClock() {
 	// timediff to end of contest
 	if ( difftime(now(), $cdata['starttime']) >= 0 &&
 	     difftime(now(), $cdata['endtime'])   <  0 ) {
-		$left = "time left: " . printtimediff(now(),$cdata['endtime']);
+		$left = "" . printtimediff(now(),$cdata['endtime']);
 	} else if ( difftime(now(), $cdata['activatetime']) >= 0 &&
 	            difftime(now(), $cdata['starttime'])    <  0 ) {
-		$left = "time to start: " . printtimediff(now(),$cdata['starttime']);
+		$left = "(to start)" . printtimediff(now(),$cdata['starttime']);
 	} else {
 		$left = "";
 	}
-	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\">" . $left . "</p>";
+	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\"><span class=\"glyphicon glyphicon-time\"></span>" . $left . "</p>";
 
 	if ( logged_in() ) {
-		echo "<p id=\"username\" class=\"navbar-text navbar-right\">logged in as " . $username
+		echo "<p id=\"username\" class=\"navbar-text navbar-right\"><span class=\"glyphicon glyphicon-user\"></span> " . $username
 			. ( have_logout() ? " <a href=\"../auth/logout.php\">×</a>" : "" )
 			. "</p>";
 	}
