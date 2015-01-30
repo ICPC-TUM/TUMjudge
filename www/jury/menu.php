@@ -26,9 +26,9 @@
 <?php	if ( IS_ADMIN ) {
 	$ndown = count($updates['judgehosts']);
 	if ( $ndown > 0 ) { ?>
-<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-briefcase"></span> <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
+<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-education"></span> <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
 <?php	} else { ?>
-<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-briefcase"></span></a></li>
+<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-education"></span></a></li>
 <?php	}
 	} ?>
 <?php	if ( checkrole('jury') ) {
@@ -55,25 +55,29 @@ if ( checkrole('team') ) {
 putClock();
 ?>
 
-<ul class="nav navbar-nav navbar-right">
 <?php
 $notify_flag  =  isset($_COOKIE["domjudge_notify"])  && (bool)$_COOKIE["domjudge_notify"];
 $refresh_flag = !isset($_COOKIE["domjudge_refresh"]) || (bool)$_COOKIE["domjudge_refresh"];
 
+echo 	addForm('toggle_notify.php', 'get', 'notify') .
+	addHidden('enable', ($notify_flag ? 0 : 1)) .
+	addEndForm();
 if ( isset($refresh) ) {
-	echo '<li>' . addForm('toggle_refresh.php', 'get', 'toggles', '', '', 'class="navbar-form navbar-right"') .
+	echo addForm('toggle_refresh.php', 'get', 'toggles') .
 	    addHidden('enable', ($refresh_flag ? 0 : 1)) .
-	    ($refresh_flag ? '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-lock"></span></a>') .
-	    addEndForm() . '</li>';
+	    addEndForm();
+}
+?>
+
+<ul class="nav navbar-nav navbar-right">
+<?php
+if ( isset($refresh) ) {
+echo    '<li>' . ($refresh_flag ? '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-lock"></span></a>') . '</li>';
 }
 
 // Default hide this from view, only show when javascript and
 // notifications are available:
- echo '<li id="notify" style="display: none">' .
-	addForm('toggle_notify.php', 'get', 'notify', '', '', 'class="navbar-form navbar-right" style="display: none"') .
-	addHidden('enable', ($notify_flag ? 0 : 1)) .
-	($notify_flag ? '<a onclick="return toggleNotifications(false);"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a onclick="return toggleNotifications(true);"><span class="glyphicon glyphicon-volume-off"></span></a>' ) .
-	addEndForm() . '</li>';
+echo	'<li id="notify" style="display: none">' .($notify_flag ? '<a onclick="toggleNotifications(false);"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a onclick="toggleNotifications(true);"><span class="glyphicon glyphicon-volume-off"></span></a>') . '</li>';
 
 ?>
 </ul>
