@@ -26,21 +26,21 @@
 <?php	if ( IS_ADMIN ) {
 	$ndown = count($updates['judgehosts']);
 	if ( $ndown > 0 ) { ?>
-<li><a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-education"></span> <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
+<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts" class="new dj-tooltip" data-toggle="tooltip" data-placement="left" title="judgehosts"><span class="glyphicon glyphicon-education"></span> <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
 <?php	} else { ?>
-<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="glyphicon glyphicon-education"></span></a></li>
+<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="judgehosts"><span class="glyphicon glyphicon-education"></span></a></li>
 <?php	}
 	} ?>
 <?php	if ( checkrole('jury') ) {
 	$nunread = count($updates['clarifications']);
 	if ( $nunread > 0 ) { ?>
-<li><a class="new" href="clarifications.php" accesskey="c" id="menu_clarifications"><span class="glyphicon glyphicon-envelope"></span> <span class="label label-info"><?php echo $nunread ?> new<span></a></li>
+<li><a href="clarifications.php" accesskey="c" id="menu_clarifications" class="new dj-tooltip" data-toggle="tooltip" data-placement="left" title="clarifications"><span class="glyphicon glyphicon-envelope"></span> <span class="label label-info"><?php echo $nunread ?> new<span></a></li>
 <?php	} else { ?>
-<li><a href="clarifications.php" accesskey="c" id="menu_clarifications"><span class="glyphicon glyphicon-envelope"></span></a></li>
+<li><a href="clarifications.php" accesskey="c" id="menu_clarifications" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="clarifications"><span class="glyphicon glyphicon-envelope"></span></a></li>
 <?php	} ?>
 <?php	} ?>
-<li><a href="submissions.php"><span class="glyphicon glyphicon-file"></span></a></li>
-<li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span></a></li>  
+<li><a href="submissions.php" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="submissions"><span class="glyphicon glyphicon-file"></span></a></li>
+<li><a href="scoreboard.php" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="scoreboard"><span class="glyphicon glyphicon-th-list"></span></a></li>  
 <?php	if ( have_printing() ) { ?>
 <li><a href="print.php" accesskey="p">print</a></li>
 <?php	} ?>
@@ -72,12 +72,12 @@ if ( isset($refresh) ) {
 <ul class="nav navbar-nav navbar-right">
 <?php
 if ( isset($refresh) ) {
-echo    '<li>' . ($refresh_flag ? '<a href="#" onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a href="#" onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-lock"></span></a>') . '</li>';
+echo    '<li>' . ($refresh_flag ? '<a href="#" onclick="document.getElementById(\'toggles\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="disable refresh"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a href="#" onclick="document.getElementById(\'toggles\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="enable refresh"><span class="glyphicon glyphicon-lock"></span></a>') . '</li>';
 }
 
 // Default hide this from view, only show when javascript and
 // notifications are available:
-echo	'<li id="notify_li" style="display: none">' .($notify_flag ? '<a href="#" onclick="toggleNotifications(false);"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a href="#" onclick="toggleNotifications(true);"><span class="glyphicon glyphicon-volume-off"></span></a>') . '</li>';
+echo	'<li id="notify_li" style="display: none">' .($notify_flag ? '<a href="#" onclick="toggleNotifications(false); document.getElementById(\'notify\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="disable notifications"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a href="#" onclick="toggleNotifications(true); document.getElementById(\'notify\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="left" title="enable notifications"><span class="glyphicon glyphicon-volume-off"></span></a>') . '</li>';
 
 ?>
 </ul>
@@ -85,7 +85,8 @@ echo	'<li id="notify_li" style="display: none">' .($notify_flag ? '<a href="#" o
 <script type="text/javascript">
 <!--
     if ( 'Notification' in window ) {
-		document.getElementById('notify_li').style.display = 'block';
-	}
+        document.getElementById('notify_li').style.display = 'block';
+    }
+    $(".dj-tooltip").tooltip();	
 // -->
 </script>
