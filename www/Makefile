@@ -21,7 +21,7 @@ install-domserver:
 	$(INSTALL_DATA) -t $(DESTDIR)$(domserver_wwwdir)/js/flot      js/flot/*.js
 	$(INSTALL_DATA) -t $(DESTDIR)$(domserver_wwwdir)/js/ace       js/ace/*.js
 	$(INSTALL_DATA) -t $(DESTDIR)$(domserver_wwwdir)              *.php style.css
-	$(INSTALL_DATA) -t $(DESTDIR)$(domserver_wwwdir)/css          css/*.css
+	$(INSTALL_DATA) -t $(DESTDIR)$(domserver_wwwdir)/css          css/*.css css/*.map
 	$(INSTALL_DATA) -t $(DESTDIR)$(domserver_wwwdir)/fonts        fonts/*.ttf fonts/*.eot fonts/*.svg fonts/*.woff fonts/*.woff2 
 	rm -f $(DESTDIR)$(domserver_wwwdir)/jury/doc
 	$(LN_S) $(domjudge_docdir) $(DESTDIR)$(domserver_wwwdir)/jury/doc

@@ -62,7 +62,7 @@ $refresh_flag = !isset($_COOKIE["domjudge_refresh"]) || (bool)$_COOKIE["domjudge
 if ( isset($refresh) ) {
 	echo addForm('toggle_refresh.php', 'get', 'toggles', '', '', 'class="navbar-form navbar-right"') .
 	    addHidden('enable', ($refresh_flag ? 0 : 1)) .
-	    addSubmit(($refresh_flag ? '<span class="glyphicon glyphicon-refresh"></span>' : '<span class="glyphicon glyphicon-lock"></span>' ), 'toggle_refresh') .
+	    ($refresh_flag ? '<span class="glyphicon glyphicon-refresh" onclick="document.getelementById(\'toggles\').submit();"></span>' : '<span class="glyphicon glyphicon-lock" onclick="document.getelementById(\'toggles\').submit();"></span>') .
 	    addEndForm();
 }
 
@@ -70,8 +70,7 @@ if ( isset($refresh) ) {
 // notifications are available:
 	addForm('toggle_notify.php', 'get', 'notify', '', '', 'class="navbar-form navbar-right" style="display: none"') .
 	addHidden('enable', ($notify_flag ? 0 : 1)) .
-	addSubmit(($notify_flag ? '<span class="glyphicon glyphicon-volume-up"></span>' : '<span class="glyphicon glyphicon-volume-off"></span>' ) . 'able notifications', 'toggle_notify',
-	          'return toggleNotifications(' . ($notify_flag ? 'false' : 'true') . ')') .
+	($notify_flag ? '<span class="glyphicon glyphicon-volume-up" onclick="return toggleNotifications(false);"></span>' : '<span class="glyphicon glyphicon-volume-off" onclick="return toggleNotifications(true);"></span>' ) .
 	addEndForm();
 
 ?>
