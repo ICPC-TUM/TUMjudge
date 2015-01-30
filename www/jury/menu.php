@@ -62,16 +62,17 @@ $refresh_flag = !isset($_COOKIE["domjudge_refresh"]) || (bool)$_COOKIE["domjudge
 if ( isset($refresh) ) {
 	echo addForm('toggle_refresh.php', 'get', 'toggles', '', '', 'class="navbar-form navbar-right"') .
 	    addHidden('enable', ($refresh_flag ? 0 : 1)) .
-	    ($refresh_flag ? '<span class="glyphicon glyphicon-refresh" onclick="document.getelementById(\'toggles\').submit();"></span>' : '<span class="glyphicon glyphicon-lock" onclick="document.getelementById(\'toggles\').submit();"></span>') .
+	    ($refresh_flag ? '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a onclick="document.getElementById(\'toggles\').submit();"><span class="glyphicon glyphicon-lock"></span></a>') .
 	    addEndForm();
 }
 
 // Default hide this from view, only show when javascript and
 // notifications are available:
+ echo '<div id="notify" style="display: none">' .
 	addForm('toggle_notify.php', 'get', 'notify', '', '', 'class="navbar-form navbar-right" style="display: none"') .
 	addHidden('enable', ($notify_flag ? 0 : 1)) .
-	($notify_flag ? '<span class="glyphicon glyphicon-volume-up" onclick="return toggleNotifications(false);"></span>' : '<span class="glyphicon glyphicon-volume-off" onclick="return toggleNotifications(true);"></span>' ) .
-	addEndForm();
+	($notify_flag ? '<a onclick="return toggleNotifications(false);"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a onclick="return toggleNotifications(true);"><span class="glyphicon glyphicon-volume-off"></span></a>' ) .
+	addEndForm() . "</div>";
 
 ?>
 <script type="text/javascript">
