@@ -398,10 +398,10 @@ function updateClock()
 	var fmt = "";
 	if (curtime >= starttime && curtime < endtime ) {
 		var left = endtime - curtime;
-		var what = "time left: ";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span>";
 	} else if (curtime >= activatetime && curtime < starttime ) {
 		var left = starttime - curtime;
-		var what = "time to start: ";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span> (to start) ";
 	} else {
 		var left = 0;
 		var what = "";

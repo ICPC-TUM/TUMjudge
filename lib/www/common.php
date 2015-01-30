@@ -383,14 +383,14 @@ function putClock() {
 	// timediff to end of contest
 	if ( difftime(now(), $cdata['starttime']) >= 0 &&
 	     difftime(now(), $cdata['endtime'])   <  0 ) {
-		$left = "" . printtimediff(now(),$cdata['endtime']);
+		$left = "<span class=\"glyphicon glyphicon-time\"></span>" . printtimediff(now(),$cdata['endtime']);
 	} else if ( difftime(now(), $cdata['activatetime']) >= 0 &&
 	            difftime(now(), $cdata['starttime'])    <  0 ) {
-		$left = "(to start)" . printtimediff(now(),$cdata['starttime']);
+		$left = "<span class=\"glyphicon glyphicon-time\"></span> (to start) " . printtimediff(now(),$cdata['starttime']);
 	} else {
 		$left = "";
 	}
-	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\"><span class=\"glyphicon glyphicon-time\"></span>" . $left . "</p>";
+	echo "<p id=\"timeleft\" class=\"navbar-text navbar-right\">" . $left . "</p>";
 
 	if ( logged_in() ) {
 		echo "<p id=\"username\" class=\"navbar-text navbar-right\"><span class=\"glyphicon glyphicon-user\"></span> " . $username
