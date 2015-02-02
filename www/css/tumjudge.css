@@ -47,12 +47,16 @@ td, th {
 .navbar > .container .navbar-brand, .navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default a, .navbar-default a:hover, .navbar-default a:focus, .navbar-default .navbar-text, #timeleft {
 	color: #ffffff;
 }
-.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus, .tooltip-inner {
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
 	color: #002143;
 	background-color: #ffffff;
 }
+.tooltip-inner {
+	color: #ffffff;
+	background-color: #002143;
+}
 .tooltip.bottom .tooltip-arrow {
-	border-bottom-color: #ffffff;
+	border-bottom-color: #002143;
 }
 .dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
 	color: #002143;
