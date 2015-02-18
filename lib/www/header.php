@@ -61,11 +61,9 @@ if ( ! empty($extrahead) ) echo $extrahead;
 </head>
 <?php
 
+$cssclass = !empty($cid) ? 'class="contest-'.$cid.'"' : '';
 if ( IS_JURY ) {
 	global $pagename;
-	if(!empty($cid)) {
-	  $cssclass = 'class="contest-'.$cid.'"';
-	}
 	echo "<body ".$cssclass." onload=\"setInterval('updateMenu(" .
 		(int)($pagename=='clarifications.php' && $refresh_cookie) . ", " .
 		(int)($pagename=='judgehosts.php' && $refresh_cookie) . ")', 20000); " .
