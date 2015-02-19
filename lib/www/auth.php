@@ -234,6 +234,28 @@ function ldap_check_credentials($user, $pass)
 	return FALSE;
 }
 
+// Check LDAP user and password credentials by trying to login to
+// the LDAP server(s).
+function ldap_check_credentials_dn($user, $pass, $ldap_dn)
+{
+	foreach ( explode(' ', LDAP_SERVERS) as $server ) {
+
+		// The connection may only be really established when needed,
+		// so execute a dummy query to test if the server is available:
+		$conn = @ldap_connect($server);
+		if ( !$conn || !ldap_get_option($conn, LDAP_OPT_PROTOCOL_VERSION, $dummy) ) {
+			continue;
+		}
+
+		// Try to login to test credentials
+		if ( @ldap_bind($conn, $ldap_dn, $pass) ) {
+			@ldap_unbind($conn);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 // Try to login a team with e.g. authentication data POST-ed. Function
 // does not return and should generate e.g. a redirect back to the
 // referring page.
@@ -274,9 +296,8 @@ function do_login()
 			if($entry['count'] == 0) show_failed_login('Invalid username supplied. Please try again or contact a staff member.');
                         
 			$authtoken = mysql_escape_string($entry[0]['dn']);
-			define('LDAP_DNQUERY', $authtoken);
                         
-			if (!ldap_check_credentials($userdata['username'], $pass)) {
+			if (!ldap_check_credentials_dn($userdata['username'], $pass, $authtoken)) {
 				sleep(1);
 				show_failed_login('Invalid username or password supplied. ' .
 				                  'Please try again or contact a staff member.');
