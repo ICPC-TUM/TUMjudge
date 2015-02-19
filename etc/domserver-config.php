@@ -17,6 +17,12 @@ require_once("common-config.php");
 //   Authenticate against one or more LDAP servers. Use PHP sessions
 //   after successful authentication. This option may be useful to
 //   integrate DOMjudge (e.g. as courseware) into a larger system.
+// IN_TUM_LOGIN
+//   Use PHP sessions with user/password authentication if a password
+//   is set. Otherwise authenticate against one or more LDAP servers.
+//   Use PHP sessions after successful authentication either way. The
+//   LDAP_DNQUERY is ignored with this option and dynamically found by
+//   looking up a user having the mail address username@in.tum.de.
 // EXTERNAL
 //   Use authentication information provided by Apache. This enables
 //   use of any authentication module available for Apache, and will
