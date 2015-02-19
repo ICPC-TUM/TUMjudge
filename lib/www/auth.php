@@ -66,6 +66,7 @@ function logged_in()
 
 	case 'PHP_SESSIONS':
 	case 'LDAP':
+	case 'IN_TUM_LOGIN':
 		if (session_id() == "") session_start();
 		if ( isset($_SESSION['username']) ) {
 			$userdata = $DB->q('MAYBETUPLE SELECT * FROM user
@@ -109,6 +110,7 @@ function have_logout()
 	case 'IPADDRESS':    return FALSE;
 	case 'PHP_SESSIONS': return TRUE;
 	case 'LDAP':         return TRUE;
+	case 'IN_TUM_LOGIN': return TRUE;
 	}
 	return FALSE;
 }
@@ -142,6 +144,7 @@ function show_loginpage()
 	case 'IPADDRESS':
 	case 'PHP_SESSIONS':
 	case 'LDAP':
+	case 'IN_TUM_LOGIN':
 		$title = 'Not Authenticated';
 		$menu = false;
 
@@ -239,6 +242,56 @@ function do_login()
 	global $DB, $ip, $username, $userdata;
 
 	switch ( AUTH_METHOD ) {
+	case 'IN_TUM_LOGIN':
+		$user = trim($_POST['login']);
+		$pass = trim($_POST['passwd']);
+
+		$title = 'Authenticate user';
+		$menu = false;
+
+		if ( empty($user) || empty($pass) ) {
+			show_failed_login('Please supply a username and password.');
+		}
+		
+		$userdata = $DB->q('MAYBETUPLE SELECT * FROM user
+		                    WHERE username = %s AND enabled = 1', $user);
+		$pw_null = empty($userdata['password']);
+                
+		if($pw_null) {
+			//LDAP IN TUM
+			$conn = false;
+			foreach(explode(' ', LDAP_SERVERS) as $server) {
+				if($conn == false) {
+					$conn = ldap_connect($server);
+				}
+			}
+			if(!$conn) show_failed_login('The authentification server is not online.');
+			if(!ldap_bind($conn)) show_failed_login('The authentification server does not accept connections.');
+                        
+			$entry = ldap_get_entries($conn,
+				ldap_search($conn, 'ou=Personen,ou=IN,o=TUM,c=DE', '(mail='.$user.'@in.tum.de)')
+			);
+			if($entry['count'] == 0) show_failed_login('Invalid username supplied. Please try again or contact a staff member.');
+                        
+			$authtoken = mysql_escape_string($entry[0]['dn']);
+			define('LDAP_DNQUERY', $authtoken);
+                        
+			if (!ldap_check_credentials($userdata['username'], $pass)) {
+				sleep(1);
+				show_failed_login('Invalid username or password supplied. ' .
+				                  'Please try again or contact a staff member.');
+			}
+
+			$username = $userdata['username'];
+		}
+		else {
+			//password
+			do_login_native($user, $pass);
+		}
+		session_start();
+		$_SESSION['username'] = $username;
+		auditlog('user', $userdata['userid'], 'logged in', $ip);
+		break;
 	// Generic authentication code for IPADDRESS and PHP_SESSIONS;
 	// some specializations are handled by if-statements.
 	case 'IPADDRESS':
@@ -412,6 +465,7 @@ function do_logout()
 	switch ( AUTH_METHOD ) {
 	case 'PHP_SESSIONS':
 	case 'LDAP':
+	case 'IN_TUM_LOGIN':
 
 		// Check that a session exists:
 		if (session_id() == "") session_start();
