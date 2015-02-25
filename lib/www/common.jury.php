@@ -123,7 +123,7 @@ function rejudgeForm($table, $id)
 
 	$ret .= '<input type="submit" value="' . htmlspecialchars($button) . '" ' .
 		($disabled ? 'disabled="disabled"' : 'onclick="return confirm(\'' .
-		htmlspecialchars($question) . '\');"') . " />\n" . addEndForm();
+		htmlspecialchars($question) . '\');"') . " class=\"btn btn-default\" />\n" . addEndForm();
 
 	return $ret;
 }

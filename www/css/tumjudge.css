@@ -1,0 +1,80 @@
+body {
+	padding-top: 80px;
+}
+a, a:hover, a:focus, a:link, a:visited {
+	color: #002143;
+}
+input[type="checkbox"], input[type="radio"] {
+	width: inherit;
+	height: inherit;
+}
+.form-control {
+	margin-top: 10px;
+}
+.checkbox + label, .checkbox, .radio + label, .radio {
+	margin-left: 25px;
+}
+label .checkbox, label .radio {/*edit user has another nesting...*/
+	margin-left: 0;
+}
+table:not(.scoreboard) {
+	width: 100%;
+}
+th, .scoreboard th a, h3.teamoverview {
+	background-color: #002143;
+	color: #ffffff;
+	font-size: inherit;
+	font-weight: bold;
+}
+th, h3.teamoverview {
+	padding: 10px;
+}
+#submitform .form-control, input#comment {
+	width: inherit;
+	height: inherit;
+	display: inline;
+}
+td, th {
+	vertical-align: middle;
+}
+.scoreboard td, .scoreboard th {
+	border-color: #002143;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus, .navbar-default {
+	background-color: #002143;
+	color: #ffffff;
+}
+.navbar > .container .navbar-brand, .navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default a, .navbar-default a:hover, .navbar-default a:focus, .navbar-default .navbar-text, #timeleft {
+	color: #ffffff;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+	color: #002143;
+	background-color: #ffffff;
+}
+.tooltip-inner {
+	color: #ffffff;
+	background-color: #002143;
+}
+.tooltip.bottom .tooltip-arrow {
+	border-bottom-color: #002143;
+}
+.dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+	color: #002143;
+}
+
+
+/* Contest 24: Christmas Week of Conpra WS14/15 */
+@font-face {
+	font-family:"Frostbitten";
+	src: url("../fonts/frostbitten.ttf");
+}
+.contest-24 h1, .contest-24 h2, .contest-24 h3, .contest-24 h4, .contest-24 #menutop *, .contest-24 .nodata, .contest-24 .scoreboard td, .contest-24 .scoreboard th {
+        font-family: "Frostbitten";
+}
+.contest-24 .scoreboard .score_correct {
+        background-image: url('../images/stars_silver.png') !important;
+        background-position: 0px -10px !important;
+}
+.contest-24 .scoreboard .score_correct.score_first {
+        background-image: url('../images/stars_gold.png') !important;
+}

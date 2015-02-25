@@ -1,18 +1,18 @@
-<nav><div id="menutop">
-<a href="index.php" accesskey="h">home</a>
+<ul class="nav navbar-nav">
+<li><a href="index.php" accesskey="h">home</a></li>
 <?php
 if ( have_problemtexts() ) {
-	echo "<a href=\"problems.php\" accesskey=\"p\">problems</a>\n";
+	echo "<li><a href=\"problems.php\" accesskey=\"p\">problems</a></li>\n";
 }
 logged_in(); // fill userdata
 if ( checkrole('team') ) {
-	echo "<a target=\"_top\" href=\"../team/\" accesskey=\"t\">→team</a>\n";
+	echo "<li><a target=\"_top\" href=\"../team/\" accesskey=\"t\">→team</a></li>\n";
 }
 if ( checkrole('jury') || checkrole('balloon') ) {
-	echo "<a target=\"_top\" href=\"../jury/\" accesskey=\"j\">→jury</a>\n";
+	echo "<li><a target=\"_top\" href=\"../jury/\" accesskey=\"j\">→jury</a></li>\n";
 }
 if ( !logged_in() ) {
-	echo "<a href=\"login.php\" accesskey=\"l\">login</a>\n";
+	echo "<li><a href=\"login.php\" accesskey=\"l\">login</a></li>\n";
 }
 ?>
-</div></nav>
+</ul>

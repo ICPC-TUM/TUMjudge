@@ -31,11 +31,11 @@ function updateMenu(doreload_clarifications, doreload_judgehosts)
 				if ( nclars == 0 ) {
 					elem.className = null;
 				} else {
-					newstr = ' ('+nclars+' new)';
+					newstr = ' <span class="label label-info">'+nclars+' new</span>';
 					elem.className = 'new';
 				}
-				if ( elem.innerHTML != 'clarifications' + newstr ) {
-					elem.innerHTML = 'clarifications' + newstr;
+				if ( elem.innerHTML != '<span class="glyphicon glyphicon-envelope"></span>' + newstr ) {
+					elem.innerHTML = '<span class="glyphicon glyphicon-envelope"></span>' + newstr;
 					if(doreload_clarifications) {
 						location.reload()
 					}
@@ -47,11 +47,11 @@ function updateMenu(doreload_clarifications, doreload_judgehosts)
 				if ( nhosts == 0 ) {
 					elem.className = null;
 				} else {
-					newstr = ' ('+nhosts+' down)';
+					newstr = ' <span class="label label-warning">'+nhosts+' down</span>';
 					elem.className = 'new';
 				}
-				if ( elem.innerHTML != 'judgehosts' + newstr ) {
-					elem.innerHTML = 'judgehosts' + newstr;
+				if ( elem.innerHTML != '<span class="glyphicon glyphicon-education"></span>' + newstr ) {
+					elem.innerHTML = '<span class="glyphicon glyphicon-education"></span>' + newstr;
 					if(doreload_judgehosts) {
 						location.reload()
 					}
@@ -398,10 +398,10 @@ function updateClock()
 	var fmt = "";
 	if (curtime >= starttime && curtime < endtime ) {
 		var left = endtime - curtime;
-		var what = "time left: ";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span>";
 	} else if (curtime >= activatetime && curtime < starttime ) {
 		var left = starttime - curtime;
-		var what = "time to start: ";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span> (to start) ";
 	} else {
 		var left = 0;
 		var what = "";

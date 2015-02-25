@@ -22,7 +22,7 @@ function addInputField($type, $name = null, $value = null, $attributes = '') {
 	return '<input type="'.$type.'"'.
 		($name  !== null ? ' name="'.htmlspecialchars($name).'"' : '') . $id .
 		($value !== null ? ' value="'.htmlspecialchars($value).'"' : '') .
-		$attributes . " />\n";
+		$attributes . " class=\"form-control\" />\n";
 }
 
 /**
@@ -37,8 +37,8 @@ function addPwField($name , $value = null) {
  * Form checkbox
  */
 function addCheckBox($name, $checked = false, $value = null) {
-	return addInputField('checkbox', $name, $value,
-	                     ($checked ? ' checked="checked"' : ''));
+	return '<span class="checkbox">'.addInputField('checkbox', $name, $value,
+	                     ($checked ? ' checked="checked"' : '')).'</span>';
 }
 
 
@@ -46,8 +46,8 @@ function addCheckBox($name, $checked = false, $value = null) {
  * Form radio button
  */
 function addRadioButton($name, $checked = false, $value = null) {
-	return addInputField('radio', $name, $value,
-	                     ($checked ? ' checked="checked"' : ''));
+	return '<span class="radio">'.addInputField('radio', $name, $value,
+	                     ($checked ? ' checked="checked"' : '')).'</span>';
 }
 
 /**
@@ -103,7 +103,7 @@ function addSelect($name, $values, $default = null, $usekeys = false, $multi = f
 
 	$ret = '<select name="' . htmlspecialchars($name) . '"' .
 		($multi ? " multiple=\"multiple\" size=\"$size\"" : '') .
-		' id="' . htmlspecialchars(strtr($name,'[]','__')) . "\">\n";
+		' id="' . htmlspecialchars(strtr($name,'[]','__')) . "\" class=\"form-control\">\n";
 	foreach ($values as $k => $v) {
 		if ( ! $usekeys ) $k = $v;
 		$ret .= '<option value="' .	htmlspecialchars( $k ) . '"' .
@@ -123,13 +123,13 @@ function addSubmit($value, $name = null, $onclick = null, $enable = true, $extra
 	return addInputField('submit', $name, $value,
 		(empty($onclick) ? null : ' onclick="'.htmlspecialchars($onclick).'"') .
 		($enable ? '' : ' disabled="disabled"') .
-		(empty($extraattrs) ? '' : " $extraattrs"));
+		' class="btn btn-default" '.(empty($extraattrs) ? '' : " $extraattrs"));
 }
 /**
  * Form reset button, $value = caption
  */
 function addReset($value) {
-	return addInputField('reset', null, $value);
+	return addInputField('reset', null, $value, ' class="btn btn-default" ');
 }
 
 /**
@@ -139,7 +139,7 @@ function addTextArea($name, $text = '', $cols = 40, $rows = 10, $attr = '') {
 	return '<textarea name="'.htmlspecialchars($name).'" '.
 		'rows="'.(int)$rows .'" cols="'.(int)$cols.'" '.
 		'id="' . htmlspecialchars(strtr($name,'[]','__')).'" ' .
-		$attr . '>'.htmlspecialchars($text) ."</textarea>\n";
+		$attr . ' class="form-control">'.htmlspecialchars($text) ."</textarea>\n";
 }
 
 /**

@@ -63,7 +63,7 @@ if ( $fdata['cstarted'] ) {
 		if ( $maxfiles > 1 ) {
 			echo " multiple";
 		}
-		echo " />\n";
+		echo " class=\"form-control\" />\n";
 
 
 		$probs = array();

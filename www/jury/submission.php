@@ -179,7 +179,7 @@ if ( IS_ADMIN ) {
 		addHidden('val', $val) .
 			'<input type="submit" value="' . $unornot .
 			'IGNORE this submission" onclick="return confirm(\'Really ' . $unornot .
-			"ignore submission s$id?');\" /></form>\n";
+			"ignore submission s$id?');\" class=\"btn btn-default\" /></form>\n";
 }
 if ( ! $submdata['valid'] ) {
 	echo "<p>This submission is not used during scoreboard calculations.</p>\n\n";

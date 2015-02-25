@@ -37,6 +37,10 @@ if(!isset($menu)) {
 <title><?php echo $title?></title>
 <link rel="icon" href="../images/favicon.png" type="image/png" />
 <link rel="stylesheet" href="../style.css" type="text/css" />
+<link rel="stylesheet" href="../css/bootstrap.css" type="text/css" />
+<link rel="stylesheet" href="../css/tumjudge.css" type="text/css" />
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/bootstrap.js"></script>
 <?php
 if ( IS_JURY ) {
 	echo "<link rel=\"stylesheet\" href=\"style_jury.css\" type=\"text/css\" />\n";
@@ -57,17 +61,41 @@ if ( ! empty($extrahead) ) echo $extrahead;
 </head>
 <?php
 
+$cssclass = !empty($cid) ? 'class="contest-'.$cid.'"' : '';
 if ( IS_JURY ) {
 	global $pagename;
-	echo "<body onload=\"setInterval('updateMenu(" .
+	echo "<body ".$cssclass." onload=\"setInterval('updateMenu(" .
 		(int)($pagename=='clarifications.php' && $refresh_cookie) . ", " .
 		(int)($pagename=='judgehosts.php' && $refresh_cookie) . ")', 20000); " .
 		"updateMenu(0,0)\">\n";
 } else {
-	echo "<body>\n";
+	echo "<body ".$cssclass.">\n";
 }
 
-/* NOTE: here a local menu.php is included
- *       both jury and team have their own menu.php
- */
-if ( $menu ) include("menu.php");
+?>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.php">
+        <img src="../images/tumjudge.png" alt="TUMjudge" />
+      </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <?php
+        /* NOTE: here a local menu.php is included
+         *       both jury and team have their own menu.php
+         */
+        if ( $menu ) include("menu.php");
+      ?>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
