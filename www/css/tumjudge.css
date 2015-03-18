@@ -14,10 +14,10 @@ input[type="checkbox"], input[type="radio"] {
 .checkbox + label, .checkbox, .radio + label, .radio {
 	margin-left: 25px;
 }
-label .checkbox, label .radio {/*edit user has another nesting...*/
+label .checkbox, label .radio {/*edit user has a different nesting...*/
 	margin-left: 0;
 }
-table:not(.scoreboard) {
+table:not(.scoreboard):not(.legend table) {
 	width: 100%;
 }
 th, .scoreboard th a, h3.teamoverview {
