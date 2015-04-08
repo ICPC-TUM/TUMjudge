@@ -95,7 +95,7 @@ if( $teams->count() == 0 ) {
 		}
 		echo ">$link" . CIRCLE_SYM . "</a></td>";
 		echo "<td class=\"teamstat\" title=\"$numcor correct / $numsub submitted\">$link$numcor / $numsub</a></td>";
-		if ( IS_ADMIN ) {
+		if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 			echo "<td class=\"editdel\">" .
 				editLink('team', $row['teamid']) . " " .
 				delLink('team','teamid',$row['teamid']) . "</td>";
@@ -105,7 +105,7 @@ if( $teams->count() == 0 ) {
 	echo "</tbody>\n</table>\n\n";
 }
 
-if ( IS_ADMIN ) {
+if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 	echo "<p>" .addLink('team') . "</p>\n";
 }
 

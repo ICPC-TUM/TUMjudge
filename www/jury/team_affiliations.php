@@ -40,7 +40,7 @@ if( $res->count() == 0 ) {
 			'</a></td><td class="tdright">' . $link .
 			(int)$row['cnt'] .
 			'</a></td>';
-		if ( IS_ADMIN ) {
+		if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 			echo "<td class=\"editdel\">" .
 				editLink('team_affiliation', $row['affilid']) . " " .
 				delLink('team_affiliation', 'affilid', $row['affilid']) . "</td>";
@@ -50,7 +50,7 @@ if( $res->count() == 0 ) {
 	echo "</tbody>\n</table>\n\n";
 }
 
-if ( IS_ADMIN ) {
+if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 	echo "<p>" . addLink('team_affiliation') . "</p>\n\n";
 }
 

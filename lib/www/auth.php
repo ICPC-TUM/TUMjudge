@@ -21,6 +21,9 @@ $userdata = NULL;
 // privileges
 function checkrole($rolename, $check_superset = TRUE) {
 	global $userdata;
+        if( $rolename == 'team' && $userdata['teamid'] != NULL) {
+                return true;//everybody with a team gets the team role
+        }
 	if ( empty($userdata) || !array_key_exists('roles', $userdata) ) {
 		return false;
 	}
@@ -90,7 +93,7 @@ function logged_in()
 	if ( !empty($teamdata) ) {
 		$teamid = $teamdata['teamid'];
 		// Is this the first visit? Record that in the team table.
-		if ( empty($teamdata['teampage_first_visited']) ) {
+		if ( empty($teamdata['teampage_first_visited']) && DOMSERVER_REPLICATION != 'slave' ) {
 			$hostname = gethostbyaddr($ip);
 			$DB->q('UPDATE team SET teampage_first_visited = %s, hostname = %s
 			        WHERE teamid = %i',
@@ -168,7 +171,7 @@ Please supply your credentials below, or contact a staff member for assistance.
 <?php
 if (dbconfig_get('allow_registration', false)) { ?>
 <p>If you do not have an account, you can register for one below: </p>
-<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+<form action="<?php echo basename($_SERVER['PHP_SELF']) ?>" method="post">
 <input type="hidden" name="cmd" value="register" />
 <table>
 <tr><td><label for="login">Username:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" /></td></tr>
@@ -380,8 +383,11 @@ function do_login()
 
 	// Authentication success. We could just return here, but we do a
 	// redirect to clear the POST data from the browser.
-	$DB->q('UPDATE user SET last_login = %s, last_ip_address = %s
-	        WHERE username = %s', now(), $ip, $username);
+	// do not update last_login and last_ip_address since this data is replicated
+	if( DOMSERVER_REPLICATION != 'slave' ) {
+		$DB->q('UPDATE user SET last_login = %s, last_ip_address = %s
+	        	WHERE username = %s', now(), $ip, $username);
+	}
 	$script = ($_SERVER['PHP_SELF']);
 	if ( preg_match( '/\/public\/login\.php$/', $_SERVER['PHP_SELF'] ) ) {
 		logged_in(); // fill userdata

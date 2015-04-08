@@ -8,6 +8,10 @@
  */
 
 require('init.php');
+if(DOMSERVER_REPLICATION == 'master') {
+        header('HTTP/1.1 302 Please see this page');
+        header('Location: register.php');
+}
 $title="Scoreboard";
 // set auto refresh
 $refresh="30;url=./";

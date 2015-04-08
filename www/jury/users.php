@@ -63,7 +63,7 @@ if( $users->count() == 0 ) {
 	echo "</tbody>\n</table>\n\n";
 }
 
-if ( IS_ADMIN ) {
+if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 	echo "<p>" .addLink('user') . "</p>\n";
 }
 
