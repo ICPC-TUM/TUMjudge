@@ -21,6 +21,9 @@ $userdata = NULL;
 // privileges
 function checkrole($rolename, $check_superset = TRUE) {
 	global $userdata;
+        if( $rolename == 'team' && $userdata['teamid'] != NULL) {
+                return true;//everybody with a team gets the team role
+        }
 	if ( empty($userdata) || !array_key_exists('roles', $userdata) ) {
 		return false;
 	}
@@ -381,7 +384,7 @@ function do_login()
 	// Authentication success. We could just return here, but we do a
 	// redirect to clear the POST data from the browser.
 	// do not update last_login and last_ip_address since this data is replicated
-	if(in_array(DOMJUDGE_REPLICATION, array('none', 'master'))) {
+	if( DOMSERVER_REPLICATION != 'slave' ) {
 		$DB->q('UPDATE user SET last_login = %s, last_ip_address = %s
 	        	WHERE username = %s', now(), $ip, $username);
 	}
