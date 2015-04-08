@@ -16,3 +16,8 @@ if ( !logged_in() ) {
 }
 ?>
 </ul>
+
+<?php
+putClock();
+?>
+
