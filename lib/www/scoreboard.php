@@ -335,6 +335,11 @@ function renderScoreBoardTable($sdata, $myteamid = null, $static = FALSE,
 		// skip if we have limitteams and the team is not listed
 		if ( !empty($limitteams) && !in_array($team,$limitteams) ) continue;
 
+		// exclude teams without submissions
+                $num_submissions = 0;
+                foreach($matrix[$team] AS $t) $num_submissions += $t['num_submissions'];
+                if ( empty($limitteams) && $num_submissions == 0) continue;
+
 		// rank, team name, total correct, total time
 		echo '<tr';
 		if ( $totals['sortorder'] != $prevsortorder ) {
