@@ -101,7 +101,7 @@ if ( ! isset($_POST['cancel']) ) {
 			check_sane_keys($prikey);
 
 			//do not edit data that is read only due to the replication
-			if(!in_array($t, array('team', 'team_affiliation', 'team_category', 'user'))) {
+			if(in_array(DOMJUDGE_REPLICATION, array('none', 'master')) || !in_array($t, array('team', 'team_affiliation', 'team_category', 'user'))) {
 				$DB->q("UPDATE $t SET %S WHERE %S", $itemdata, $prikey);
 			}
 			auditlog($t, implode(', ', $prikey), 'updated');

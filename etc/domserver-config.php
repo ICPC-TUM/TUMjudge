@@ -61,3 +61,10 @@ define('DJ_MYSQL_CONNECT_FLAGS', null);
 // accept SSL by default. Not normally necessary if you run the DOMserver
 // and database on the same machine.
 // define('DJ_MYSQL_CONNECT_FLAGS', MYSQLI_CLIENT_SSL);
+
+// Database replication
+// Available options: master, slave and none
+// The tables team, team_category, team_affiliation and user should be
+// replicated from master servers to slave servers.
+define('DOMSERVER_REPLICATION', 'none');
+
