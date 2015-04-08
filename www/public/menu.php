@@ -16,3 +16,8 @@ if ( !logged_in() && DOMSERVER_REPLICATION != 'master' ) {
 }
 ?>
 </ul>
+
+<?php
+putClock();
+?>
+
