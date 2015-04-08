@@ -11,7 +11,7 @@ if ( checkrole('team') ) {
 if ( checkrole('jury') || checkrole('balloon') ) {
 	echo "<li><a target=\"_top\" href=\"../jury/\" accesskey=\"j\">→jury</a></li>\n";
 }
-if ( !logged_in() ) {
+if ( !logged_in() && DOMSERVER_REPLICATION != 'master' ) {
 	echo "<li><a href=\"login.php\" accesskey=\"l\">login</a></li>\n";
 }
 ?>
