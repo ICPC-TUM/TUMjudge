@@ -95,14 +95,16 @@ function matchSelect($val, $default)
  * default: the key that will be selected
  * usekeys: use the keys of the array as option value or not
  * multi: multiple values are selectable, set to integer to set vertical size
+ * readonly: boolean describing whether the select is read-only
  */
-function addSelect($name, $values, $default = null, $usekeys = false, $multi = false)
+function addSelect($name, $values, $default = null, $usekeys = false, $multi = false, $readonly = false)
 {
 	$size = 5;
 	if ( is_int($multi) ) $size = $multi;
 
 	$ret = '<select name="' . htmlspecialchars($name) . '"' .
 		($multi ? " multiple=\"multiple\" size=\"$size\"" : '') .
+		($readonly ? ' readonly': '') .
 		' id="' . htmlspecialchars(strtr($name,'[]','__')) . "\" class=\"form-control\">\n";
 	foreach ($values as $k => $v) {
 		if ( ! $usekeys ) $k = $v;
