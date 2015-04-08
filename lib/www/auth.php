@@ -381,8 +381,10 @@ function do_login()
 	// Authentication success. We could just return here, but we do a
 	// redirect to clear the POST data from the browser.
 	// do not update last_login and last_ip_address since this data is replicated
-	// $DB->q('UPDATE user SET last_login = %s, last_ip_address = %s
-	//        WHERE username = %s', now(), $ip, $username);
+	if(in_array(DOMJUDGE_REPLICATION, array('none', 'master'))) {
+		$DB->q('UPDATE user SET last_login = %s, last_ip_address = %s
+	        	WHERE username = %s', now(), $ip, $username);
+	}
 	$script = ($_SERVER['PHP_SELF']);
 	if ( preg_match( '/\/public\/login\.php$/', $_SERVER['PHP_SELF'] ) ) {
 		logged_in(); // fill userdata
