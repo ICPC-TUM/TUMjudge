@@ -36,7 +36,7 @@ if( $res->count() == 0 ) {
 			'</a></td><td class="tdright">' . $link . (int)$row['numteams'] .
 			'</a></td><td class="tdcenter">' . $link . printyn($row['visible']) .
 			'</a></td>';
-		if ( IS_ADMIN ) {
+		if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 			echo "<td class=\"editdel\">" .
 				editLink('team_category', $row['categoryid']) . " " .
 				delLink('team_category', 'categoryid', $row['categoryid']) . "</td>";
@@ -46,7 +46,7 @@ if( $res->count() == 0 ) {
 	echo "</tbody>\n</table>\n\n";
 }
 
-if ( IS_ADMIN ) {
+if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 	echo "<p>" . addLink('team_category') . "</p>\n\n";
 }
 

@@ -296,8 +296,10 @@ function judgings_POST($args)
 	               LEFT JOIN language l USING (langid)
 	               WHERE submitid = %i', $submitid);
 
-	$DB->q('UPDATE team SET judging_last_started = %s WHERE teamid = %i',
-	       now(), $row['teamid']);
+	if(DOMSERVER_REPLICATION != 'slave') {
+		$DB->q('UPDATE team SET judging_last_started = %s WHERE teamid = %i',
+	       		now(), $row['teamid']);
+	}
 
 	if ( empty($row['memlimit']) ) {
 		$row['memlimit'] = dbconfig_get('memory_limit');
