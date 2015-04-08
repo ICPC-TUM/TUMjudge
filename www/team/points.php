@@ -12,6 +12,7 @@ $pointsArray = array(
 	'#00ff00' => 4,
 	'#ffff00' => 6,
 	'#ff0000' => 8,
+	'#ffffff' => 0,
 	'default' => 1
 );
 $coursePointArray = array();
@@ -45,7 +46,9 @@ while ($contest = $res->next()) {
 			$percentage = round(100*$coursePointArray[$course]/$courseTotalArray[$course],2);
 			$header2 = '<h2>'.$course.': '.$coursePointArray[$course].'/'.$courseTotalArray[$course].' Points ('.$percentage.'%)</h2>';
 			//print header
-			echo $header2.$header3;
+			if($coursePointArray[$course] > 0) {
+				echo $header2.$header3;
+			}
 			$header3 = '';
 			$course = $first;
 			$coursePointArray[$course] = 0;
@@ -62,8 +65,8 @@ while ($contest = $res->next()) {
 			   FROM contest c
 			   WHERE c.enabled = 1
 			   AND c.activatetime < now()
-			   AND INSTR(c.contestname, %s) > 0
-			   ORDER BY c.cid ASC', $first);
+			   AND c.contestname LIKE %s
+			   ORDER BY c.cid ASC', (empty($first) ? $contest['contestname'] : $first) . '%' );
 
 	while ($contest = $try->next()) {
 		$split = explode('-', $contest['contestname']);
@@ -148,8 +151,9 @@ while ($contest = $res->next()) {
 $percentage = round(100*$coursePointArray[$course]/$courseTotalArray[$course],2);
 $header2 = '<h2>'.$course.': '.$coursePointArray[$course].'/'.$courseTotalArray[$course].' Points ('.$percentage.'%)</h2>';
 //print last header
-echo $header2.$header3;
-
+if($coursePointArray[$course] > 0) {
+	echo $header2.$header3;
+}
 
 require(LIBWWWDIR . '/footer.php');
 ?>
