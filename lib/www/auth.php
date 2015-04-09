@@ -159,7 +159,7 @@ function show_loginpage()
 Please supply your credentials below, or contact a staff member for assistance.
 </p>
 
-<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+<form action="<?php echo basename($_SERVER['PHP_SELF']) ?>" method="post">
 <input type="hidden" name="cmd" value="login" />
 <table>
 <tr><td><label for="login">Login:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" autofocus /></td></tr>

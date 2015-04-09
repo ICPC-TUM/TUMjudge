@@ -8,8 +8,18 @@ require(LIBWWWDIR . '/header.php');
 echo '<h1>Welcome to TUMjudge!</h1>';
 echo 'If you already have an account please choose a contest to participate.';
 echo '<div class="row" style="margin-top: 2em;">';
-echo '<a href="/conpra/public/login.php" class="col-xs-6"><div class="jumbotron" style="padding: 20px; color: #ffffff; background-color: #002143; height: 15em;"><h2>ConPra</h2><p class="lead">Praktikum: Algorithmen f&uuml;r Programmierwettbewerbe</p></div></a>';
-echo '<a href="/gad/public/login.php" class="col-xs-6"><div class="jumbotron" style="padding: 20px; color: #ffffff; background-color: #002143; height: 15em;"><h2>GAD</h2><p class="lead">Grundlagen: Algorithmen und Datenstrukturen</p></div></a>';
+$servers = array(
+	array('title' => 'ConPra', 'description' => 'Algorithmen f&uuml;r Programmierwettbewerbe', 'url' => 'conpra'),
+        array('title' => 'GAD', 'description' => 'Grundlagen: Algorithmen und Datenstrukturen', 'url' => 'gad'),
+);
+foreach($servers AS $server) {
+	echo '<div class="col-xs-6"><div class="jumbotron" style="padding: 20px; color: #ffffff; background-color: #002143; height: 15em;">';
+	echo '<h2>'.$server['title'].'</h2>';
+	echo '<p class="lead">'.$server['description'].'</p>';
+        echo '<p><a href="/'.$server['url'].'/" class="btn btn-default" style="margin-right: 1em;">Scoreboard</a>';
+        echo '<a href="/'.$server['url'].'/public/login.php" class="btn btn-default" style="margin-right: 1em;">Login</a></p>';
+	echo '</div></div>';
+}
 echo '</div>';
 
 if(DOMSERVER_REPLICATION != 'master') {
@@ -21,7 +31,7 @@ echo '<h1>Registration</h1>';
 
 //globals
 $categories = array();
-$res_cat = $DB->q('SELECT categoryid, name FROM team_category WHERE visible = 1');
+$res_cat = $DB->q('SELECT categoryid, name FROM team_category WHERE categoryid IN (2,5)');
 while(($cat = $res_cat->next()) != null) {
   $categories[$cat['categoryid']] = $cat['name'];
 }
