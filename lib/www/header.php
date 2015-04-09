@@ -100,7 +100,7 @@ if ( IS_JURY ) {
 
 <script type="text/javascript">
 <!--
-  if ( 'Notification' in window ) {
+  if ( 'Notification' in window && document.getElementById('notify_li') != null) {
     document.getElementById('notify_li').style.display = 'block';
   }
   $(".dj-tooltip").tooltip();
