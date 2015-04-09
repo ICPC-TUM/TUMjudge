@@ -31,7 +31,7 @@ echo '<h1>Registration</h1>';
 
 //globals
 $categories = array();
-$res_cat = $DB->q('SELECT categoryid, name FROM team_category WHERE visible = 1');
+$res_cat = $DB->q('SELECT categoryid, name FROM team_category WHERE categoryid IN (2,5)');
 while(($cat = $res_cat->next()) != null) {
   $categories[$cat['categoryid']] = $cat['name'];
 }
