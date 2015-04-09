@@ -98,4 +98,13 @@ if ( IS_JURY ) {
   </div>
 </nav>
 
+<script type="text/javascript">
+<!--
+  if ( 'Notification' in window ) {
+    document.getElementById('notify_li').style.display = 'block';
+  }
+  $(".dj-tooltip").tooltip();
+// -->
+</script>
+
 <div class="container">

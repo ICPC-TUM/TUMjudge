@@ -81,12 +81,3 @@ echo	'<li id="notify_li" style="display: none">' .($notify_flag ? '<a href="#" o
 
 ?>
 </ul>
-
-<script type="text/javascript">
-<!--
-    if ( 'Notification' in window ) {
-        document.getElementById('notify_li').style.display = 'block';
-    }
-    $(".dj-tooltip").tooltip();	
-// -->
-</script>
