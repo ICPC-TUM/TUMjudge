@@ -42,29 +42,29 @@ if(empty($_GET['probid'])) {
 	$title = "Statistics";
 	//draw graph
 	if(empty($_GET['langid'])) {
-	$res = $DB->q('SELECT result,
-                   COUNT(result) as count,
-                   (c.freezetime IS NOT NULL && submittime >= c.freezetime) AS afterfreeze,
-                   (TIMESTAMPDIFF(MINUTE, c.starttime, submittime) DIV %i) * %i AS minute
+	$res = $DB->q('SELECT j.result AS result,
+                   COUNT(j.result) as count,
+                   (c.freezetime IS NOT NULL && s.submittime >= c.freezetime) AS afterfreeze,
+                   (ROUND((s.submittime - c.starttime) / 60, 0) DIV %i) * %i AS minute
                    FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    LEFT OUTER JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
-                   AND submittime < c.endtime
-                   AND submittime >= c.starttime
+                   AND s.submittime < c.endtime
+                   AND s.submittime >= c.starttime
                    GROUP BY minute, result', $bar_size, $bar_size, $sortOrder, $cid, 'domjudge');
 	}
 	else {
 	$res = $DB->q('SELECT result,
 	                   COUNT(result) as count,
 	                   (c.freezetime IS NOT NULL && submittime >= c.freezetime) AS afterfreeze,
-	                   (TIMESTAMPDIFF(MINUTE, c.starttime, submittime) DIV %i) * %i AS minute
+	                   (ROUND((s.submittime - c.starttime) / 60, 0) DIV %i) * %i AS minute
 	                   FROM submission s
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
         	           LEFT OUTER JOIN contest c ON(c.cid=s.cid)
-			   JOIN team t ON(s.teamid=t.name)
+			   JOIN team t ON(s.teamid=t.teamid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
 	                   WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
 	                   AND submittime < c.endtime
@@ -74,9 +74,9 @@ if(empty($_GET['probid'])) {
 	}
 
 	//count how many students tried to solve in contest
-	$tried = $DB->q('SELECT DISTINCT t.name
+	$tried = $DB->q('SELECT DISTINCT t.teamid
                    FROM team t
-		   JOIN submission s ON(s.teamid=t.name)
+		   JOIN submission s ON(s.teamid=t.teamid)
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    JOIN contest c ON(c.cid=s.cid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -90,9 +90,9 @@ if(empty($_GET['probid'])) {
 	$tried = $counter;
 
 	//count how many students solved at least 1 problem in contest
-	$solved = $DB->q('SELECT DISTINCT t.name
+	$solved = $DB->q('SELECT DISTINCT t.teamid
                    FROM team t
-		   JOIN submission s ON(s.teamid=t.name)
+		   JOIN submission s ON(s.teamid=t.teamid)
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    JOIN contest c ON(c.cid=s.cid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -111,7 +111,7 @@ if(empty($_GET['probid'])) {
                    FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
                    AND s.submittime < c.endtime
@@ -123,11 +123,11 @@ if(empty($_GET['probid'])) {
 	}
 
 	//get the fastest problem solved for all problems
-	$fastest = $DB->q('SELECT TIMESTAMPDIFF(MINUTE,c.starttime,s.submittime) as timediff, t.name as name
+	$fastest = $DB->q('SELECT ROUND((s.submittime - c.starttime) / 60, 0) as timediff, t.name as name
 		   FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
                    AND s.submittime < c.endtime
@@ -151,7 +151,7 @@ if(empty($_GET['probid'])) {
                    JOIN submission s ON(sf.submitid = s.submitid)
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
                    AND s.submittime < c.endtime
@@ -181,7 +181,7 @@ if(empty($_GET['probid'])) {
 				 ON (j.judgingid = jr.judgingid AND j.valid=1 AND j.result = %s)
 			JOIN submission s ON (j.submitid = s.submitid)
 			JOIN contest c ON(c.cid=s.cid)
-			JOIN team t ON(s.teamid=t.name)
+			JOIN team t ON(s.teamid=t.teamid)
 			JOIN team_category tc ON (t.categoryid=tc.categoryid)
 			JOIN language l ON (l.langid = s.langid)
 			JOIN problem p ON (p.probid = s.probid)
@@ -214,9 +214,9 @@ if(empty($_GET['probid'])) {
 	//with language
 	for($langCount = 0; $langCount < count($languageIdArray); $langCount++) {	
 		//count how many students tried to solve in contest
-		$tried1 = $DB->q('SELECT DISTINCT t.name
+		$tried1 = $DB->q('SELECT DISTINCT t.teamid
 	                   FROM team t
-			   JOIN submission s ON(s.teamid=t.name)
+			   JOIN submission s ON(s.teamid=t.teamid)
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
 	                   JOIN contest c ON(c.cid=s.cid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -232,9 +232,9 @@ if(empty($_GET['probid'])) {
 		$dataArray[$langCount][0] = $tried1;
 
 		//count how many students solved at least 1 problem in contest
-		$solved1 = $DB->q('SELECT DISTINCT t.name
+		$solved1 = $DB->q('SELECT DISTINCT t.teamid
 	                   FROM team t
-			   JOIN submission s ON(s.teamid=t.name)
+			   JOIN submission s ON(s.teamid=t.teamid)
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
 	                   JOIN contest c ON(c.cid=s.cid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -255,7 +255,7 @@ if(empty($_GET['probid'])) {
 	                   FROM submission s
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
 	                   JOIN contest c ON(c.cid=s.cid)
-			   JOIN team t ON(s.teamid=t.name)
+			   JOIN team t ON(s.teamid=t.teamid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
 	                   WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
 	                   AND s.submittime < c.endtime
@@ -269,11 +269,11 @@ if(empty($_GET['probid'])) {
 		$dataArray[$langCount][2] = $submissions1;
 
 		//get the fastest problem solved for all problems
-		$fastest1 = $DB->q('SELECT TIMESTAMPDIFF(MINUTE,c.starttime,s.submittime) as timediff, t.name as name
+		$fastest1 = $DB->q('SELECT ROUND((s.submittime - c.starttime) / 60, 0) as timediff, t.name as name
 		   FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
                    AND s.submittime < c.endtime
@@ -300,7 +300,7 @@ if(empty($_GET['probid'])) {
 	                   JOIN submission s ON(sf.submitid = s.submitid)
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
 	                   JOIN contest c ON(c.cid=s.cid)
-			   JOIN team t ON(s.teamid=t.name)
+			   JOIN team t ON(s.teamid=t.teamid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
 	                   WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
 	                   AND s.submittime < c.endtime
@@ -334,7 +334,7 @@ if(empty($_GET['probid'])) {
 					 ON (j.judgingid = jr.judgingid AND j.valid=1 AND j.result = %s)
 				JOIN submission s ON (j.submitid = s.submitid)
 				JOIN contest c ON(c.cid=s.cid)
-				JOIN team t ON(s.teamid=t.name)
+				JOIN team t ON(s.teamid=t.teamid)
 				JOIN team_category tc ON (t.categoryid=tc.categoryid)
 				JOIN language l ON (l.langid = s.langid)
 				JOIN problem p ON (p.probid = s.probid)
@@ -377,43 +377,43 @@ else {
 	$title = "Statistics - Problem " . $problemName;
 	//draw graph
 	if (empty($_GET['langid'])) {
-		$res = $DB->q('SELECT result,
-	                   COUNT(result) as count,
-	                   (c.freezetime IS NOT NULL && submittime >= c.freezetime) AS afterfreeze,
-	                   (TIMESTAMPDIFF(MINUTE, c.starttime, submittime) DIV %i) * %i AS minute
+		$res = $DB->q('SELECT j.result AS result,
+	                   COUNT(j.result) as count,
+	                   (c.freezetime IS NOT NULL && s.submittime >= c.freezetime) AS afterfreeze,
+	                   (ROUND((s.submittime - c.starttime) / 60, 0) DIV %i) * %i AS minute
 	                   FROM submission s
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
 	                   LEFT OUTER JOIN contest c ON(c.cid=s.cid)
-			   JOIN team t ON(s.teamid=t.name)
+			   JOIN team t ON(s.teamid=t.teamid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
 	                   WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s AND LOWER(s.teamid) != %s
 	                   AND s.probid = %s
-	                   AND submittime < c.endtime
-	                   AND submittime >= c.starttime
+	                   AND s.submittime < c.endtime
+	                   AND s.submittime >= c.starttime
 	                   GROUP BY minute, result', $bar_size, $bar_size, $sortOrder, $cid, 'domjudge', 'coolteam', $_GET['probid']);
 	}
 	else {
-		$res = $DB->q('SELECT result,
-                   COUNT(result) as count,
+		$res = $DB->q('SELECT j.result,
+                   COUNT(j/result) as count,
                    (c.freezetime IS NOT NULL && submittime >= c.freezetime) AS afterfreeze,
-                   (TIMESTAMPDIFF(MINUTE, c.starttime, submittime) DIV %i) * %i AS minute
+                   (ROUND((s.submittime - c.starttime) / 60, 0) DIV %i) * %i AS minute
                    FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    LEFT OUTER JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s AND LOWER(s.teamid) != %s
                    AND s.probid = %s
-                   AND submittime < c.endtime
-                   AND submittime >= c.starttime
+                   AND s.submittime < c.endtime
+                   AND s.submittime >= c.starttime
 		   AND s.langid = %s
                    GROUP BY minute, result', $bar_size, $bar_size, $sortOrder, $cid, 'domjudge', 'coolteam', $_GET['probid'], $_GET['langid']);
 
 	}
 	//count how many students tried to solve the problem
-	$tried = $DB->q('SELECT DISTINCT t.name
+	$tried = $DB->q('SELECT DISTINCT t.teamid
                    FROM team t
-		   JOIN submission s ON(s.teamid=t.name)
+		   JOIN submission s ON(s.teamid=t.teamid)
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    JOIN contest c ON(c.cid=s.cid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -428,9 +428,9 @@ else {
 	$tried = $counter;
 	
 	//count how many students solved the problem
-	$solved = $DB->q('SELECT DISTINCT t.name
+	$solved = $DB->q('SELECT DISTINCT t.teamid
                    FROM team t
-		   JOIN submission s ON(s.teamid=t.name)
+		   JOIN submission s ON(s.teamid=t.teamid)
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    JOIN contest c ON(c.cid=s.cid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -450,7 +450,7 @@ else {
                    FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s AND LOWER(s.teamid) != %s
 		   AND s.probid = %s
@@ -463,11 +463,11 @@ else {
 	}
 
 	//get the fastest time solved for this problem
-	$fastest = $DB->q('SELECT TIMESTAMPDIFF(MINUTE,c.starttime,s.submittime) as timediff, t.name as name
+	$fastest = $DB->q('SELECT ROUND((s.submittime - c.starttime) / 60, 0) as timediff, t.name as name
 		   FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
                    AND s.submittime < c.endtime
@@ -492,7 +492,7 @@ else {
                    JOIN submission s ON(sf.submitid = s.submitid)
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
                    AND s.submittime < c.endtime
@@ -524,7 +524,7 @@ else {
 				 ON (j.judgingid = jr.judgingid AND j.valid=1 AND j.result = %s)
 			JOIN submission s ON (j.submitid = s.submitid)
 			JOIN contest c ON(c.cid=s.cid)
-			JOIN team t ON(s.teamid=t.name)
+			JOIN team t ON(s.teamid=t.teamid)
 			JOIN team_category tc ON (t.categoryid=tc.categoryid)
 			JOIN language l ON (l.langid = s.langid)
 			JOIN problem p ON (p.probid = s.probid)
@@ -558,9 +558,9 @@ else {
 	//with language
 	for($langCount = 0; $langCount < count($languageIdArray); $langCount++) {
 		//count how many students tried to solve the problem
-		$tried1 = $DB->q('SELECT DISTINCT t.name
+		$tried1 = $DB->q('SELECT DISTINCT t.teamid
 	                   FROM team t
-			   JOIN submission s ON(s.teamid=t.name)
+			   JOIN submission s ON(s.teamid=t.teamid)
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
 	                   JOIN contest c ON(c.cid=s.cid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -577,9 +577,9 @@ else {
 		$dataArray[$langCount][0] = $tried1;
 	
 		//count how many students solved the problem
-		$solved1 = $DB->q('SELECT DISTINCT t.name
+		$solved1 = $DB->q('SELECT DISTINCT t.teamid
 	                   FROM team t
-			   JOIN submission s ON(s.teamid=t.name)
+			   JOIN submission s ON(s.teamid=t.teamid)
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
 	                   JOIN contest c ON(c.cid=s.cid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
@@ -601,7 +601,7 @@ else {
 		                   FROM submission s
 		                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
 		                   JOIN contest c ON(c.cid=s.cid)
-				   JOIN team t ON(s.teamid=t.name)
+				   JOIN team t ON(s.teamid=t.teamid)
 				   JOIN team_category tc ON(t.categoryid=tc.categoryid)
 		                   WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s AND LOWER(s.teamid) != %s
 				   AND s.probid = %s
@@ -616,11 +616,11 @@ else {
 		$dataArray[$langCount][2] = $submissions1;
 
 		//get the fastest time solved for this problems
-		$fastest1 = $DB->q('SELECT TIMESTAMPDIFF(MINUTE,c.starttime,s.submittime) as timediff, t.name as name
+		$fastest1 = $DB->q('SELECT ROUND((s.submittime - c.starttime) / 60, 0) as timediff, t.name as name
 		   FROM submission s
                    JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
                    JOIN contest c ON(c.cid=s.cid)
-		   JOIN team t ON(s.teamid=t.name)
+		   JOIN team t ON(s.teamid=t.teamid)
 		   JOIN team_category tc ON(t.categoryid=tc.categoryid)
                    WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
                    AND s.submittime < c.endtime
@@ -648,7 +648,7 @@ else {
 	                   JOIN submission s ON(sf.submitid = s.submitid)
 	                   JOIN judging j ON(s.submitid=j.submitid AND j.valid=1 AND j.result = %s)
 	                   JOIN contest c ON(c.cid=s.cid)
-			   JOIN team t ON(s.teamid=t.name)
+			   JOIN team t ON(s.teamid=t.teamid)
 			   JOIN team_category tc ON(t.categoryid=tc.categoryid)
 	                   WHERE tc.sortorder < %i AND s.cid = %i AND s.valid = 1 AND LOWER(s.teamid) != %s
 			   AND s.probid = %s
@@ -683,7 +683,7 @@ else {
 					 ON (j.judgingid = jr.judgingid AND j.valid=1 AND j.result = %s)
 				JOIN submission s ON (j.submitid = s.submitid)
 				JOIN contest c ON(c.cid=s.cid)
-				JOIN team t ON(s.teamid=t.name)
+				JOIN team t ON(s.teamid=t.teamid)
 				JOIN team_category tc ON (t.categoryid=tc.categoryid)
 				JOIN language l ON (l.langid = s.langid)
 				JOIN problem p ON (p.probid = s.probid)
