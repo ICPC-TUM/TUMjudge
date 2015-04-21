@@ -15,7 +15,9 @@ echo "<h1>Problems</h1>\n\n";
 
 // Select all data
 $res = $DB->q('SELECT p.probid,p.name,p.timelimit,p.memlimit,p.outputlimit,
-               p.problemtext_type, COUNT(testcaseid) AS testcases
+               p.problemtext_type,
+			   p.difficulty,p.author,p.source,p.topic,
+			   COUNT(testcaseid) AS testcases
                FROM problem p
                LEFT JOIN testcase USING (probid)
                GROUP BY probid ORDER BY probid');
@@ -36,6 +38,12 @@ if( $res->count() == 0 ) {
 } else {
 	echo "<table class=\"list sortable\">\n<thead>\n" .
 	     "<tr><th scope=\"col\">ID</th><th scope=\"col\">name</th>" .
+		 //add new fields
+		 "<th scope=\"col\">difficulty</th>" .
+		 "<th scope=\"col\">author</th>" .
+		 "<th scope=\"col\">source</th>" .
+		 "<th scope=\"col\">topic</th>" .
+		 //
 	     "<th scope=\"col\" class=\"sorttable_numeric\"># contests</th>" .
 	     "<th scope=\"col\">time<br />limit</th>" .
 	     "<th scope=\"col\">memory<br />limit</th>" .
@@ -56,6 +64,11 @@ if( $res->count() == 0 ) {
 			"\"><td>" . $link . "p" .
 				htmlspecialchars($row['probid'])."</a>".
 			"</td><td>" . $link . htmlspecialchars($row['name'])."</a>".
+			//insert extra problem data
+			"</td><td>" . $link . htmlspecialchars($row['difficulty'])."</a>".
+			"</td><td>" . $link . htmlspecialchars($row['author'])."</a>".
+			"</td><td>" . $link . htmlspecialchars($row['source'])."</a>".
+			"</td><td>" . $link . htmlspecialchars($row['topic'])."</a>".
 			"</td><td>".
 			$link . htmlspecialchars(count($contestproblems[$row['probid']])) . "</a>" .
 			"</td><td>" . $link . (int)$row['timelimit'] . "</a>" .

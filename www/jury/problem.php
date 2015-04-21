@@ -79,7 +79,9 @@ if ( !empty($cmd) ):
 		$row = $DB->q('TUPLE SELECT p.probid,p.name,
 		                            p.timelimit,p.memlimit,p.outputlimit,
 		                            p.special_run,p.special_compare,
-		                            p.problemtext_type, COUNT(testcaseid) AS testcases
+		                            p.problemtext_type,
+									p.difficulty,p.author,p.source,p.topic,
+									COUNT(testcaseid) AS testcases
 		               FROM problem p
 		               LEFT JOIN testcase USING (probid)
 		               WHERE probid = %i GROUP BY probid', $id);
@@ -91,6 +93,18 @@ if ( !empty($cmd) ):
 ?>
 <tr><td><label for="data_0__name_">Problem name:</label></td>
 <td><?php echo addInput('data[0][name]', @$row['name'], 30, 255, 'required')?></td></tr>
+
+<tr><td><label for="data_0__name_">Difficulty:</label></td>
+<td><?php echo addInput('data[0][difficulty]', @$row['difficulty'], 30, 255, 'required')?></td></tr>
+
+<tr><td><label for="data_0__name_">Author:</label></td>
+<td><?php echo addInput('data[0][author]', @$row['author'], 30, 255, 'required')?></td></tr>
+
+<tr><td><label for="data_0__name_">Source:</label></td>
+<td><?php echo addInput('data[0][source]', @$row['source'], 30, 255, 'required')?></td></tr>
+
+<tr><td><label for="data_0__name_">Topic:</label></td>
+<td><?php echo addInput('data[0][topic]', @$row['topic'], 30, 255, 'required')?></td></tr>
 
 <?php
     if ( !empty($row['probid']) ) {
@@ -176,7 +190,9 @@ endif;
 $data = $DB->q('TUPLE SELECT p.probid,p.name,
                              p.timelimit,p.memlimit,p.outputlimit,
                              p.special_run,p.special_compare,
-                             p.problemtext_type, count(rank) AS ntestcases
+                             p.problemtext_type,
+							 p.difficulty,p.author,p.source,p.topic,
+							 count(rank) AS ntestcases
                 FROM problem p
                 LEFT JOIN testcase USING (probid)
                 WHERE probid = %i GROUP BY probid', $id);
@@ -193,6 +209,10 @@ echo addForm($pagename . '?id=' . urlencode($id),
 <table>
 <tr><td>ID:          </td><td>p<?php echo htmlspecialchars($data['probid'])?></td></tr>
 <tr><td>Name:        </td><td><?php echo htmlspecialchars($data['name'])?></td></tr>
+<tr><td>Difficulty:        </td><td><?php echo htmlspecialchars($data['difficulty'])?></td></tr>
+<tr><td>Author:        </td><td><?php echo htmlspecialchars($data['author'])?></td></tr>
+<tr><td>Source:        </td><td><?php echo htmlspecialchars($data['source'])?></td></tr>
+<tr><td>Topic:        </td><td><?php echo htmlspecialchars($data['topic'])?></td></tr>
 <tr><td>Testcases:   </td><td><?php
     if ( $data['ntestcases']==0 ) {
 		echo '<em>no testcases</em>';
