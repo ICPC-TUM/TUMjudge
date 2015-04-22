@@ -46,6 +46,22 @@ $api->provideFunction('GET', 'info', $doc);
 
 
 /**
+ * Statistics
+ */
+function statistics()
+{
+        global $DB;
+        return array(
+                 'submissions' => array_pop($DB->q('SELECT COUNT(*) FROM submission')->next()),
+                 'contests' => array_pop($DB->q('SELECT COUNT(*) FROM contest')->next()),
+                 'teams' => array_pop($DB->q('SELECT COUNT(DISTINCT teamid) FROM submission')->next()),
+                 'participations' => array_pop($DB->q('SELECT COUNT(DISTINCT teamid, cid) FROM submission')->next())
+        );
+}
+$doc = "get some statistics on the number of contests, submissions and participants.";
+$api->provideFunction('GET', 'statistics', $doc);
+
+/**
  * Contest information
  */
 function contest()

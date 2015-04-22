@@ -13,14 +13,35 @@ $servers = array(
         array('title' => 'GAD', 'description' => 'Grundlagen: Algorithmen und Datenstrukturen', 'url' => 'gad'),
 );
 foreach($servers AS $server) {
-	echo '<div class="col-xs-6"><div class="jumbotron" style="padding: 20px; color: #ffffff; background-color: #002143; height: 15em;">';
-	echo '<h2>'.$server['title'].'</h2>';
-	echo '<p class="lead">'.$server['description'].'</p>';
-        echo '<p><a href="/'.$server['url'].'/" class="btn btn-default" style="margin-right: 1em;">Scoreboard</a>';
-        echo '<a href="/'.$server['url'].'/public/login.php" class="btn btn-default" style="margin-right: 1em;">Login</a></p>';
-	echo '</div></div>';
-}
+echo '<div class="col-xs-6" id="'.$server['title'].'"><div class="jumbotron" style="padding: 20px; color: #ffffff; background-color: #002143; height: 17em;">';
+        echo '<a href="/'.$server['url'].'/public/login.php" class="btn btn-default" style="float: right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Login</a></p>';
+        echo '<h2>'.$server['title'].'</h2>';
+        echo '<p class="lead">'.$server['description'].'</p>';
+        echo '<div><small class="stats"></small></div>';
+        echo '<div><small class="contests">Current Contests: </small></div>';
+        echo '</div></div>';
+        echo '<script>
+            var runningcontest = false;
+            $.ajax({url: "/'.$server['url'].'/api/contests"})     
+            .done(function(data) {
+              runningcontest = false;
+              $.each(data, function(id, contest) {
+                if(contest.end > new Date().getTime()/1000) {
+                  $("#'.$server['title'].' .contests").append("<a href=\"/'.$server['url'].'/\" style=\"color: #ffffff;\">" + contest.name + "</a>");
+                  runningcontest = true;
+                }
+              });
+              if(!runningcontest) {
+                $("#'.$server['title'].' .contests").append("none");
+              }
+            });
+            $.ajax({url: "/'.$server['url'].'/api/statistics"})
+            .done(function(data) {
+              $("#'.$server['title'].' .stats").html(data.submissions + " submissions in " + data.contests + " contests by " + data.teams + " teams");
+            });
+          </script>';
 echo '</div>';
+}
 
 if(DOMSERVER_REPLICATION != 'master') {
   require(LIBWWWDIR . '/footer.php');
