@@ -1,16 +1,14 @@
 <?php
 require('init.php');
-$title = 'Changelog;
+$title = 'Changelog';
 require(LIBWWWDIR . '/header.php');
 ?>
 
 <h2>Impressum</h2>
-
-Unsere Adresse:
  
-Institut für Informatik
-TU München
-Boltzmannstr. 3
+Institut für Informatik<br />
+TU München<br />
+Boltzmannstr. 3<br />
 D-85748 Garching
 
 <h2>Kontakt</h2>
