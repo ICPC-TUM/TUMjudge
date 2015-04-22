@@ -19,7 +19,7 @@ D-85748 Garching
 
 <h3>v4.1.0.2</h3>
 <ul>
-<li>categrorize problems with topics, authors, difficulty and source</li>
+<li>categorize problems with topics, authors, difficulty and source</li>
 <li>statistics on registration page</li>
 <li>changelog/imprint</li>
 <li>improved error messages for the registration script</li>
