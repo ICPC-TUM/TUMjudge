@@ -40,8 +40,8 @@ echo '<div class="col-xs-6" id="'.$server['title'].'"><div class="jumbotron" sty
               $("#'.$server['title'].' .stats").html(data.submissions + " submissions in " + data.contests + " contests by " + data.teams + " teams");
             });
           </script>';
-echo '</div>';
 }
+echo '</div>';
 
 if(DOMSERVER_REPLICATION != 'master') {
   require(LIBWWWDIR . '/footer.php');
