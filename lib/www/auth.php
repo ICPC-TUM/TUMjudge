@@ -280,7 +280,8 @@ function do_login()
 		
 		$userdata = $DB->q('MAYBETUPLE SELECT * FROM user
 		                    WHERE username = %s AND enabled = 1', $user);
-		$pw_null = empty($userdata['password']);
+                if(empty($userdata['username'])) show_failed_login('This account is not registered here.');
+                $pw_null = empty($userdata['password']);
                 
 		if($pw_null) {
 			//LDAP IN TUM
