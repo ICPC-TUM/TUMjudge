@@ -280,10 +280,10 @@ CREATE TABLE `problem` (
   `special_compare` varchar(32) DEFAULT NULL COMMENT 'Script to compare problem and jury output for this problem',
   `problemtext` longblob COMMENT 'Problem text in HTML/PDF/ASCII',
   `problemtext_type` varchar(4) DEFAULT NULL COMMENT 'File type of problem text',
-  `difficulty` varchar(255) NOT NULL COMMENT 'Estimated difficulty of problem',
-  `author` varchar(255) NOT NULL COMMENT 'Author of problem',
-  `source` varchar(255) NOT NULL COMMENT 'Source of problem',
-  `topic` varchar(255) NOT NULL COMMENT 'Topic of problem',
+  `difficulty` varchar(255) DEFAULT NULL COMMENT 'Estimated difficulty of problem',
+  `author` varchar(255) DEFAULT NULL COMMENT 'Author of problem',
+  `source` varchar(255) DEFAULT NULL COMMENT 'Source of problem',
+  `topic` varchar(255) DEFAULT NULL COMMENT 'Topic of problem',
   PRIMARY KEY  (`probid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Problems the teams can submit solutions for';
 

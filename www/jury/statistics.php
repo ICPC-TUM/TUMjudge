@@ -394,7 +394,7 @@ else {
 	}
 	else {
 		$res = $DB->q('SELECT j.result,
-                   COUNT(j/result) as count,
+                   COUNT(j.result) as count,
                    (c.freezetime IS NOT NULL && submittime >= c.freezetime) AS afterfreeze,
                    (ROUND((s.submittime - c.starttime) / 60, 0) DIV %i) * %i AS minute
                    FROM submission s
