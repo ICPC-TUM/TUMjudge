@@ -79,6 +79,9 @@ if(!in_array($categoryid, array_keys($categories))) showForm('The categroy you s
 $affilid = mysql_escape_string($_POST['affilid']);
 if(!in_array($affilid, array_keys($affiliations))) showForm('The affiliation you selected is invalid.');
 
+//check login name
+if(strpos($login, '@') !== false) showForm('Your login may not contain an "@". Use the first part of your address only.');
+
 //connect
 $conn = false;
 foreach(explode(' ', LDAP_SERVERS) as $server) {
@@ -111,6 +114,8 @@ ldap_close($conn);
 //check for user account
 $count = array_pop($DB->q(sprintf('SELECT COUNT(*) FROM user WHERE username="%s"', $login))->next());
 if($count > 0) showForm('This account is already existing. You can login to it now.');
+$count = array_pop($DB->q(sprintf('SELECT COUNT(*) FROM user WHERE name="%s"', $name))->next());
+if($count > 0) showForm('There is already an account using your name '.$name.'. You can login to it now.');
 
 //create new user account
 $teamid = $DB->q(sprintf('RETURNID INSERT INTO team(name, categoryid, affilid, members) VALUES ("%s", "%s", "%s", "%s")', $name, $categoryid, $affilid, $name));
