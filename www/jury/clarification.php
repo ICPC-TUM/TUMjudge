@@ -75,6 +75,19 @@ if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
 		$problem = null;
 	}
 
+	//insert bonus points
+	$bonus_amount = $_POST['bonus_points'];
+	$bonus_reason = $_POST['bonus_reason'];
+	if(!empty($bonus_amount)) {
+	        if(empty($bonus_reason)) error('You need to specify a reason for the bonus points.');
+	        if(is_null($sendto)) error('You can only assign bonus points to individual teams.');
+	        $DB->q('INSERT INTO bonus_points
+	                (teamid, cid, probid, points, reason)
+	                VALUES (%i, %i, %i, %i, %s)',
+	                $sendto, $cid, $problem, $bonus_amount, $bonus_reason
+	        );                                                                                                                                                                    $_POST['bodytext'], 1, $jury_member)
+	}
+
 	$newid = $DB->q('RETURNID INSERT INTO clarification
 	                 (cid, respid, submittime, recipient, probid, body,
  	                  answered, jury_member)
