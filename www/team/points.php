@@ -6,7 +6,12 @@ $title = 'Points Overview';
 require(LIBWWWDIR . '/header.php');
 echo "<h1>" . $title . "</h1>\n\n";
 
-global $teamdata;
+
+//TODO: clean this up, use predefined function (e.g. for finding active contests),
+//add functions (e.g. search for contests only once in the code...), check SQL
+//injections, improve design, extract constants, improve runtime (use fewer
+//database queries, just get the data needed), ...
+global $teamdata, $DB;
 
 $pointsArray = array(
 	'#00ff00' => 4,
@@ -17,8 +22,6 @@ $pointsArray = array(
 );
 $coursePointArray = array();
 $courseTotalArray = array();
-
-
 
 $res = $DB->q('SELECT *
 	                   FROM contest c
@@ -104,11 +107,12 @@ while ($contest = $res->next()) {
 			if ($solved->next()['probid'] != NULL) {
 				$solved = 'score_correct';
 				if (!array_key_exists($pr['color'], $pointsArray)) {
-					$contestSum+= $pointsArray['default'];
+					$problemPoins = $pointsArray['default'];
 				}
 				else {
-					$contestSum+= $pointsArray[$pr['color']];
+					$problemPoints = $pointsArray[$pr['color']];
 				}
+				$contestSum += $problemPoints;
 			}
 			else {
 				$solved = $DB->q('SELECT DISTINCT s.probid AS probid
@@ -126,18 +130,42 @@ while ($contest = $res->next()) {
 					$solved = 'score_neutral';
 				}
 			}
+			
+			//find bonus points
+			$bonus_points = $DB->q('SELECT SUM(points) AS points, GROUP_CONCAT(reason SEPARATOR ', ') AS reason
+			        FROM `bonus_points` WHERE teamid = %i AND cid = %i AND probid = %i',
+			        $teamdata['teamid'], $contest['cid'], $pr['probid']
+                        )->next();
+                        if(!empty($bonus_points)) {
+                                $contestSum += $bonus_points['points'];
+                                $solved = 'score_pending';
+                        }
 
 			//generate table with all problems in contest
 			$problemTable.= '<span style="padding:5px" class = "'.$solved.' problem-entry" title="problem \'' . htmlspecialchars($pr['name']) . '\'" scope="col">';
 			$str =  (!empty($pr['color']) ? ' <div class="circle" style="background: ' .
 				    htmlspecialchars($pr['color']) . ';"></div>' : '' ) .
-					htmlspecialchars($pr['shortname']);
+					htmlspecialchars($pr['shortname']) . ' ('.$problemPoints.')';
+                        if(!empty($bonus_points)) {
+                                $str .= ', '.$bonus_points['reason'].' ('.$bonus_points['points'].')';
+                        }
 			$problemTable.= $str . '</span>';
 		
 
 			$pr = $probs->next();
 		}
 
+		//find bonus points
+		$bonus_points = $DB->q('SELECT SUM(points) AS points, GROUP_CONCAT(reason SEPARATOR ', ') AS reason
+		        FROM `bonus_points` WHERE teamid = %i AND cid = %i AND probid ISD NULL',
+		        $teamdata['teamid'], $contest['cid']
+                )->next();
+                if(!empty($bonus_points)) {
+                        $contestSum += $bonus_points['points'];
+			$problemTable.= '<span style="padding:5px" class = "score_pending problem-entry" title="bonus points" scope="col">'.
+			        $bonus_points['reason'].' ('.$bonus_points['points'].') </span>';
+                }
+                
 		//add points achieved, maximum allowed to total course array
 		$courseTotalArray[$first]+=$contestMaxPoints;
 		$coursePointArray[$first]+=$contestSum;
