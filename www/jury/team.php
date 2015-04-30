@@ -281,7 +281,7 @@ echo "</h3>\n\n";
 $restrictions['teamid'] = $id;
 putSubmissions($cdatas, $restrictions);
 
-ech '<h3>Points Overview</h3>';
+echo '<h3>Points Overview</h3>';
 putPointsOverview($id);
 
 require(LIBWWWDIR . '/footer.php');
