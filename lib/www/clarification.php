@@ -390,6 +390,16 @@ Best regards,
 }
 echo addTextArea('bodytext', $body, 80, 10, 'required');
 ?></td></tr>
+<?php if ( IS_JURY ): ?>
+        <tr>
+        <td><b><label for="bonus_points">Grant bonus points</label>:</b></td>
+        <td><?php echo addInputField('number', 'bonus_points', '', ' min="1" max="10000"'); ?></td>
+        </tr>
+        <tr>
+        <td><b><label for="bonus_reason">Reason for bonus points</label>:</b></td>
+        <td><?php echo addInput('bonus_reason'); ?></td>
+        </tr>
+<?php endif; ?>
 <tr>
 <td>&nbsp;</td>
 <td><?php echo addSubmit('Send', 'submit', 'return confirmClar()'); ?></td>
