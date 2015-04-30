@@ -85,7 +85,7 @@ if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
 	                (teamid, cid, probid, points, reason)
 	                VALUES (%i, %i, %i, %i, %s)',
 	                $sendto, $cid, $problem, $bonus_amount, $bonus_reason
-	        );                                                                                                                                                                    $_POST['bodytext'], 1, $jury_member)
+	        );
 	}
 
 	$newid = $DB->q('RETURNID INSERT INTO clarification
