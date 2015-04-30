@@ -5,7 +5,7 @@ $title = 'Points Overview';
 
 require(LIBWWWDIR . '/header.php');
 echo "<h1>" . $title . "</h1>\n\n";
-
+echo '<div class="points_overview" style="line-height: 2.25em;">';
 
 //TODO: clean this up, use predefined function (e.g. for finding active contests),
 //add functions (e.g. search for contests only once in the code...), check SQL
@@ -89,11 +89,12 @@ while ($contest = $res->next()) {
 		//create contest problem table
 		while($pr != NULL) {
 			if (!array_key_exists($pr['color'], $pointsArray)) {
-				$contestMaxPoints+= $pointsArray['default'];
+				$problemMaxPoints = $pointsArray['default'];
 			}
 			else {
-				$contestMaxPoints+= $pointsArray[$pr['color']];
+				$problemMaxPoints = $pointsArray[$pr['color']];
 			}
+			$contestMaxPoints += $problemMaxPoints;
 			//check if team has correct,incorrect or no submission for problem
 			$solved = $DB->q('SELECT DISTINCT s.probid AS probid
 								FROM submission s
@@ -107,7 +108,7 @@ while ($contest = $res->next()) {
 			if ($solved->next()['probid'] != NULL) {
 				$solved = 'score_correct';
 				if (!array_key_exists($pr['color'], $pointsArray)) {
-					$problemPoins = $pointsArray['default'];
+					$problemPoints = $pointsArray['default'];
 				}
 				else {
 					$problemPoints = $pointsArray[$pr['color']];
@@ -115,6 +116,7 @@ while ($contest = $res->next()) {
 				$contestSum += $problemPoints;
 			}
 			else {
+			        $problemPoints = 0;
 				$solved = $DB->q('SELECT DISTINCT s.probid AS probid
 								FROM submission s
 								JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
@@ -132,11 +134,11 @@ while ($contest = $res->next()) {
 			}
 			
 			//find bonus points
-			$bonus_points = $DB->q('SELECT SUM(points) AS points, GROUP_CONCAT(reason SEPARATOR ', ') AS reason
+			$bonus_points = $DB->q('SELECT SUM(points) AS points, GROUP_CONCAT(reason SEPARATOR \', \') AS reason
 			        FROM `bonus_points` WHERE teamid = %i AND cid = %i AND probid = %i',
 			        $teamdata['teamid'], $contest['cid'], $pr['probid']
                         )->next();
-                        if(!empty($bonus_points)) {
+                        if(!empty($bonus_points['points'])) {
                                 $contestSum += $bonus_points['points'];
                                 $solved = 'score_pending';
                         }
@@ -145,9 +147,9 @@ while ($contest = $res->next()) {
 			$problemTable.= '<span style="padding:5px" class = "'.$solved.' problem-entry" title="problem \'' . htmlspecialchars($pr['name']) . '\'" scope="col">';
 			$str =  (!empty($pr['color']) ? ' <div class="circle" style="background: ' .
 				    htmlspecialchars($pr['color']) . ';"></div>' : '' ) .
-					htmlspecialchars($pr['shortname']) . ' ('.$problemPoints.')';
-                        if(!empty($bonus_points)) {
-                                $str .= ', '.$bonus_points['reason'].' ('.$bonus_points['points'].')';
+					htmlspecialchars($pr['shortname']) . ' ('.$problemPoints.'/'.$problemMaxPoints.')';
+                        if(!empty($bonus_points['points'])) {
+                                $str .= ', '.$bonus_points['reason'].' (+'.$bonus_points['points'].')';
                         }
 			$problemTable.= $str . '</span>';
 		
@@ -156,14 +158,14 @@ while ($contest = $res->next()) {
 		}
 
 		//find bonus points
-		$bonus_points = $DB->q('SELECT SUM(points) AS points, GROUP_CONCAT(reason SEPARATOR ', ') AS reason
-		        FROM `bonus_points` WHERE teamid = %i AND cid = %i AND probid ISD NULL',
+		$bonus_points = $DB->q('SELECT SUM(points) AS points, GROUP_CONCAT(reason SEPARATOR \', \') AS reason
+		        FROM `bonus_points` WHERE teamid = %i AND cid = %i AND probid IS NULL',
 		        $teamdata['teamid'], $contest['cid']
                 )->next();
-                if(!empty($bonus_points)) {
+                if(!empty($bonus_points['points'])) {
                         $contestSum += $bonus_points['points'];
 			$problemTable.= '<span style="padding:5px" class = "score_pending problem-entry" title="bonus points" scope="col">'.
-			        $bonus_points['reason'].' ('.$bonus_points['points'].') </span>';
+			        $bonus_points['reason'].' (+'.$bonus_points['points'].') </span>';
                 }
                 
 		//add points achieved, maximum allowed to total course array
@@ -183,5 +185,6 @@ if($coursePointArray[$course] > 0) {
 	echo $header2.$header3;
 }
 
+echo '</div>';
 require(LIBWWWDIR . '/footer.php');
 ?>
