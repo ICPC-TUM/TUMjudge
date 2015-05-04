@@ -531,7 +531,7 @@ CREATE TABLE `userrole` (
 -- Table structure for table `bonus_points`
 --
 CREATE TABLE `bonus_points` ( 
-  `bonusid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Bonus ID',
+  `bonusid` int(4) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Bonus ID',
   `teamid` int(4) unsigned NOT NULL COMMENT 'Team ID',
   `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
   `probid` int(4) unsigned DEFAULT NULL COMMENT 'Problem ID',
@@ -541,11 +541,10 @@ CREATE TABLE `bonus_points` (
   KEY `teamid` (`teamid`),
   KEY `cid` (`cid`),
   KEY `probid` (`probid`),
-  CONSTRAINT `bonus_points_ibfk_4` FOREIGN KEY (`probid`) REFERENCES `problem` (`probid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `bonus_points_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `bonus_points_ibfk_3` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `bonus_points_ibfk_4` FOREIGN KEY (`probid`) REFERENCES `problem` (`probid`) ON DELETE CASCADE,
+  CONSTRAINT `bonus_points_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE CASCADE,
+  CONSTRAINT `bonus_points_ibfk_3` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='bonus points assigned to teams';
-ALTER TABLE `bonus_points`
 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 
