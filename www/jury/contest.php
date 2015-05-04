@@ -78,6 +78,10 @@ $pattern_dateorpos = "($pattern_datetime|\+$pattern_offset)";
 <?php echo addRadioButton('data[0][enabled]', (!isset($row['enabled']) ||  $row['enabled']), 1)?> <label for="data_0__enabled_1">yes</label>
 <?php echo addRadioButton('data[0][enabled]', ( isset($row['enabled']) && !$row['enabled']), 0)?> <label for="data_0__enabled_0">no</label></td></tr>
 
+<tr><td>Shuffle Scoreboard:</td><td>
+<?php echo addRadioButton('data[0][shuffle]', (isset($row['shuffle']) &&  $row['shuffle']), 1)?> <label for="data_0__shuffle_1">yes</label>
+<?php echo addRadioButton('data[0][shuffle]', (!isset($row['shuffle']) || !$row['shuffle']), 0)?> <label for="data_0__shuffle_0">no</label></td></tr>
+
 </table>
 
 <h3>Problems</h3>
@@ -249,6 +253,9 @@ echo '<tr><td>Process balloons:</td><td>' .
      "</td></tr>\n";
 echo '<tr><td>Public:</td><td>' .
      ($data['public'] ? 'yes' : 'no') .
+     "</td></tr>\n";
+echo '<tr><td>Shuffle Scoreboard:</td><td>' .
+     ($data['shuffle'] ? 'yes' : 'no') .
      "</td></tr>\n";
 echo '<tr><td>Teams:</td><td>';
 if ( $data['public'] ) {
