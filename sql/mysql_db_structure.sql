@@ -36,7 +36,7 @@ CREATE TABLE `balloon` (
 --
 -- Table structure for table `bonus_points`
 --
-CREATE TABLE `bonus_points` ( 
+CREATE TABLE `bonus_points` (
   `bonusid` int(4) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Bonus ID',
   `teamid` int(4) unsigned NOT NULL COMMENT 'Team ID',
   `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
