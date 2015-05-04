@@ -279,7 +279,7 @@ function initSummary($probs) {
  * if $displayrank is false the first column will not display the
  * team's current rank but a question mark.
  */
-function renderScoreBoardTable($sdata, $myteamid = null, $static = FALSE,
+function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FALSE,
 	$limitteams = null, $displayrank = TRUE, $center = FALSE, $showlegends = TRUE)
 {
 	// 'unpack' the scoreboard data:
@@ -408,7 +408,9 @@ function renderScoreBoardTable($sdata, $myteamid = null, $static = FALSE,
 			'<td class="scorett">' . jurylink(null,$totals['total_time'] ) . '</td>';
 
 		// for each problem
-		foreach ( array_keys($probs) as $prob ) {
+		$prob_keys = array_keys($probs);
+		if( !(IS_JURY || count($limitteams) == 1) && $shuffle) shuffle($prob_keys);//remove this line to disable shuffling
+		foreach ($prob_keys as $prob ) {
 
 			echo '<td class=';
 			// CSS class for correct/incorrect/neutral results
@@ -444,7 +446,7 @@ function renderScoreBoardTable($sdata, $myteamid = null, $static = FALSE,
 	}
 	echo "</tbody>\n\n";
 
-	if ( empty($limitteams) ) {
+	if ( ( empty($limitteams) && !$shuffle ) || IS_JURY ) {
 		// print a summaryline
 		echo '<tbody><tr id="scoresummary" title="#submitted / #correct">' .
 			'<td title="total teams">' .
@@ -609,8 +611,8 @@ collapse("filter");
 </script>
 		<?php
 	}
-
-	renderScoreBoardTable($sdata,$myteamid,$static);
+	$shuffle = $cdata['shuffle'];
+	renderScoreBoardTable($shuffle,$sdata,$myteamid,$static);
 
 	// last modified date, now if we are the jury, else include the
 	// freeze time
@@ -761,9 +763,9 @@ function putTeamRow($cdata, $teamids) {
 	// Render the row based on this info
 	$myteamid = null;
 	$static = FALSE;
-
+	$shuffle = $cdata['shuffle'];
 	if ( ! IS_JURY ) echo "<div id=\"teamscoresummary\">\n";
-	renderScoreBoardTable($sdata,$myteamid,$static,
+	renderScoreBoardTable($shuffle,$sdata,$myteamid,$static,
 	                      $teamids,$displayrank,TRUE,FALSE);
 	if ( ! IS_JURY ) echo "</div>\n\n";
 
@@ -966,7 +968,7 @@ function putPointsOverview($teamid) {
         $res = $DB->q('SELECT *
 	                   FROM contest c
 	                   WHERE c.enabled = 1
-			   AND c.activatetime < UNIX_TIMESTAMP(NOW())
+			   AND c.starttime < UNIX_TIMESTAMP(NOW())
 			   ORDER BY c.cid DESC'
         );
 
@@ -1008,7 +1010,7 @@ function putPointsOverview($teamid) {
                 $try = $DB->q('SELECT *
                                    FROM contest c
                                    WHERE c.enabled = 1
-                                   AND c.activatetime < now()
+                                   AND c.starttime < UNIX_TIMESTAMP(NOW())
                                    AND c.contestname LIKE %s
                                    ORDER BY c.cid ASC', (empty($first) ? $contest['contestname'] : $first) . '%' );
 

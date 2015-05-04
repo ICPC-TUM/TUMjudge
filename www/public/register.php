@@ -9,11 +9,13 @@ echo '<h1>Welcome to TUMjudge!</h1>';
 echo 'If you already have an account please choose a contest to participate.';
 echo '<div class="row" style="margin-top: 2em;">';
 $servers = array(
-	array('title' => 'ConPra', 'description' => 'Algorithmen f&uuml;r Programmierwettbewerbe', 'url' => 'conpra'),
+        array('title' => 'Contest', 'description' => 'ICPC (International Collegiate Programming Contest)', 'url' => 'contest'),
+        array('title' => 'ConPra', 'description' => 'Algorithmen f&uuml;r Programmierwettbewerbe', 'url' => 'conpra'),
         array('title' => 'GAD', 'description' => 'Grundlagen: Algorithmen und Datenstrukturen', 'url' => 'gad'),
+        array('title' => 'Isabelle', 'description' => 'International Collegiate <i>Proving</i> Contest', 'url' => 'isabelle'),
 );
 foreach($servers AS $server) {
-echo '<div class="col-xs-6" id="'.$server['title'].'"><div class="jumbotron" style="padding: 20px; color: #ffffff; background-color: #002143; height: 17em;">';
+echo '<div class="col-xs-6" id="'.$server['title'].'"><div class="jumbotron" style="padding: 20px; color: #ffffff; background-color: #002143; height: 20em;">';
         echo '<a href="/'.$server['url'].'/public/login.php" class="btn btn-default" style="float: right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Login</a></p>';
         echo '<h2>'.$server['title'].'</h2>';
         echo '<p class="lead">'.$server['description'].'</p>';
@@ -26,13 +28,13 @@ echo '<div class="col-xs-6" id="'.$server['title'].'"><div class="jumbotron" sty
             .done(function(data) {
               runningcontest = false;
               $.each(data, function(id, contest) {
-                if(contest.end > new Date().getTime()/1000) {
-                  $("#'.$server['title'].' .contests").append("<a href=\"/'.$server['url'].'/\" style=\"color: #ffffff;\">" + contest.name + "</a>");
+                if(ontest.start < new Date().getTime()/1000 && contest.end > new Date().getTime()/1000) {
+                  $("#'.$server['title'].' .contests").append("<br /><a href=\"/'.$server['url'].'/\" style=\"color: #ffffff;\">" + contest.name + "</a>");
                   runningcontest = true;
                 }
               });
               if(!runningcontest) {
-                $("#'.$server['title'].' .contests").append("none");
+                $("#'.$server['title'].' .contests").append("<br />none");
               }
             });
             $.ajax({url: "/'.$server['url'].'/api/statistics"})
@@ -40,8 +42,8 @@ echo '<div class="col-xs-6" id="'.$server['title'].'"><div class="jumbotron" sty
               $("#'.$server['title'].' .stats").html(data.submissions + " submissions in " + data.contests + " contests by " + data.teams + " teams");
             });
           </script>';
-echo '</div>';
 }
+echo '</div>';
 
 if(DOMSERVER_REPLICATION != 'master') {
   require(LIBWWWDIR . '/footer.php');

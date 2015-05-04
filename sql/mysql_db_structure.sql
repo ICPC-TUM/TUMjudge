@@ -94,6 +94,7 @@ CREATE TABLE `contest` (
   `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT 'Whether this contest can be active',
   `process_balloons` tinyint(1) UNSIGNED DEFAULT '1' COMMENT 'Will balloons be processed for this contest?',
   `public` tinyint(1) UNSIGNED DEFAULT '1' COMMENT 'Is this contest visible for the public and non-associated teams?',
+  `shuffle` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Is scoreboard shuffle enabled?',
   PRIMARY KEY (`cid`),
   UNIQUE KEY `shortname` (`shortname`),
   KEY `cid` (`cid`,`enabled`)

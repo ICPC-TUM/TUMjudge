@@ -25,3 +25,7 @@ ALTER TABLE `bonus_points`
   ADD CONSTRAINT `bonus_points_ibfk_4` FOREIGN KEY (`probid`) REFERENCES `problem` (`probid`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `bonus_points_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `bonus_points_ibfk_3` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--contest table
+ALTER TABLE `contest`
+ADD COLUMN `shuffle` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Is scoreboard shuffle enabled?';

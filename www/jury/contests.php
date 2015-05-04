@@ -182,6 +182,7 @@ if( count($res) == 0 ) {
 	foreach($times as $time) echo "<th scope=\"col\">$time</th>";
 	echo "<th scope=\"col\">process<br />balloons?</th>";
 	echo "<th scope=\"col\">public?</th>";
+	echo "<th scope=\"col\">shuffle<br />scoreboard?</th>";
 	echo "<th scope=\"col\" class=\"sorttable_numeric\"># teams</th>";
 	echo "<th scope=\"col\" class=\"sorttable_numeric\"># problems</th>";
 	echo "<th scope=\"col\">name</th>" .
@@ -209,6 +210,7 @@ if( count($res) == 0 ) {
 		}
 		echo "<td>" . $link . ($row['process_balloons'] ? 'yes' : 'no') . "</a></td>\n";
 		echo "<td>" . $link . ($row['public'] ? 'yes' : 'no') . "</a></td>\n";
+		echo "<td>" . $link . ($row['shuffle'] ? 'yes' : 'no') . "</a></td>\n";
 		echo "<td>" . $link . ($row['public'] ? '<em>all</em>' : $row['numteams']) . "</a></td>\n";
 		echo "<td>" . $link . $numprobs . "</a></td>\n";
 		echo "<td>" . $link . htmlspecialchars($row['contestname']) . "</a></td>\n";

@@ -52,10 +52,10 @@ function statistics()
 {
         global $DB;
         return array(
-                 'submissions' => array_pop($DB->q('SELECT COUNT(*) FROM submission')->next()),
-                 'contests' => array_pop($DB->q('SELECT COUNT(*) FROM contest')->next()),
-                 'teams' => array_pop($DB->q('SELECT COUNT(DISTINCT teamid) FROM submission')->next()),
-                 'participations' => array_pop($DB->q('SELECT COUNT(DISTINCT teamid, cid) FROM submission')->next())
+                 'submissions' => array_pop($DB->q('SELECT COUNT(*) FROM submission WHERE valid = 1')->next()),
+                 'contests' => array_pop($DB->q('SELECT COUNT(*) FROM contest WHERE starttime < UNIX_TIMESTAMP(NOW())')->next()),
+                 'teams' => array_pop($DB->q('SELECT COUNT(DISTINCT teamid) FROM submission WHERE valid = 1')->next()),
+                 'participations' => array_pop($DB->q('SELECT COUNT(DISTINCT teamid, cid) FROM submission WHERE valid = 1')->next())
         );
 }
 $doc = "get some statistics on the number of contests, submissions and participants.";
