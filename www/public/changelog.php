@@ -17,6 +17,14 @@ D-85748 Garching
 
 <h2>Changelog</h2>
 
+<h3>v4.1.0.3</h3>
+<ul>
+<li>bonus points can be added by the jury</li>
+<li>scoreboards may be shuffled for contests</li>
+<li>add more servers to TUMjudge</li>
+<li>minor layout changes of the front page</li>
+</ul>
+
 <h3>v4.1.0.2</h3>
 <ul>
 <li>categorize problems with topics, authors, difficulty and source</li>
