@@ -23,7 +23,7 @@ $courseTotalArray = array();
 $res = $DB->q('SELECT *
 	                   FROM contest c
 	                   WHERE c.enabled = 1
-			   AND c.activatetime < UNIX_TIMESTAMP(NOW())
+			   AND c.starttime < UNIX_TIMESTAMP(NOW())
 			   ORDER BY c.cid DESC');
 
 //header2 to show points achieved in course/maxPoints in course
@@ -64,7 +64,7 @@ while ($contest = $res->next()) {
 	$try = $DB->q('SELECT *
 			   FROM contest c
 			   WHERE c.enabled = 1
-			   AND c.activatetime < now()
+			   AND c.starttime < UNIX_TIMESTAMP(NOW())
 			   AND c.contestname LIKE %s
 			   ORDER BY c.cid ASC', (empty($first) ? $contest['contestname'] : $first) . '%' );
 
