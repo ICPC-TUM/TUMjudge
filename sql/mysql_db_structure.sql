@@ -530,7 +530,7 @@ CREATE TABLE `userrole` (
 --
 -- Table structure for table `bonus_points`
 --
-CREATE TABLE IF NOT EXISTS `bonus_points` ( 
+CREATE TABLE `bonus_points` ( 
   `bonusid` int(11) NOT NULL AUTO_INCREMENT,
   `teamid` int(4) unsigned NOT NULL,
   `cid` int(4) unsigned NOT NULL,
@@ -540,16 +540,12 @@ CREATE TABLE IF NOT EXISTS `bonus_points` (
   PRIMARY KEY (`bonusid`),
   KEY `teamid` (`teamid`),
   KEY `cid` (`cid`),
-  KEY `probid` (`probid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='bonus points assigned to teams' AUTO_INCREMENT=1 ;
+  KEY `probid` (`probid`),
+  CONSTRAINT `bonus_points_ibfk_4` FOREIGN KEY (`probid`) REFERENCES `problem` (`probid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `bonus_points_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `bonus_points_ibfk_3` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='bonus points assigned to teams';
 ALTER TABLE `bonus_points`
-  ADD CONSTRAINT `bonus_points_ibfk_4` FOREIGN KEY (`probid`) REFERENCES `problem` (`probid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `bonus_points_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE CASCADE ON UPDATE CASCADE,   
-  ADD CONSTRAINT `bonus_points_ibfk_3` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE;   
-
-  
-
-
 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 
