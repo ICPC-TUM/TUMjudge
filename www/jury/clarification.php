@@ -81,7 +81,7 @@ if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
 	        $DB->q('INSERT INTO bonus_points
 	                (teamid, cid, probid, points, reason)
 	                VALUES (%i, %i, %i, %i, %s)',
-	                $sendto, $cid, $problem, $bonus_amount, $bonus_reason
+	                $sendto, $cid, $probid, $bonus_amount, $bonus_reason
 	        );
 	}
 

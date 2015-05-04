@@ -34,6 +34,25 @@ CREATE TABLE `balloon` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Balloons to be handed out';
 
 --
+-- Table structure for table `bonus_points`
+--
+CREATE TABLE `bonus_points` (
+  `bonusid` int(4) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Bonus ID',
+  `teamid` int(4) unsigned NOT NULL COMMENT 'Team ID',
+  `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
+  `probid` int(4) unsigned DEFAULT NULL COMMENT 'Problem ID',
+  `points` int(4) NOT NULL COMMENT 'Amount of points',
+  `reason` varchar(255) NOT NULL COMMENT 'Reason to be displayed to the user',
+  PRIMARY KEY (`bonusid`),
+  KEY `teamid` (`teamid`),
+  KEY `cid` (`cid`),
+  KEY `probid` (`probid`),
+  CONSTRAINT `bonus_points_ibfk_4` FOREIGN KEY (`probid`) REFERENCES `problem` (`probid`) ON DELETE CASCADE,
+  CONSTRAINT `bonus_points_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE CASCADE,
+  CONSTRAINT `bonus_points_ibfk_3` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='bonus points assigned to teams';
+
+--
 -- Table structure for table `clarification`
 --
 CREATE TABLE `clarification` (
@@ -512,7 +531,6 @@ CREATE TABLE `user` (
   CONSTRAINT `user_ibfk_1` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Users that have access to DOMjudge';
 
-
 --
 -- Table structure for table `userrole`
 --
@@ -525,31 +543,6 @@ CREATE TABLE `userrole` (
   CONSTRAINT `userrole_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`) ON DELETE CASCADE,
   CONSTRAINT `userrole_ibfk_2` FOREIGN KEY (`roleid`) REFERENCES `role` (`roleid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Many-to-Many mapping of users and roles';
-
-
---
--- Table structure for table `bonus_points`
---
-CREATE TABLE IF NOT EXISTS `bonus_points` ( 
-  `bonusid` int(11) NOT NULL AUTO_INCREMENT,
-  `teamid` int(4) unsigned NOT NULL,
-  `cid` int(4) unsigned NOT NULL,
-  `probid` int(4) unsigned DEFAULT NULL,
-  `points` int(4) NOT NULL,
-  `reason` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`bonusid`),
-  KEY `teamid` (`teamid`),
-  KEY `cid` (`cid`),
-  KEY `probid` (`probid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='bonus points assigned to teams' AUTO_INCREMENT=1 ;
-ALTER TABLE `bonus_points`
-  ADD CONSTRAINT `bonus_points_ibfk_4` FOREIGN KEY (`probid`) REFERENCES `problem` (`probid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `bonus_points_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`teamid`) ON DELETE CASCADE ON UPDATE CASCADE,   
-  ADD CONSTRAINT `bonus_points_ibfk_3` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE;   
-
-  
-
-
 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 
