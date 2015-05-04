@@ -531,12 +531,12 @@ CREATE TABLE `userrole` (
 -- Table structure for table `bonus_points`
 --
 CREATE TABLE `bonus_points` ( 
-  `bonusid` int(11) NOT NULL AUTO_INCREMENT,
-  `teamid` int(4) unsigned NOT NULL,
-  `cid` int(4) unsigned NOT NULL,
-  `probid` int(4) unsigned DEFAULT NULL,
-  `points` int(4) NOT NULL,
-  `reason` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `bonusid` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Bonus ID',
+  `teamid` int(4) unsigned NOT NULL COMMENT 'Team ID',
+  `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
+  `probid` int(4) unsigned DEFAULT NULL COMMENT 'Problem ID',
+  `points` int(4) NOT NULL COMMENT 'Amount of points',
+  `reason` varchar(255) NOT NULL COMMENT 'Reason to be displayed to the user',
   PRIMARY KEY (`bonusid`),
   KEY `teamid` (`teamid`),
   KEY `cid` (`cid`),
