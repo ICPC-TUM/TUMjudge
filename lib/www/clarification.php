@@ -262,7 +262,8 @@ function putClarificationList($clars, $team = NULL)
 
 /**
  * Output a form to send a new clarification.
- * Set respid to a teamid, to make only that team (or ALL) selectable.
+ * Set respid to a clarid, to make only responses to same
+ * sender(s)/recipient(s) or ALL selectable.
  */
 function putClarificationForm($action, $respid = NULL, $onlycontest = NULL)
 {
@@ -367,7 +368,8 @@ function confirmClar() {
 		}
 	}
 	echo "<tr><td><b>Subject:</b></td><td>\n" .
-	     addSelect('problem', $options, ($respid ? $clar['probid'] : 'general'), true) .
+	     addSelect('problem', $options,
+	               ($respid ? $clar['cid'].'-'.$clar['probid'] : 'general'), true) .
 	     "</td></tr>\n";
 
 	?>
@@ -390,6 +392,16 @@ Best regards,
 }
 echo addTextArea('bodytext', $body, 80, 10, 'required');
 ?></td></tr>
+<?php if ( IS_JURY ): ?>
+        <tr>
+        <td><b><label for="bonus_points">Grant bonus points</label>:</b></td>
+        <td><?php echo addInputField('number', 'bonus_points', '', ' min="1" max="10000"'); ?></td>
+        </tr>
+        <tr>
+        <td><b><label for="bonus_reason">Reason for bonus points</label>:</b></td>
+        <td><?php echo addInput('bonus_reason'); ?></td>
+        </tr>
+<?php endif; ?>
 <tr>
 <td>&nbsp;</td>
 <td><?php echo addSubmit('Send', 'submit', 'return confirmClar()'); ?></td>

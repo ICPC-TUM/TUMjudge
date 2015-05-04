@@ -26,16 +26,18 @@ if ( isset($id) ) {
 
 // insert a request (if posted)
 if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
+
+	list($cid, $probid) = explode('-', $_POST['problem']);
+	if ( !ctype_digit($probid) ) $probid = NULL;
+
 	// Disallow problems that are not submittable or
 	// before contest start.
-	if ( !problemVisible($_POST['problem']) ) $_POST['problem'] = 'general';
+	if ( !problemVisible($probid) ) $probid = NULL;
 
 	$newid = $DB->q('RETURNID INSERT INTO clarification
 	                 (cid, submittime, sender, probid, body)
 	                 VALUES (%i, %s, %i, %i, %s)',
-			$cid, now(), $teamid,
-	                ($_POST['problem'] == 'general' ? NULL : $_POST['problem']),
-	                $_POST['bodytext']);
+	                $cid, now(), $teamid, $probid, $_POST['bodytext']);
 
 	auditlog('clarification', $newid, 'added', null, null, $cid);
 
