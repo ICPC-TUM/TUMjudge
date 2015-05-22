@@ -1042,8 +1042,10 @@ function putPointsOverview($teamid) {
                                 $solved = $DB->q('SELECT DISTINCT s.probid AS probid
                                                                         FROM submission s
                                                                         JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
-                                                        JOIN contest c ON(c.cid=s.cid)
+                                                                        JOIN contest c ON(c.cid=s.cid)
                                                         WHERE c.cid = %i
+                                                                        AND c.starttime <= s.submittime
+                                                                        AND c.endtime >= s.submittime
                                                                         AND s.probid = %s
                                                                         AND s.teamid = %s
                                                                         AND j.result = %s', $contest['cid'], $pr['probid'], $teamid, 'correct');
@@ -1063,8 +1065,10 @@ function putPointsOverview($teamid) {
                                         $solved = $DB->q('SELECT DISTINCT s.probid AS probid
                                                                         FROM submission s
                                                                         JOIN judging j ON(s.submitid=j.submitid AND j.valid=1)
-                                                        JOIN contest c ON(c.cid=s.cid)
+                                                                        JOIN contest c ON(c.cid=s.cid)
                                                         WHERE c.cid = %i
+                                                                        AND c.starttime <= s.submittime
+                                                                        AND c.endtime >= s.submittime
                                                                         AND s.probid = %s
                                                                         AND s.teamid = %s', $contest['cid'], $pr['probid'], $teamid);
                                 
