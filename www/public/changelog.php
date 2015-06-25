@@ -17,6 +17,13 @@ D-85748 Garching
 
 <h2>Changelog</h2>
 
+<h3>v4.1.0.4</h3>
+<ul>
+<li>divide contests into categories (future, running, past)</li>
+<li>backend UI improvements</li>
+<li>fix: points overview</li>
+</ul>
+
 <h3>v4.1.0.3</h3>
 <ul>
 <li>bonus points can be added by the jury</li>
