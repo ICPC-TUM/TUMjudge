@@ -40,9 +40,14 @@ td, th {
 .scoreboard td, .scoreboard th {
 	border-color: #002143;
 }
-.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus, .navbar-default {
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus, .navbar-default, .dropdown-menu .header {
 	background-color: #002143;
 	color: #ffffff;
+}
+.dropdown-menu .header {
+        font-weight: bold;
+        font-size: larger;
+        padding-left: 0.5em;
 }
 .navbar > .container .navbar-brand, .navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default a, .navbar-default a:hover, .navbar-default a:focus, .navbar-default .navbar-text, #timeleft {
 	color: #ffffff;
