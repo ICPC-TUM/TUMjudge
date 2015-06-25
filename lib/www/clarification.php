@@ -369,7 +369,8 @@ function confirmClar() {
 	}
 	echo "<tr><td><b>Subject:</b></td><td>\n" .
 	     addSelect('problem', $options,
-	               ($respid ? $clar['cid'].'-'.$clar['probid'] : 'general'), true) .
+	               ($respid ? $clar['cid'] : $cid).'-'.
+	               ($clar['probid'] ? 'general' : $clar['probid']), true) .
 	     "</td></tr>\n";
 
 	?>
