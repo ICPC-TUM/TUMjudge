@@ -217,6 +217,7 @@ if ( IS_ADMIN ) {
 
 echo rejudgeForm('team', $id) . "\n\n";
 
+/* Do not show the list of contests.
 if ( $current_cid === null ) {
 	echo "<h3>Contests</h3>\n\n";
 
@@ -260,6 +261,7 @@ if ( $current_cid === null ) {
 		echo "</tbody>\n</table>\n\n";
 	}
 }
+*/
 
 echo "<h3>Score</h3>\n\n";
 
