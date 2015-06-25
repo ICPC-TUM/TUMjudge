@@ -355,7 +355,6 @@ function putClock() {
 	// Show a contest selection form, if there are contests
 	if ( count($cdatas) > 1 ) {
 		echo addForm('change_contest.php', 'get', 'selectcontestform');
-		$contests = array_reverse(array_map(function($c) { return $c['contestname']; }, $cdatas), true);
 		echo addHidden('cid', $cid);
 		echo addEndForm();
 		echo "<script type=\"text/javascript\">
@@ -368,9 +367,40 @@ function putClock() {
 		echo "<li class=\"dropdown\">";
 		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">contest <span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
-		foreach($contests AS $tcid => $tcname) {
-			echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$tcname."</a></li>";
-		}
+
+                $current_contests = array();
+                $future_contests = array(); 
+                $past_contests = array();   
+                foreach(array_reverse($cdatas, true) AS $tcid => $contest) {
+                        if($contest['starttime'] < time() && $contest['endtime'] > time()) {
+                                $current_contests[$tcid] = $contest;
+                        }
+                        else if($contest['startt~ime'] > time()) {
+                                $future_contests[$tcid] = $contest;
+                        }
+                        else {
+                                $past_contests[$tcid] = $contest;
+                        }
+                }
+                if(count($current_contests) > 0) {
+                        echo "<li class='header'>Current Contests</li>";
+                        foreach($current_contests AS $tcid => $contest) {
+                                echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$c
+                        }
+                }
+                if(count($future_contests) > 0) {
+                        echo "<li class='header'>Future Contests</li>";
+                        foreach($future_contests AS $tcid => $contest) {
+                                echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$c
+                        }
+                }
+                if(count($past_contests) > 0) {
+                        echo "<li class='header'>Past Contests</li>";
+                        foreach($past_contests AS $tcid => $contest) {
+                                echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$c
+                        }
+                }
+
 		echo "</ul>";
 		echo "</ul>";
 	} elseif ( count($cdatas) == 1 && IS_JURY ) {
