@@ -6,6 +6,8 @@
 # using the chroot environment and Oracle Java compiler/interpreter and
 # adapt this script to your environment. See also bin/dj_make_chroot.sh
 # for a script to generate a minimal chroot environment with Oracle Java.
+# Note that if you modify paths in this script, then the associated
+# sudo rules (see etc/sudoers-domjudge) must also be updated.
 #
 # This script will be called from judgedaemon.main.php in the root
 # directory of the chroot environment with one parameter: either
@@ -26,16 +28,16 @@ CHROOTORIGINAL="@judgehost_chrootdir@"
 case "$1" in
 	start)
 
-# Mount (bind) the proc filesystem (needed by Java for /proc/self/stat):
+		# Mount (bind) the proc filesystem (needed by Java for /proc/self/stat):
 		mkdir -p proc
-		sudo -n mount -n -t proc --bind /proc proc < /dev/null
+		sudo -n mount -n --bind /proc proc < /dev/null
 
 		for i in $SUBDIRMOUNTS ; do
 
 			# Some dirs may be links to others, e.g. /lib64 -> /lib.
 			# Preserve those; bind mount the others.
 			if [ -L "$CHROOTORIGINAL/$i" ]; then
-				ln -s `readlink "$CHROOTORIGINAL/$i"` $i
+				ln -s "$(readlink "$CHROOTORIGINAL/$i")" $i
 			elif [ -d "$CHROOTORIGINAL/$i" ]; then
 				mkdir -p $i
 				sudo -n mount --bind "$CHROOTORIGINAL/$i" $i < /dev/null

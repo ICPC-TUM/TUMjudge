@@ -22,13 +22,23 @@ $tablemap = array (
 	'team'       => 's.teamid'
 	);
 
-$table = @$_POST['table'];
-$id    = @$_POST['id'];
+$table        = @$_POST['table'];
+$id           = @$_POST['id'];
+$reason       = @$_POST['reason'];
+$include_all  = !empty($_POST['include_all']);
+$full_rejudge = @$_POST['full_rejudge'];
+if ( !isset($full_rejudge) ) {
+	$full_rejudge = FALSE;
+}
 
 if ( empty($table) || empty($id) ) {
 	error("no table or id passed for selection in rejudging");
 } elseif ( !isset($tablemap[$table]) ) {
 	error("unknown table in rejudging");
+}
+
+if ( !IS_ADMIN && $include_all ) {
+	error("rejudging pending/correct submissions requires admin rights");
 }
 
 global $DB;
@@ -37,34 +47,68 @@ global $DB;
 // allow us to call calcScoreRow() for the right rows, so we'll just loop
 // over the results one at a time.
 
-// Special case 'submission' and 'contest' for admin overrides
-if ( IS_ADMIN && ($table == 'submission' || $table == 'contest') ) {
-	$res = $DB->q('SELECT j.judgingid, s.submitid, s.teamid, s.probid, j.cid
-		       FROM judging j
-		       LEFT JOIN submission s USING (submitid)
-		       WHERE j.valid = 1 AND ' .
-		       $tablemap[$table] . ' = %s', $id);
-} else {
-	$res = $DB->q('SELECT j.judgingid, s.submitid, s.teamid, s.probid, j.cid
-		       FROM judging j
-		       LEFT JOIN submission s USING (submitid)
-		       WHERE j.cid IN %Ai AND j.valid = 1 AND
-		       result IS NOT NULL AND result != "correct" AND ' .
-		       $tablemap[$table] . ' = %s', getCurContests(FALSE), $id);
+// Special case 'submission' for admin overrides
+if ( IS_ADMIN && ($table == 'submission') ) $include_all = true;
+
+$res = null;
+$cids = getCurContests(FALSE);
+if ( !empty($cids) ) {
+	$restrictions = 'result != \'correct\' AND result IS NOT NULL AND ';
+	if ( $include_all ) {
+		if ( $full_rejudge ) {
+			// do not include pending/queued submissions in rejudge
+			$restrictions = 'result IS NOT NULL AND ';
+		} else {
+			$restrictions = '';
+		}
+	}
+	$res = $DB->q('SELECT j.judgingid, s.submitid, s.teamid, s.probid, j.cid, s.rejudgingid
+	               FROM judging j
+	               LEFT JOIN submission s USING (submitid)
+	               WHERE j.cid IN (%Ai) AND j.valid = 1 AND ' .
+		      $restrictions .
+	              $tablemap[$table] . ' = %s', $cids, $id);
 }
 
-if ( $res->count() == 0 ) {
+if ( !$res || $res->count() == 0 ) {
 	error("No judgings matched.");
 }
 
+if ( $full_rejudge ) {
+	if ( empty($reason) ) {
+		$reason = $table . ': ' . $id;
+	}
+	$rejudgingid = $DB->q('RETURNID INSERT INTO rejudging
+	                       (userid_start, starttime, reason) VALUES (%i, %s, %s)',
+	                      $userdata['userid'], now(), $reason);
+}
+
 while ( $jud = $res->next() ) {
+	if ( isset($jud['rejudgingid']) ) {
+		// already associated rejudging
+		if ( $table == 'submission' ) {
+			// clean up rejudging
+			if ( $full_rejudge ) {
+				$DB->q('DELETE FROM rejudging WHERE rejudgingid=%i', $rejudgingid);
+			}
+			error('submission is already part of rejudging r' . htmlspecialchars($jud['rejudgingid']));
+		} else {
+			// silently skip that submission
+			continue;
+		}
+	}
+
 	$DB->q('START TRANSACTION');
 
-	$DB->q('UPDATE judging SET valid = 0 WHERE judgingid = %i',
-	       $jud['judgingid']);
+	if ( !$full_rejudge ) {
+		$DB->q('UPDATE judging SET valid = 0 WHERE judgingid = %i',
+		       $jud['judgingid']);
+	}
 
-	$DB->q('UPDATE submission SET judgehost = NULL
-	        WHERE submitid = %i', $jud['submitid']);
+	$DB->q('UPDATE submission SET judgehost = NULL' .
+		( $full_rejudge ? ', rejudgingid=%i ' : '%_ ' ) .
+		'WHERE submitid = %i AND rejudgingid IS NULL',
+		@$rejudgingid, $jud['submitid']);
 
 	// Prioritize single submission rejudgings
 	if ( $table == 'submission' && DOMSERVER_REPLICATION != 'slave' ) {
@@ -73,12 +117,20 @@ while ( $jud = $res->next() ) {
 		        WHERE submitid = %i)', $jud['submitid']);
 	}
 
-	calcScoreRow($jud['cid'], $jud['teamid'], $jud['probid']);
+	if ( !$full_rejudge ) {
+		calcScoreRow($jud['cid'], $jud['teamid'], $jud['probid']);
+	}
 	$DB->q('COMMIT');
 
-	auditlog('judging', $jud['judgingid'], 'mark invalid', '(rejudge)');
+	if ( !$full_rejudge ) {
+		auditlog('judging', $jud['judgingid'], 'mark invalid', '(rejudge)');
+	}
 }
 
 
 /** redirect back. */
-header('Location: '.$table.'.php?id='.urlencode($id));
+if ( $full_rejudge ) {
+	header('Location: rejudging.php?id='.urlencode($rejudgingid));
+} else {
+	header('Location: '.$table.'.php?id='.urlencode($id));
+}

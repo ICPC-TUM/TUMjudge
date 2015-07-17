@@ -48,7 +48,7 @@ class db
 		%f: floating point
 		%l: literal (no quoting/escaping)
 		%_: nothing, but do process one argument
-		%A?: array of type ?, comma separated, surrounded by braces
+		%A?: array of type ?, comma separated
 		%S:  array of key => ., becomes key=., comma separated
 		%SS: array of key => ., becomes key=., "AND" separated
 
@@ -145,22 +145,23 @@ class db
 			$val = array_shift($argv);
 			switch ($part{0}) {
 				case 'A':
-					if (!is_array($val)) {
+					if (!is_array($val) || !$val) {
+						$backtrace = debug_backtrace();
+						if (DEBUG) {
+							$callsite = 'in file: ' . $backtrace[0]['file'] . ', ' .
+								    ' line: ' . $backtrace[0]['line'] . ', ';
+						} else {
+							$callsite = '';
+						}
 						throw new InvalidArgumentException(
 							"%A in \$DATABASE->q() has to correspond to an "
-							. "array, it is" . " now a '$val' (Query:"
-							. "'$key $query')!");
+							. "non-empty array, it is" . " now a '$val' (Query:"
+							. "'$key $query')! $callsite");
 					}
 					$GLOBALS['MODE'] = $part{1};
-					if (!$val) {
-						$query .= '(\'\')';
-					} else {
-						$query .= '(';
-						$query .= implode( ', '
-								 , array_map( array($this, 'val2sql')
-									    , $val));
-						$query .= ')';
-					}
+					$query .= implode( ', '
+							 , array_map( array($this, 'val2sql')
+								    , $val));
 					unset($GLOBALS['MODE']);
 					$query .= substr($part,2);
 					break;
@@ -204,13 +205,13 @@ class db
 		if ($argv) {
 			if(DEBUG) {
 				$backtrace = debug_backtrace();
-				$callsite = ' in file:' . $backtrace[0]['file'] . ', ' .
-					    ' line:' . $backtrace[0]['line'] . ', ';
+				$callsite = ' in file: ' . $backtrace[0]['file'] . ', ' .
+					    ' line: ' . $backtrace[0]['line'] . ', ';
 			} else {
 				$callsite = '';
 			}
 			throw new BadMethodCallException("Not all arguments to q() are"
-			    . " processed");
+			    . " processed.\n$callsite");
 		}
 
 		$res = $this->execute($query);
@@ -290,8 +291,8 @@ class db
 
 		if(DEBUG) {
 			$backtrace = debug_backtrace();
-			$callsite = ' file:' . $backtrace[1]['file'] . ', ' .
-			            ' line:' . $backtrace[1]['line'] . ', ';
+			$callsite = ' file: ' . $backtrace[2]['file'] . ', ' .
+			            ' line: ' . $backtrace[2]['line'] . ', ';
 		} else {
 			$callsite = '';
 		}
@@ -319,7 +320,7 @@ class db
 	{
 		if($this->_connection) return;
 
-		$pers = ( $this->persist && version_compare(PHP_VERSION, '5.3', '>=') ) ? "p:" : "";
+		$pers = ($this->persist ? "p:" : "");
 		if(!function_exists('mysqli_real_connect')) {
 			throw new RuntimeException("PHP database module missing "
 			    . "(no such function: 'mysqli_real_connect')");

@@ -38,8 +38,10 @@ function tsv_import($fmt)
 	$content = file($_FILES['tsv']['tmp_name']);
 	// the first line of the tsv is always the format with a version number.
 	// currently we hardcode version 1 because there are no others
-	$version = array_shift($content);
-	if ( trim($version) != "File_Version\t1" ) {
+	$version = rtrim(array_shift($content));
+	// Two variants are in use: one where the first token is a static string
+	// "File_Version" and the second where it's the type, e.g. "groups".
+	if ( !preg_match("/^(File_Version|$fmt)\t1$/", $version) ) {
 		error ("Unknown format or version: $version");
 	}
 
@@ -56,6 +58,10 @@ function tsv_import($fmt)
 		case 'teams':
 			$data = tsv_teams_prepare($content);
 			$c = tsv_teams_set($data);
+			break;
+		case 'accounts':
+			$data = tsv_accounts_prepare($content);
+			$c = tsv_accounts_set($data);
 			break;
 		default: error("Unknown format");
 	}
@@ -141,6 +147,59 @@ function tsv_teams_set($data)
 	return $c;
 }
 
+
+function tsv_accounts_prepare($content)
+{
+	global $DB;
+	$data = array();
+	$l = 1;
+	$juryroleid = $DB->q('VALUE SELECT roleid FROM role WHERE role = %s', 'jury');
+	$adminroleid = $DB->q('VALUE SELECT roleid FROM role WHERE role = %s', 'admin');
+	foreach($content as $line) {
+		$l++;
+		$line = explode("\t", trim($line));
+
+		if ($line[0] != 'admin' && $line[0] != 'judge') {
+			error('unknown role id in line ' . $l . ': ' . $line[0]);
+		}
+		$line[0] = ($line == 'admin' ? $adminroleid : $juryroleid);
+
+		// accounts.tsv contains data pertaining both to users and userroles.
+		// hence return data for both tables.
+
+		// we may do more integrity/format checking of the data here.
+		$data[] = array (
+			'user' => array (
+				'name' => $line[2],
+				'username' => $line[3],
+				'password' => md5($line[3].'#'.$line[4])),
+			'userrole' => array (
+				'userid' => -1, // need to get appropriate userid later
+				'roleid' => $line[0])
+			);
+	}
+
+	return $data;
+}
+
+
+function tsv_accounts_set($data)
+{
+	global $DB;
+	$c = 0;
+	foreach ($data as $row) {
+		$DB->q("REPLACE INTO user SET %S", $row['user']);
+		$userid = $DB->q("VALUE SELECT userid FROM user WHERE username = %s", $row['user']['username']);
+		auditlog('user', $userid, 'replaced', 'imported from tsv');
+		$row['userrole']['userid'] = $userid;
+		$DB->q("REPLACE INTO userrole SET %S", $row['userrole']);
+		auditlog('userrole', $userid, 'replaced', 'imported from tsv');
+		$c++;
+	}
+	return $c;
+}
+
+
 /** Export functions **/
 function tsv_export($fmt)
 {
@@ -150,7 +209,7 @@ function tsv_export($fmt)
 		case 'groups':     $data = tsv_groups_get();     $version = 1; break;
 		case 'teams':      $data = tsv_teams_get();      $version = 1; break;
 		case 'scoreboard': $data = tsv_scoreboard_get(); $version = 1; break;
-	//	case 'results':    $data = tsv_results_get();    $version = 1; break;
+		case 'results':    $data = tsv_results_get();    $version = 1; break;
 	//	case 'userdata':   $data = tsv_userdata_get();   $version = 1; break;
 	//	case 'accounts':   $data = tsv_accounts_get();   $version = 1; break;
 		default: error('Specified format not (yet) supported.');
@@ -214,6 +273,100 @@ function tsv_scoreboard_get()
 			$drow
 			);
 	}
+
+	return $data;
+}
+
+$extid_to_name = array();
+
+// sort data array according to rank and name
+function cmp_extid_name($a, $b) {
+	global $extid_to_name;
+	if ( $a[1] != $b[1] ) {
+		// Honorable mention has no rank
+		if ( $a[1] == "" ) {
+			return 1;
+		} else if ( $b[1] == "" ) {
+			return -11;
+		}
+		return $a[1] - $b[1];
+	}
+	$name_a = $extid_to_name[$a[0]];
+	$name_b = $extid_to_name[$b[0]];
+	return strcmp($name_a, $name_b);
+}
+
+function tsv_results_get()
+{
+	// we'll here assume that the requested file will be of the current contest,
+	// as all our scoreboard interfaces do
+	// 1 	External ID 	24314 	integer
+	// 2 	Rank in contest 	1 	integer
+	// 3 	Award 	Gold Medal 	string
+	// 4 	Number of problems the team has solved 	4 	integer
+	// 5 	Total Time 	534 	integer
+	// 6 	Time of the last submission 	233 	integer
+	// 7 	Group Winner 	North American 	string
+	global $cdata, $DB, $extid_to_name;
+
+	$categs = $DB->q('COLUMN SELECT categoryid FROM team_category WHERE visible = 1');
+	$sb = genScoreBoard($cdata, true, array('categoryid' => $categs));
+	$extid_to_name = $DB->q('KEYVALUETABLE SELECT externalid, name FROM team ORDER BY externalid');
+
+	$numteams = sizeof($sb['scores']);
+
+	// determine number of problems solved by median team
+	$cnt = 0;
+	foreach ($sb['scores'] as $teamid => $srow) {
+		$cnt++;
+		$median = $srow['num_correct'];
+		if ($cnt > $numteams/2) { // XXX: lower or upper median?
+			break;
+		}
+	}
+
+	$ranks = array();
+	$group_winners = array();
+	$data = array();
+	foreach ($sb['scores'] as $teamid => $srow) {
+		$maxtime = -1;
+		foreach($sb['matrix'][$teamid] as $prob) {
+			$maxtime = max($maxtime, $prob['time']);
+		}
+
+		$rank = $srow['rank'];
+		$num_correct = $srow['num_correct'];
+		if ( $rank <= 4 ) {
+			$awardstring = "Gold Medal";
+		} else if ( $rank <= 8 ) {
+			$awardstring = "Silver Medal";
+		} else if ( $rank <= 12 ) {
+			$awardstring = "Bronze Medal";
+		} else if ( $num_correct >= $median ) {
+			// teams with equally solved number of problems get the same rank
+			if ( !isset($ranks[$num_correct]) ) {
+				$ranks[$num_correct] = $rank;
+			}
+			$rank = $ranks[$num_correct];
+			$awardstring = "Ranked";
+		} else {
+			$awardstring = "Honorable";
+			$rank = "";
+		}
+
+		$groupwinner = "";
+		if ( !isset($group_winners[$srow['categoryid']]) ) {
+			$group_winners[$srow['categoryid']] = true;
+			$groupwinner = $DB->q('VALUE SELECT name FROM team_category WHERE categoryid = %i', $srow['categoryid']);
+		}
+
+		$data[] = array(@$sb['teams'][$teamid]['externalid'],
+				$rank, $awardstring, $srow['num_correct'],
+				$srow['total_time'], $maxtime, $groupwinner);
+	}
+
+	// sort by rank/name
+	uasort($data, 'cmp_extid_name');
 
 	return $data;
 }

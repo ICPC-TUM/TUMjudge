@@ -20,7 +20,7 @@ function put_print_form()
 	global $DB, $pagename;
 
 	$langs = $DB->q('KEYTABLE SELECT langid AS ARRAYKEY, name, extensions FROM language
-			 WHERE allow_submit = 1 ORDER BY name');
+	                 WHERE allow_submit = 1 ORDER BY name');
 	echo "<script type=\"text/javascript\">\n<!--\n";
 	echo "function detectLanguage(filename)
 	{
@@ -58,6 +58,7 @@ function put_print_form()
 	<tr><td><label for="langid">Language</label>:</td>
 	    <td><?php
 
+	$langlist = array();
 	foreach($langs as $langid => $langdata) {
 		$langlist[$langid] = $langdata['name'];
 	}
@@ -93,7 +94,7 @@ function handle_print_upload()
 	/* sanity check only */
 	if ( $langid != "" ) {
 		$lang = $DB->q('MAYBETUPLE SELECT langid FROM language
-				WHERE langid = %s AND allow_submit = 1', $langid);
+		                WHERE langid = %s AND allow_submit = 1', $langid);
 
 		if ( ! isset($lang) ) error("Unable to find language '$langid'");
 	}

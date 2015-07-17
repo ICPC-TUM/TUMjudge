@@ -9,7 +9,7 @@
 require('init.php');
 $title = 'Judgehosts';
 
-if ( !$_REQUEST['cmd'] ) {
+if ( !isset($_REQUEST['cmd']) ) {
 	$refresh = '15;url=judgehosts.php';
 }
 
@@ -30,23 +30,30 @@ if ( $cmd == 'add' || $cmd == 'edit' ) {
 
 	requireAdmin();
 
-	$restrictions = $DB->q('KEYVALUETABLE SELECT restrictionid, restrictionname FROM judgehost_restriction ORDER BY restrictionid');
+	$restrictions = $DB->q('KEYVALUETABLE SELECT restrictionid, name
+	                        FROM judgehost_restriction ORDER BY restrictionid');
 	$restrictions = array(null => '-- No restrictions --') + $restrictions;
 
 	echo addForm('edit.php');
-	echo "\n<table>\n" .
+?>
+<script type="text/template" id="judgehost_template">
+<tr>
+	<td>
+		<?php echo addInput("data[{id}][hostname]", null, 20, 50, 'pattern="[A-Za-z0-9._-]+"'); ?>
+	</td>
+	<td>
+		<?php echo addSelect("data[{id}][active]", array(1=>'yes',0=>'no'), '1', true); ?>
+	</td>
+	<td>
+		<?php echo addSelect("data[{id}][restrictionid]", $restrictions, null, true); ?>
+	</td>
+</tr>
+</script>
+<?php
+	echo "\n<table id=\"judgehosts\">\n" .
 		"<tr><th>Hostname</th><th>Active</th><th>Restrictions</th></tr>\n";
 	if ( $cmd == 'add' ) {
-		for ($i=0; $i<10; ++$i) {
-			echo "<tr><td>" .
-				addInput("data[$i][hostname]", null, 20, 50, 'pattern="[A-Za-z0-9._-]+"') .
-				"</td><td>" .
-				addSelect("data[$i][active]",
-					array(1=>'yes',0=>'no'), '1', true) .
-				"</td><td>" .
-				addSelect("data[$i][restrictionid]", $restrictions, null, true) .
-				"</td></tr>\n";
-		}
+		// Nothing, added by javascript in addAddRowButton
 	} else {
 		$res = $DB->q('SELECT * FROM judgehost ORDER BY hostname');
 		$i = 0;
@@ -67,6 +74,7 @@ if ( $cmd == 'add' || $cmd == 'edit' ) {
 	echo addHidden('cmd', $cmd) .
 		( $cmd == 'add' ? addHidden('skipwhenempty', 'hostname') : '' ) .
 		addHidden('table','judgehost') .
+		( $cmd == 'add' ? addAddRowButton('judgehost_template', 'judgehosts') : '' ) .
 		addSubmit('Save Judgehosts') .
 		addEndForm();
 
@@ -75,27 +83,26 @@ if ( $cmd == 'add' || $cmd == 'edit' ) {
 
 }
 
-$res = $DB->q('SELECT judgehost.*, judgehost_restriction.restrictionname
-	       FROM judgehost
-	       LEFT JOIN judgehost_restriction USING (restrictionid)
-	       ORDER BY hostname');
-
-// NOTE: these queries do not take into account the time spent on a
-// current judging. It is tricky, however, to determine if a judging
-// is currently running or has crashed, so we simply ignore this.
+$res = $DB->q('SELECT judgehost.*, judgehost_restriction.name
+               FROM judgehost
+               LEFT JOIN judgehost_restriction USING (restrictionid)
+               ORDER BY hostname');
 
 $now = now();
-$work2min    = $DB->q('KEYVALUETABLE SELECT judgehost, SUM(endtime - GREATEST(%i,starttime))
-                       FROM judging WHERE endtime > %i GROUP BY judgehost',
-                      $now-2*60, $now-2*60);
+$query = 'KEYVALUETABLE SELECT judgehost,
+          SUM(IF(endtime,endtime,%i) - GREATEST(%i,starttime))
+          FROM judging
+          WHERE endtime > %i OR (endtime IS NULL and valid = 1)
+          GROUP BY judgehost';
 
-$work10min   = $DB->q('KEYVALUETABLE SELECT judgehost, SUM(endtime - GREATEST(%i,starttime))
-                       FROM judging WHERE endtime > %i GROUP BY judgehost',
-                      $now-10*60, $now-10*60);
+$from = $now-2*60;
+$work2min    = $DB->q($query, $now, $from, $from);
 
-$workcontest = $DB->q('KEYVALUETABLE SELECT judgehost, SUM(endtime - GREATEST(%i,starttime))
-                       FROM judging WHERE endtime > %i GROUP BY judgehost',
-                      $cdata['starttime'], $cdata['starttime']);
+$from = $now-10*60;
+$work10min   = $DB->q($query, $now, $from, $from);
+
+$from = $cdata['starttime'];
+$workcontest = $DB->q($query, $now, $from, $from);
 
 $clen = difftime($now,$cdata['starttime']);
 
@@ -121,9 +128,9 @@ if( $res->count() == 0 ) {
 			echo "\" title =\"never checked in\">";
 		} else {
 			$reltime = floor(difftime($now,$row['polltime']));
-			if ( $reltime < JUDGEHOST_WARNING ) {
+			if ( $reltime < dbconfig_get('judgehost_warning',30) ) {
 				echo "judgehost-ok";
-			} else if ( $reltime < JUDGEHOST_CRITICAL ) {
+			} else if ( $reltime < dbconfig_get('judgehost_critical',120) ) {
 				echo "judgehost-warn";
 			} else {
 				echo "judgehost-crit";
@@ -131,7 +138,7 @@ if( $res->count() == 0 ) {
 			echo "\" title =\"last checked in $reltime seconds ago\">";
 		}
 		echo $link . CIRCLE_SYM . "</a></td>";
-		echo "<td>" . $link . (is_null($row['restrictionname']) ? '<i>none</i>' : $row['restrictionname']) . '</a></td>';
+		echo "<td>" . $link . (is_null($row['name']) ? '<i>none</i>' : $row['name']) . '</a></td>';
 		echo "<td title=\"load during the last 2 and 10 minutes and the whole contest\">" .$link .
 		    sprintf('%.2f&nbsp;%.2f&nbsp;%.2f',
 		            @$work2min[   $row['hostname']] / (2*60),

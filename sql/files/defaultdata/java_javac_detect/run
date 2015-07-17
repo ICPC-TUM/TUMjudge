@@ -20,12 +20,12 @@ MAINCLASS=""
 # Amount of memory reserved for the Java virtual machine in kB. The
 # default below is just above the maximum memory usage of current
 # versions of the jvm, but might need increasing in some cases.
-MEMRESERVED=300000
+MEMRESERVED=350000
 
 TMPFILE=`mktemp --tmpdir domjudge_javac_output.XXXXXX` || exit 1
 
 # Byte-compile:
-javac -d . "$@" 2> "$TMPFILE"
+javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE"
 EXITCODE=$?
 if [ "$EXITCODE" -ne 0 ]; then
 	# Let's see if should have named the .java differently
@@ -38,7 +38,7 @@ if [ "$EXITCODE" -ne 0 ]; then
 	rm -f $TMPFILE
 	echo "Info: renaming main source '$MAINSOURCE' to '$PUBLICCLASS.java'"
 	mv "$MAINSOURCE" "$PUBLICCLASS.java"
-	javac -d . "$PUBLICCLASS.java"
+	javac -encoding UTF-8 -d . "$PUBLICCLASS.java"
 	EXITCODE=$?
 	[ "$EXITCODE" -ne 0 ] && exit $EXITCODE
 fi
@@ -46,22 +46,20 @@ fi
 rm -f $TMPFILE
 
 # Look for class that has the 'main' function:
-CLASSNAMES=$(find * -type f -regex '^.*\.class$' \
-            | sed -e 's/\.class$//' -e 's/\//./g')
-COMPILESCRIPTDIR=$(dirname $0)
-MAINCLASS=$(java -cp $COMPILESCRIPTDIR DetectMain `pwd` $CLASSNAMES)
+CLASSNAMES="$(find ./* -type f -regex '^.*\.class$' \
+            | sed -e 's/\.class$//' -e 's/^\.\///' -e 's/\//./g')"
+COMPILESCRIPTDIR="$(dirname "$0")"
+MAINCLASS=$(java -cp "$COMPILESCRIPTDIR" DetectMain "`pwd`" $CLASSNAMES)
 EXITCODE=$?
 [ "$EXITCODE" -ne 0 ] && exit $EXITCODE
 
 # Calculate Java program memlimit as MEMLIMIT - max. JVM memory usage:
-MEMLIMITJAVA=$(($MEMLIMIT - $MEMRESERVED))
+MEMLIMITJAVA=$((MEMLIMIT - MEMRESERVED))
 
 # Write executing script:
 # Executes java byte-code interpreter with following options
 # -Xmx: maximum size of memory allocation pool
-# -Xrs: reduces usage signals by java, because that generates debug
-#       output when program is terminated on timelimit exceeded.
-cat > $DEST <<EOF
+cat > "$DEST" <<EOF
 #!/bin/sh
 # Generated shell-script to execute java interpreter on source.
 
@@ -70,9 +68,9 @@ if [ "\${0%/*}" != "\$0" ]; then
 	cd "\${0%/*}"
 fi
 
-exec java -Xrs -Xss8m -DONLINE_JUDGE=1 -DDOMJUDGE=1 -Xmx${MEMLIMITJAVA}k '$MAINCLASS'
+exec java -client -Xss8m -Xmx${MEMLIMITJAVA}k -DONLINE_JUDGE=1 -DDOMJUDGE=1 '$MAINCLASS'
 EOF
 
-chmod a+x $DEST
+chmod a+x "$DEST"
 
 exit 0
