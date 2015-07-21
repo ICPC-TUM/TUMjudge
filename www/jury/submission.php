@@ -196,7 +196,7 @@ $title = 'Submission s'.@$id;
 
 if ( ! $id ) error("Missing or invalid submission id");
 
-$submdata = $DB->q('MAYBETUPLE SELECT s.teamid, s.probid, s.langid,
+$submdata = $DB->q('MAYBETUPLE SELECT s.teamid, s.probid, s.langid, s.origsubmitid,
                     s.submittime, s.valid, c.cid, c.shortname AS contestshortname,
                     c.name AS contestname, t.name AS teamname, l.name AS langname,
                     cp.shortname AS probshortname, p.name AS probname,
@@ -262,6 +262,9 @@ if ( isset($_REQUEST['claim']) || isset($_REQUEST['unclaim']) ) {
 require_once(LIBWWWDIR . '/header.php');
 
 echo "<br/><h1 style=\"display:inline;\">Submission s" . $id .
+    ( isset($submdata['origsubmitid']) ?
+      ' (resubmit of <a href="submission.php?id='. urlencode($submdata['origsubmitid']) .
+      '">s' . htmlspecialchars($submdata['origsubmitid']) . '</a>)' : '' ) .
 	( $submdata['valid'] ? '' : ' (ignored)' ) . "</h1>\n\n";
 if ( IS_ADMIN ) {
 	$val = ! $submdata['valid'];
@@ -370,13 +373,19 @@ if ( isset($jid) )  {
 	                WHERE t.probid = %s ORDER BY rank',
 	               $jid, $submdata['probid']);
 
-	// Try to find data of a previous submission/judging of the same team/problem.
-	$lastsubmitid = $DB->q('MAYBEVALUE SELECT submitid
-	                        FROM submission
-	                        WHERE teamid = %i AND probid = %i AND submittime < %s
-	                        ORDER BY submittime DESC LIMIT 1',
-	                       $submdata['teamid'],$submdata['probid'],
-	                       $submdata['submittime']);
+	// Use original submission as previous, or try to find a previous
+	// submission/judging of the same team/problem.
+	if ( isset($submdata['origsubmitid']) ) {
+		$lastsubmitid = $submdata['origsubmitid'];
+	} else {
+		$lastsubmitid = $DB->q('MAYBEVALUE SELECT submitid
+		                        FROM submission
+		                        WHERE teamid = %i AND probid = %i AND submittime < %s
+		                        ORDER BY submittime DESC LIMIT 1',
+		                       $submdata['teamid'],$submdata['probid'],
+		                       $submdata['submittime']);
+	}
+
 	$lastjud = NULL;
 	if ( $lastsubmitid !== NULL ) {
 		$lastjud = $DB->q('MAYBETUPLE SELECT judgingid, result, verify_comment, endtime
@@ -431,19 +440,7 @@ if ( isset($jid) )  {
 		}
 		echo addEndForm();
 	}
-	echo rejudgeForm('submission', $id);
-
-	echo ( $lastjud === NULL ? '' :
-	      "<span class=\"testcases_prev\">" .
-	      "<a href=\"javascript:togglelastruns();\">show/hide</a> results of previous " .
-	      "<a href=\"submission.php?id=$lastsubmitid\">submission s$lastsubmitid</a>" .
-	          ( empty($lastjud['verify_comment']) ? '' :
-		    "<span class=\"prevsubmit\"> (verify comment: '" . $lastjud['verify_comment'] . "')</span>"
-                  ) .
-	      "</span>" );
-
-	echo '<br/><br/>';
-
+	echo rejudgeForm('submission', $id) . '<br/><br/>';
 
 	echo 'Result: ' . printresult($jud['result'], $jud['valid']) . ( $lastjud === NULL ? '' :
 		'<span class="lastresult"> (<a href="submission.php?id=' . $lastsubmitid . '">s' . $lastsubmitid. '</a>: '
@@ -479,6 +476,16 @@ if ( isset($jid) )  {
 			echo $lasttclist;
 		}
 		echo "</table>\n";
+	}
+
+	// Show JS toggle of previous submission results.
+	if ( $lastjud!==NULL ) {
+		echo "<span class=\"testcases_prev\">" .
+		     "<a href=\"javascript:togglelastruns();\">show/hide</a> results of previous " .
+		     "<a href=\"submission.php?id=$lastsubmitid\">submission s$lastsubmitid</a>" .
+		     ( empty($lastjud['verify_comment']) ? '' :
+		       "<span class=\"prevsubmit\"> (verify comment: '" .
+		       $lastjud['verify_comment'] . "')</span>" ) . "</span>";
 	}
 
 	// display following data only when the judging has been completed

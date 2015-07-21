@@ -256,7 +256,7 @@ function initSummary($probs) {
 		if ( !isset($SUMMARY['problems'][$prob]) ) {
 			$SUMMARY['problems'][$prob]['num_submissions'] = 0;
 			$SUMMARY['problems'][$prob]['num_pending'] = 0;
-			$SUMMARY['problems'][$prob]['num_points'] = 0;
+			$SUMMARY['problems'][$prob]['num_correct'] = 0;
 			$SUMMARY['problems'][$prob]['best_time_sort'] = array();
 		}
 	}
@@ -696,7 +696,7 @@ function initScorefilter()
 		}
 	}
 
-	setcookie('domjudge_scorefilter', json_encode($scorefilter));
+	dj_setcookie('domjudge_scorefilter', json_encode($scorefilter));
 
 	return $scorefilter;
 }
