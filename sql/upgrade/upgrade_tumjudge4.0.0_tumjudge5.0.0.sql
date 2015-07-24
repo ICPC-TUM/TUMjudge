@@ -48,21 +48,11 @@ ALTER TABLE `submission`
   ADD KEY `rejudgingid` (`rejudgingid`),
   ADD CONSTRAINT `submission_ibfk_7` FOREIGN KEY (`rejudgingid`) REFERENCES `rejudging` (`rejudgingid`) ON DELETE SET NULL;
 
-ALTER TABLE `problem`
-  ADD COLUMN `memlimit` int(4) unsigned DEFAULT NULL COMMENT 'Maximum memory available (in kB) for this problem' AFTER `timelimit`,
-  ADD COLUMN `outputlimit` int(4) unsigned DEFAULT NULL COMMENT 'Maximum output size (in kB) for this problem' AFTER `memlimit`,
-  ADD COLUMN `special_compare_args` varchar(255) DEFAULT NULL COMMENT 'Optional arguments to special_compare script' AFTER `special_compare`;
-
 ALTER TABLE `team`
   MODIFY COLUMN `externalid` varchar(255) DEFAULT NULL COMMENT 'Team ID in an external system',
   ADD COLUMN `penalty` int(4) NOT NULL default '0' COMMENT 'Additional penalty time in minutes' AFTER `hostname`,
   DROP INDEX `externalid`,
   ADD UNIQUE KEY `externalid` (`externalid`);
-
-ALTER TABLE `testcase`
-  ADD COLUMN `image` longblob COMMENT 'A graphical representation of this testcase' AFTER `description`,
-  ADD COLUMN `image_thumb` longblob COMMENT 'Aumatically created thumbnail of the image' AFTER `image`,
-  ADD COLUMN `image_type` varchar(4) DEFAULT NULL COMMENT 'File type of the image and thumbnail' AFTER `image_thumb`;
 
 -- Add support for points per problem
 ALTER TABLE `contestproblem`
@@ -92,9 +82,14 @@ INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES
 ('judgehost_critical', '120', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "critical".'),
 ('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.');
 
-UPDATE `contest` SET `shortname` = UPPER(SUBSTR(REPLACE(`name`, ' ', ''), 1, 10)), `public` = 1;
-
 -- Update compare scripts to support new Kattis 42/43 exitcode format:
 source mysql_db_files_defaultdata.sql
 source mysql_db_files_examples.sql
+
+-- Add changes not contained in last upgrade script
+ALTER TABLE `contestproblem`
+  ADD COLUMN `lazy_eval_results` tinyint(1) unsigned DEFAULT NULL COMMENT 'Whether to do lazy evaluation for this problem; if set this overrides the global configuration setting' AFTER `color`;
+
+ALTER TABLE `contest`
+  CHANGE COLUMN `contestname` `name` varchar(255) NOT NULL COMMENT 'Descriptive name';
 
