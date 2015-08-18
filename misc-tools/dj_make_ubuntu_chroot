@@ -26,8 +26,16 @@ trap cleanup EXIT
 CHROOTDIR=$1
 ARCH=$2
 
-# Ubuntu release (codename) to bootstrap:
-RELEASE="$(lsb_release -c -s)"
+# Ubuntu release (codename) to bootstrap (note: overriden right below):
+RELEASE="trusty"
+
+# If host system is Debian, use its release and architecture by default
+if [ 'Debian' = "$(lsb_release -i -s || true)" ]; then
+	RELEASE="$(lsb_release -c -s)"
+	if [ -z "$ARCH" ]; then
+		ARCH="$(dpkg --print-architecture)"
+	fi
+fi
 
 # List of possible architectures to install chroot for:
 ARCHLIST="amd64,armel,i386,ia64,mips,mipsel,powerpc,s390,sparc"
@@ -44,7 +52,7 @@ INSTALLDEBS="openjdk-7-jre-headless locales"
 REMOVEDEBS=""
 
 # Which debootstrap package to install on non-Debian/Ubuntu systems:
-DEBOOTDEB="debootstrap_1.0.46_all.deb"
+DEBOOTDEB="debootstrap_1.0.59_all.deb"
 
 # The Debian mirror/proxy below can be passed as environment
 # variables; if none are given the following defaults are used.
@@ -62,32 +70,35 @@ export DEBIAN_FRONTEND=noninteractive
 
 usage()
 {
-    echo "Usage: $0 <chrootdir> <architecture>"
+    echo "Usage: $0 <chrootdir> [<architecture>]"
     echo "Creates a chroot environment with Oracle (Sun) Java support using the"
-    echo "Debian GNU/Linux distribution."
+    echo "Ubuntu GNU/Linux distribution."
     echo
     echo "This script must be run as root, <chrootdir> the non-existing target"
     echo "location of the chroot and <architecture> one of the following:"
     echo "$ARCHLIST"
+    echo
+    echo "If the host runs Ubuntu, no architecture needs to be specified and"
+    echo "the host architecture and release are used."
 }
 
 error()
 {
-    echo "Error: $@"
+    echo "Error: $*"
     echo
     usage
     exit 1
 }
 
-if [ `id -u` != 0 ]; then
+if [ "`id -u`" != 0 ]; then
     echo "Warning: you probably need to run this program as root."
 fi
 
 [ -z "$CHROOTDIR" ] && error "No installation directory given."
-[ -z "$ARCH" ]      && error "No architecture given."
+[ -z "$ARCH" ]      && error "No architecture given or detected."
 
 if [ -e "$CHROOTDIR" ]; then
-	echo -n "'$CHROOTDIR' already exists. Remove? (y/N) "
+	printf "'$CHROOTDIR' already exists. Remove? (y/N) "
 	read yn
 	if [ "$yn" != "y" -a "$yn" != "Y" ]; then
 		error "Chrootdir already exists, exiting."
@@ -102,7 +113,7 @@ CHROOTDIR="$PWD"
 if [ ! -x /usr/sbin/debootstrap ]; then
 
 	echo "This script will install debootstrap on your system."
-	echo -n "Continue? (y/N) "
+	printf "Continue? (y/N) "
 	read yn
 	if [ "$yn" != "y" -a "$yn" != "Y" ]; then
 		exit 1;
@@ -132,6 +143,7 @@ if [ -n "$INCLUDEDEBS" ]; then
 	INCLUDEOPT="--include=$INCLUDEDEBS"
 fi
 EXCLUDEOPT=""
+# shellcheck disable=SC2153
 if [ -n "$EXCLUDEDEBS" ]; then
 	EXCLUDEOPT="--exclude=$EXCLUDEDEBS"
 fi
@@ -148,6 +160,7 @@ eval $BOOTSTRAP_COMMAND $INCLUDEOPT $EXCLUDEOPT \
 
 rm -f "$CHROOTDIR/etc/resolv.conf"
 cp /etc/resolv.conf /etc/hosts /etc/hostname "$CHROOTDIR/etc" || true
+cp /etc/ssl/certs/ca-certificates.crt "$CHROOTDIR/etc/ssl/certs/" || true
 
 cat > "$CHROOTDIR/etc/apt/sources.list" <<EOF
 deb $DEBMIRROR $RELEASE main
@@ -224,9 +237,6 @@ chroot "$CHROOTDIR" /bin/sh -c "chmod a-s /usr/bin/wall /usr/bin/newgrp \
 	/usr/bin/chage /usr/bin/chfn /usr/bin/chsh /usr/bin/expiry \
 	/usr/bin/gpasswd /usr/bin/passwd /usr/lib/pt_chown \
 	/bin/su /bin/mount /bin/umount /sbin/unix_chkpwd"
-
-# Copy passwd file from host, necessary for python
-cp /etc/passwd "$CHROOTDIR/etc/passwd"
 
 # Disable root account
 sed -i "s/^root::/root:*:/" "$CHROOTDIR/etc/shadow"

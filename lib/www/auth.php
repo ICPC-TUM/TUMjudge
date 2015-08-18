@@ -334,7 +334,7 @@ function do_login()
 
 		if ( AUTH_METHOD=='IPADDRESS' ) {
 			$cnt = $DB->q('RETURNAFFECTED UPDATE user SET ip_address = %s
-				       WHERE username = %s', $ip, $username);
+			               WHERE username = %s', $ip, $username);
 			if ( $cnt != 1 ) error("cannot set IP for '$username'");
 		}
 		if ( AUTH_METHOD=='PHP_SESSIONS' ) {
@@ -504,9 +504,9 @@ function do_logout()
 		// Also delete the session cookie.
 		if ( ini_get("session.use_cookies") ) {
 			$params = session_get_cookie_params();
-			setcookie(session_name(), '', time() - 42000,
-			          $params["path"], $params["domain"],
-			          $params["secure"], $params["httponly"]);
+			dj_setcookie(session_name(), '', time() - 42000,
+			             $params["path"], $params["domain"],
+			             $params["secure"], $params["httponly"]);
 		}
 
 		// Finally, destroy the session.

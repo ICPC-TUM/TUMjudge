@@ -17,7 +17,7 @@ $submitted = @$_GET['submitted'];
 
 $fdata = calcFreezeData($cdata);
 $langdata = $DB->q('KEYTABLE SELECT langid AS ARRAYKEY, name, extensions
-		    FROM language WHERE allow_submit = 1');
+                    FROM language WHERE allow_submit = 1');
 
 echo "<script type=\"text/javascript\">\n<!--\n";
 
@@ -72,6 +72,7 @@ if ( $fdata['cstarted'] ) {
 		}
 		$probs[''] = 'problem';
 		echo addSelect('probid', $probs, '', true);
+		$langs = array();
 		foreach($langdata as $langid => $langdata) {
 			$langs[$langid] = $langdata['name'];
 		}

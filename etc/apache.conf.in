@@ -15,6 +15,7 @@
 #<VirtualHost *>
 #ServerName _default_
 #DocumentRoot @domserver_wwwdir@
+#RedirectMatch ^/api$ /api/
 #Alias /api @domserver_wwwdir@/api/index.php
 #</VirtualHost>
 
@@ -44,6 +45,7 @@
 # want DOMjudge in the root, but only occupy a subdir, like this:
 # www.example.com/domjudge
 
+RedirectMatch ^/domjudge/api$ /domjudge/api/
 Alias /domjudge/api @domserver_wwwdir@/api/index.php
 Alias /domjudge @domserver_wwwdir@
 
@@ -53,10 +55,10 @@ Alias /domjudge @domserver_wwwdir@
 
 <Directory @domserver_wwwdir@>
 # For Apache 2.2:
-Order allow,deny
-Allow from all
-# For Apache 2.4 use the following instead:
-# Require all granted
+#Order allow,deny
+#Allow from all
+# For Apache 2.4:
+Require all granted
 
 Options FollowSymlinks
 DirectoryIndex index.php

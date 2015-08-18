@@ -11,8 +11,9 @@ require('init.php');
 $id = getRequestID();
 $current_cid = null;
 if ( isset($_GET['cid']) && is_numeric($_GET['cid']) ) {
-	$current_cid = $_GET['cid'];
-	$cdatas = array($current_cid => $cdatas[$current_cid]);
+	$cid = $_GET['cid'];
+	$cdata = $cdatas[$cid];
+	$current_cid = $cid;
 }
 $title = 'Problem p'.htmlspecialchars(@$id);
 $title = ucfirst((empty($_GET['cmd']) ? '' : htmlspecialchars($_GET['cmd']) . ' ') .
@@ -22,7 +23,7 @@ if ( isset($_POST['cmd']) ) {
 	$pcmd = $_POST['cmd'];
 } elseif ( isset($_GET['cmd'] ) ) {
 	$cmd = $_GET['cmd'];
-} else {
+} elseif ( isset($id) ) {
 	$extra = '';
 	if ( $current_cid !== null ) {
 		$extra = '&cid=' . urlencode($current_cid);
@@ -57,7 +58,7 @@ if ( isset($_POST['upload']) ) {
 		}
 		echo "<p><a href=\"problems.php\">Return to problems overview.</a></p>\n";
 	} else {
-		error("Missing filename for problem upload");
+		error("Missing filename for problem upload. Maybe you have to increase upload_max_filesize, see config checker.");
 	}
 
 	require(LIBWWWDIR . '/footer.php');
@@ -78,10 +79,9 @@ if ( !empty($cmd) ):
 		echo "<tr><td>Problem ID:</td><td>";
 		$row = $DB->q('TUPLE SELECT p.probid,p.name,
 		                            p.timelimit,p.memlimit,p.outputlimit,
-		                            p.special_run,p.special_compare,
-		                            p.problemtext_type,
-									p.difficulty,p.author,p.source,p.topic,
-									COUNT(testcaseid) AS testcases
+		                            p.special_run,p.special_compare, p.special_compare_args,
+		                            p.difficulty,p.author,p.source,p.topic,
+		                            p.problemtext_type, COUNT(testcaseid) AS testcases
 		               FROM problem p
 		               LEFT JOIN testcase USING (probid)
 		               WHERE probid = %i GROUP BY probid', $id);
@@ -118,10 +118,12 @@ if ( !empty($cmd) ):
 	' min="1" max="10000" required')?> sec</td></tr>
 
 <tr><td><label for="data_0__memlimit_">Memory limit:</label></td>
-<td><?php echo addInputField('number','data[0][memlimit]', @$row['memlimit'])?> kB</td></tr>
+<td><?php echo addInputField('number','data[0][memlimit]', @$row['memlimit']);
+?> kB (leave empty for default)</td></tr>
 
 <tr><td><label for="data_0__outputlimit_">Output limit:</label></td>
-<td><?php echo addInputField('number','data[0][outputlimit]', @$row['outputlimit'])?> kB</td></tr>
+<td><?php echo addInputField('number','data[0][outputlimit]', @$row['outputlimit']);
+?> kB (leave empty for default)</td></tr>
 
 <tr><td><label for="data_0__problemtext_">Problem text:</label></td>
 <td><?php
@@ -132,27 +134,28 @@ if ( !empty($row['problemtext_type']) ) {
 }
 ?></td></tr>
 
-<tr><td><label for="data_0__special_run_">Special run script:</label></td>
+<tr><td><label for="data_0__special_run_">Run script:</label></td>
 <td>
 <?php
 $execmap = $DB->q("KEYVALUETABLE SELECT execid,description FROM executable
-			WHERE type = 'run'
-			ORDER BY execid");
-$execmap[''] = 'none';
+                   WHERE type = 'run' ORDER BY execid");
+$execmap = array('' => 'default') + $execmap;
 echo addSelect('data[0][special_run]', $execmap, @$row['special_run'], True);
 ?>
 </td></tr>
 
-<tr><td><label for="data_0__special_compare_">Special compare script:</label></td>
+<tr><td><label for="data_0__special_compare_">Compare script:</label></td>
 <td>
 <?php
 $execmap = $DB->q("KEYVALUETABLE SELECT execid,description FROM executable
-			WHERE type = 'compare'
-			ORDER BY execid");
-$execmap[''] = 'none';
+                   WHERE type = 'compare' ORDER BY execid");
+$execmap = array('' => 'default') + $execmap;
 echo addSelect('data[0][special_compare]', $execmap, @$row['special_compare'], True);
 ?>
 </td></tr>
+
+<tr><td><label for="data_0__special_compare_args_">Compare args:</label></td>
+<td><?php echo addInput('data[0][special_compare_args]', @$row['special_compare_args'], 30, 255)?></td></tr>
 
 </table>
 
@@ -166,7 +169,7 @@ echo addHidden('cmd', $cmd) .
 
 
 if ( class_exists("ZipArchive") ) {
-	$contests = $DB->q("KEYVALUETABLE SELECT cid, CONCAT('c', cid, ': ' , shortname, ' - ', contestname) FROM contest");
+	$contests = $DB->q("KEYVALUETABLE SELECT cid, CONCAT('c', cid, ': ' , shortname, ' - ', name) FROM contest");
 	$values = array(-1 => 'Do not add / update contest data');
 	foreach ($contests as $cid => $contest) {
 		$values[$cid] = $contest;
@@ -189,15 +192,37 @@ endif;
 
 $data = $DB->q('TUPLE SELECT p.probid,p.name,
                              p.timelimit,p.memlimit,p.outputlimit,
+<<<<<<< HEAD
                              p.special_run,p.special_compare,
                              p.problemtext_type,
 							 p.difficulty,p.author,p.source,p.topic,
 							 count(rank) AS ntestcases
+=======
+                             p.special_run,p.special_compare,p.special_compare_args,
+                             p.problemtext_type, count(rank) AS ntestcases
+>>>>>>> domjudge/master
                 FROM problem p
                 LEFT JOIN testcase USING (probid)
                 WHERE probid = %i GROUP BY probid', $id);
 
 if ( ! $data ) error("Missing or invalid problem id");
+
+if ( !isset($data['memlimit']) ) {
+	$defaultmemlimit = TRUE;
+	$data['memlimit'] = dbconfig_get('memory_limit');
+}
+if ( !isset($data['outputlimit']) ) {
+	$defaultoutputlimit = TRUE;
+	$data['outputlimit'] = dbconfig_get('output_limit');
+}
+if ( !isset($data['special_run']) ) {
+	$defaultrun = TRUE;
+	$data['special_run'] = dbconfig_get('default_run');
+}
+if ( !isset($data['special_compare']) ) {
+	$defaultcompare = TRUE;
+	$data['special_compare'] = dbconfig_get('default_compare');
+}
 
 echo "<h1>Problem ".htmlspecialchars($data['name'])."</h1>\n\n";
 
@@ -222,10 +247,8 @@ echo addForm($pagename . '?id=' . urlencode($id),
 	echo ' <a href="testcase.php?probid='.urlencode($data['probid']).'">details/edit</a>';
 ?></td></tr>
 <tr><td>Timelimit:   </td><td><?php echo (int)$data['timelimit']?> sec</td></tr>
-<tr><td>Memory limit:</td><td><?php
-	echo (isset($data['memlimit']) ? (int)$data['memlimit'] : '-') ?> kB</td></tr>
-<tr><td>Output limit:</td><td><?php
-	echo (isset($data['outputlimit']) ? (int)$data['outputlimit'] : '-') ?> kB</td></tr>
+<tr><td>Memory limit:</td><td><?php	echo (int)$data['memlimit'].' kB'.(@$defaultmemlimit ? ' (default)' : '')?></td></tr>
+<tr><td>Output limit:</td><td><?php echo (int)$data['outputlimit'].' kB'.(@$defaultoutputlimit ? ' (default)' : '')?></td></tr>
 <?php
 if ( !empty($data['color']) ) {
 	echo '<tr><td>Colour:</td><td><div class="circle" style="background-color: ' .
@@ -239,15 +262,20 @@ if ( !empty($data['problemtext_type']) ) {
 	    urlencode($data['problemtext_type']) . '.png" alt="problem text" ' .
 	    'title="view problem description" /></a> ' . "</td></tr>\n";
 }
-if ( !empty($data['special_compare']) ) {
-	echo '<tr><td>Special run script:</td><td class="filename">' .
-		'<a href="executable.php?id=' . urlencode($data['special_run']) . '">' .
-		htmlspecialchars($data['special_run']) . "</a></td></tr>\n";
-}
-if ( !empty($data['special_compare']) ) {
-	echo '<tr><td>Special compare script:</td><td class="filename">' .
-		'<a href="executable.php?id=' . urlencode($data['special_compare']) . '">' .
-		htmlspecialchars($data['special_compare']) . "</a></td></tr>\n";
+
+echo '<tr><td>Run script:</td><td class="filename">' .
+	'<a href="executable.php?id=' . urlencode($data['special_run']) . '">' .
+	htmlspecialchars($data['special_run']) . "</a>" .
+	(@$defaultrun ? ' (default)' : '') . "</td></tr>\n";
+
+echo '<tr><td>Compare script:</td><td class="filename">' .
+	'<a href="executable.php?id=' . urlencode($data['special_compare']) . '">' .
+	htmlspecialchars($data['special_compare']) . "</a>" .
+	(@$defaultcompare ? ' (default)' : '') . "</td></tr>\n";
+
+if ( !empty($data['special_compare_args']) ) {
+	echo '<tr><td>Compare script arguments:</td><td>' .
+		htmlspecialchars($data['special_compare_args']) . "</td></tr>\n";
 }
 
 echo "</table>\n" . addEndForm();
@@ -296,7 +324,7 @@ if ( $current_cid === null) {
 			     "<td class=\"tdright\">" . $link .
 			     "c" . (int)$row['cid'] . "</a></td>\n";
 			echo "<td>" . $link . htmlspecialchars($row['shortname']) . "</a></td>\n";
-			echo "<td>" . $link . htmlspecialchars($row['contestname']) . "</a></td>\n";
+			echo "<td>" . $link . htmlspecialchars($row['name']) . "</a></td>\n";
 			echo "<td>" . $link . htmlspecialchars($row['problemshortname']) . "</a></td>\n";
 			echo "<td class=\"tdcenter\">" . $link . printyn($row['allow_submit']) . "</a></td>\n";
 			echo "<td class=\"tdcenter\">" . $link . printyn($row['allow_judge']) . "</a></td>\n";

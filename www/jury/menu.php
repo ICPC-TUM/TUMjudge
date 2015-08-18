@@ -41,6 +41,13 @@
 <?php	} ?>
 <li><a href="submissions.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="submissions"><span class="glyphicon glyphicon-file"></span></a></li>
 <li><a href="scoreboard.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="scoreboard"><span class="glyphicon glyphicon-th-list"></span></a></li>  
+<?php
+	$nrejudgings = count($updates['rejudgings']);
+	if ( $nrejudgings > 0 ) { ?>
+<a class="new" href="rejudgings.php" accesskey="r" id="menu_rejudgings">rejudgings (<?php echo $nrejudgings ?> active)</a>
+<?php	} else { ?>
+<a href="rejudgings.php" accesskey="r" id="menu_rejudgings">rejudgings</a>
+<?php	} ?>
 <?php	if ( have_printing() ) { ?>
 <li><a href="print.php" accesskey="p">print</a></li>
 <?php	} ?>

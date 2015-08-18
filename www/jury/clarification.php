@@ -14,9 +14,13 @@ $id = getRequestID();
 
 if ( isset($id) ) {
 
-	$req = $DB->q('MAYBETUPLE SELECT q.*, t.name AS name FROM clarification q
-		       LEFT JOIN team t ON (t.teamid = q.sender)
-		       WHERE q.cid IN %Ai AND q.clarid = %i', $cids, $id);
+	if ( empty($cids) ) {
+		$req = null;
+	} else {
+		$req = $DB->q('MAYBETUPLE SELECT q.*, t.name AS name FROM clarification q
+		               LEFT JOIN team t ON (t.teamid = q.sender)
+		               WHERE q.cid IN (%Ai) AND q.clarid = %i', $cids, $id);
+	}
 
 	if ( ! $req ) error("clarification $id not found, cids = " . implode(', ', $cids));
 
@@ -93,7 +97,7 @@ if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
 	                (isset($jury_member) ? '%s)' : 'NULL %_)'),
 	                $cid, $respid, now(), $sendto, $probid,
 	                $_POST['bodytext'], 1, $jury_member);
-	auditlog('clarification', $newid, 'added');
+	auditlog('clarification', $newid, 'added', null, null, $cid);
 
 	if ( ! $isgeneral ) {
 		$DB->q('UPDATE clarification SET answered = 1, jury_member = ' .

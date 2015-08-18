@@ -22,12 +22,13 @@ requireAdmin();
 <li>Tab separated, export:
 	<a href="impexp_tsv.php?act=ex&amp;fmt=groups">groups.tsv</a>,
 	<a href="impexp_tsv.php?act=ex&amp;fmt=teams">teams.tsv</a>,
-	<a href="impexp_tsv.php?act=ex&amp;fmt=scoreboard">scoreboard.tsv</a>
+	<a href="impexp_tsv.php?act=ex&amp;fmt=scoreboard">scoreboard.tsv</a>,
+	<a href="impexp_tsv.php?act=ex&amp;fmt=results">results.tsv</a>
 <li>
 <?php echo addForm('impexp_tsv.php', 'post', null, 'multipart/form-data') .
 	'Tab separated, import: ' .
 	'<label for="fmt">type:</label> ' .
-	addSelect('fmt',array('groups','teams')) .
+	addSelect('fmt',array('groups','teams','accounts')) .
         ', <label for="tsv">file:</label>' .
         addFileField('tsv') .
         addHidden('act','im') .
@@ -43,7 +44,7 @@ requireAdmin();
 Create a "Web Services Token" with appropriate rights in the "Export" section
 for your contest at <a
 href="https://icpc.baylor.edu/login">https://icpc.baylor.edu/login</a>. You can
-find the Contest ID (e.g. <tt>Southwestern-Europe-2014</tt>) in the URL.
+find the Contest ID (e.g. <code>Southwestern-Europe-2014</code>) in the URL.
 </p>
 
 <?php

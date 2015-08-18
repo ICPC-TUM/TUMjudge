@@ -63,9 +63,6 @@ if ( isset($_POST['upload']) ) {
 				$desc = $ini_array['description'];
 				$type = $ini_array['type'];
 			}
-			if ( $zip->getFromName('build') === FALSE ) {
-				error("Need 'build' script/executable when adding a new executable.");
-			}
 			$content = file_get_contents($_FILES['executable_archive']['tmp_name'][$fileid]);
 			if ( !empty($id) ) {
 				$DB->q('UPDATE executable SET description=%s, md5sum=%s, zipfile=%s, type=%s
@@ -124,10 +121,8 @@ if ( !empty($cmd) ):
 <tr><td><label for="data_0__description_">Executable description:</label></td>
 <td><?php echo addInput('data[0][description]', @$row['description'], 30, 255, 'required')?></td></tr>
 <tr><td><label for="data_0__type_">Executable type:</label></td>
-<td><?php echo addSelect('data[0][type]', array('compare' => 'compare',
-	                                            'compile' => 'compile',
-	                                            'run' => 'run'), @$row['type'], True)?></td></tr>
-
+<td><?php echo addSelect('data[0][type]', $executable_types, @$row['type'], True)?></td></tr>
+<tr><td>Content:     </td><td><a href="show_executable.php?edit_source=1&amp;id=<?php echo htmlspecialchars($id)?>">edit file contents</a></td></tr>
 </table>
 
 <?php
@@ -144,9 +139,7 @@ if ( class_exists("ZipArchive") ) {
 	addForm($pagename, 'post', null, 'multipart/form-data') .
 	addHidden('id', @$row['execid']) .
 	'<label for="executable_archive__">Upload executable archive:</label>' .
-	($cmd == 'add' ? addSelect('type', array('compare' => 'compare',
-	                                         'compile' => 'compile',
-	                                         'run' => 'run')) : '') .
+	($cmd == 'add' ? addSelect('type', $executable_types) : '') .
 	addFileField('executable_archive[]') .
 	addSubmit('Upload', 'upload') .
 	addEndForm();
@@ -176,7 +169,7 @@ echo addForm($pagename . '?id=' . urlencode($id),
 <tr><td>md5sum:      </td><td><?php echo htmlspecialchars($data['md5sum'])?></td></tr>
 <tr><td>type:        </td><td><?php echo htmlspecialchars($data['type'])?></td></tr>
 <tr><td>size:        </td><td><?php echo htmlspecialchars($data['size'])?> Bytes</td></tr>
-<tr><td>content:        </td><td><a href="show_executable.php?id=<?php echo htmlspecialchars($id)?>">view content of zip file</a></td></tr>
+<tr><td>content:     </td><td><a href="show_executable.php?id=<?php echo htmlspecialchars($id)?>">view file contents</a></td></tr>
 <tr><td>used as <?=$data['type'] ?> script:</td><td>
 <?php
 if ( $data['type'] == 'compare' ) {
@@ -221,8 +214,6 @@ if ( IS_ADMIN && class_exists("ZipArchive") ) {
 
 echo "</table>\n" . addEndForm();
 
-echo "<br />\n" . rejudgeForm('executable', $id) . "\n\n"; // FIXME: useful?
-
 if ( IS_ADMIN ) {
 	echo "<p>" .
 		'<a href="executable.php?fetch&amp;id=' . urlencode($id) .
@@ -231,12 +222,5 @@ if ( IS_ADMIN ) {
 		editLink('executable',$id) . "\n" .
 		delLink('executable','execid', $id) . "</p>\n\n";
 }
-
-/* FIXME: useful?
-echo "<h2>Submissions for " . htmlspecialchars($id) . "</h2>\n\n";
-
-$restrictions = array( 'execid' => $id );
-putSubmissions($cdata, $restrictions);
-*/
 
 require(LIBWWWDIR . '/footer.php');

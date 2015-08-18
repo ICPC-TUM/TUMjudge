@@ -26,12 +26,12 @@ require_once(LIBDIR . '/lib.misc.php');
  * This function returns an array (scores, summary, matrix)
  * containing the following:
  *
- * scores[teamid](num_correct, total_time, solve_times[], rank,
+ * scores[teamid](num_points, total_time, solve_times[], rank,
  *               teamname, categoryid, sortorder, country, affilid)
  *
  * matrix[teamid][probid](is_correct, num_submissions, num_pending, time, penalty)
  *
- * summary(num_correct, total_time, affils[affilid], countries[country], problems[probid]
+ * summary(num_points, total_time, affils[affilid], countries[country], problems[probid]
  *    probid(num_submissions, num_pending, num_correct, best_time_sort[sortorder] )
  */
 function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
@@ -45,9 +45,9 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 	// We can compare $now and the dbfields stringwise.
 	$now = now();
 	$showfinal  = ( !isset($cdata['freezetime']) &&
-		difftime($cdata['endtime'],$now) <= 0 ) ||
-		( isset($cdata['unfreezetime']) &&
-		difftime($cdata['unfreezetime'], $now) <= 0 );
+	                difftime($cdata['endtime'],$now) <= 0 ) ||
+	              ( isset($cdata['unfreezetime']) &&
+	                difftime($cdata['unfreezetime'], $now) <= 0 );
 	// contest is active but has not yet started
 	$cstarted = difftime($cdata['starttime'],$now) <= 0;
 
@@ -71,10 +71,9 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 		$cachetable = 'scorecache_public';
 	}
 
-	// Get all stuff from the cached table, but don't bother with outdated
-	// info from previous contests.
-	$scoredata = $DB->q("SELECT * FROM $cachetable WHERE cid = %i", $cid);
-
+	// Get all stuff from the cached table from this contest
+	$query = "SELECT points, $cachetable.* FROM $cachetable JOIN contestproblem USING(probid,cid) WHERE cid = %i";
+	$scoredata = $DB->q($query, $cid);
 
 	// loop all info the scoreboard cache and put it in our own datastructure
 	while ( $srow = $scoredata->next() ) {
@@ -95,7 +94,7 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 
 		// calculate totals for this team
 		if ( $srow['is_correct'] ) {
-			$SCORES[$srow['teamid']]['num_correct']++;
+			$SCORES[$srow['teamid']]['num_points'] += $srow['points'];
 			$SCORES[$srow['teamid']]['solve_times'][] = $srow['totaltime'];
 			$SCORES[$srow['teamid']]['total_time'] += $srow['totaltime'] + $penalty;
 		}
@@ -124,7 +123,8 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 		$prevteam = $team;
 
 		// keep summary statistics for the bottom row of our table
-		$SUMMARY['num_correct'] += $totals['num_correct'];
+		// The num_points summary is useful only if they're all 1-point problems.
+		$SUMMARY['num_points'] += $totals['num_points'];
 		if ( ! empty($teams[$team]['affilid']) ) @$SUMMARY['affils'][$totals['affilid']]++;
 		if ( ! empty($teams[$team]['country']) ) @$SUMMARY['countries'][$totals['country']]++;
 
@@ -134,7 +134,7 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 			// provide default scores when nothing submitted for this team,problem yet
 			if ( ! isset ( $MATRIX[$team][$prob] ) ) {
 				$MATRIX[$team][$prob] = array('num_submissions' => 0, 'num_pending' => 0,
-				                              'is_correct' => 0, 'time' => 0, 'penalty' => 0);
+				                              'is_correct' => false, 'time' => 0, 'penalty' => 0);
 			}
 			$pdata = $MATRIX[$team][$prob];
 			$psum = &$SUMMARY['problems'][$prob];
@@ -170,7 +170,7 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 function getProblems($cdata) {
 	global $DB;
 
-	return $DB->q('KEYTABLE SELECT probid AS ARRAYKEY, probid, shortname,
+	return $DB->q('KEYTABLE SELECT probid AS ARRAYKEY, probid, points, shortname,
 	               name, color, LENGTH(problemtext) AS hastext
 	               FROM problem
 	               INNER JOIN contestproblem USING (probid)
@@ -187,7 +187,7 @@ function getTeams($filter, $jury, $cdata) {
 	global $DB;
 
 	return $DB->q('KEYTABLE SELECT team.teamid AS ARRAYKEY, team.teamid, externalid,
-	               team.name, team.categoryid, team.affilid, sortorder,
+	               team.name, team.categoryid, team.affilid, penalty, sortorder,
 	               country, color, team_affiliation.name AS affilname
 	               FROM team
 	               INNER JOIN contest ON (contest.cid = %i)
@@ -196,10 +196,10 @@ function getTeams($filter, $jury, $cdata) {
 	               LEFT JOIN team_affiliation USING (affilid)
 	               WHERE team.enabled = 1 AND (ct.teamid IS NOT NULL OR contest.public = 1)' .
 	              ( $jury ? '' : ' AND visible = 1' ) .
-	              (isset($filter['affilid']) ? ' AND team.affilid IN %As ' : ' %_') .
-	              (isset($filter['country']) ? ' AND country IN %As ' : ' %_') .
-	              (isset($filter['categoryid']) ? ' AND team.categoryid IN %As ' : ' %_') .
-	              (isset($filter['teams']) ? ' AND team.teamid IN %Ai ' : ' %_'),
+	              (isset($filter['affilid']) ? ' AND team.affilid IN (%As) ' : ' %_') .
+	              (isset($filter['country']) ? ' AND country IN (%As) ' : ' %_') .
+	              (isset($filter['categoryid']) ? ' AND team.categoryid IN (%As) ' : ' %_') .
+	              (isset($filter['teams']) ? ' AND team.teamid IN (%Ai) ' : ' %_'),
 	              $cdata['cid'], @$filter['affilid'], @$filter['country'],
 	              @$filter['categoryid'], @$filter['teams']);
 }
@@ -221,14 +221,14 @@ function getCategories($jury) {
 /**
  * Helper function for genScoreBoard.
  *
- * Initialize SCORES table contains the totals for each team which is
+ * Initialize SCORES table contains the totals for each team which are
  * used for determining the ranking.
  */
 function initScores($teams) {
 	$SCORES = array();
 	foreach ($teams as $teamid => $team ) {
-		$SCORES[$teamid]['num_correct'] = 0;
-		$SCORES[$teamid]['total_time']  = 0;
+		$SCORES[$teamid]['num_points']  = 0;
+		$SCORES[$teamid]['total_time']  = $team['penalty'];
 		$SCORES[$teamid]['solve_times'] = array();
 		$SCORES[$teamid]['rank']        = 0;
 		$SCORES[$teamid]['teamname']    = $team['name'];
@@ -246,7 +246,7 @@ function initScores($teams) {
  * Initialize SUMMARY table.
  */
 function initSummary($probs) {
-	$SUMMARY = array('num_correct' => 0,
+	$SUMMARY = array('num_points' => 0,
 	                 'affils'      => array(),
 	                 'countries'   => array(),
 	                 'problems'    => array());
@@ -295,6 +295,14 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 	$SHOW_AFFILIATIONS = dbconfig_get('show_affiliations', 1);
 	$SHOW_PENDING      = dbconfig_get('show_pending', 0);
 
+	// Do not show points if they are all 1
+	$showpoints = FALSE;
+	foreach( $probs as $pr ) {
+		if ($pr['points'] != 1) {
+			$showpoints = TRUE;
+			break;
+		}
+	}
 	echo '<table class="scoreboard' . (IS_JURY ? ' scoreboard_jury' : '') . ($center ? ' center' : '') . "\">\n";
 
 	// output table column groups (for the styles)
@@ -321,11 +329,17 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 			htmlspecialchars($pr['color']) . ';"></div>' : '') ;
 
 		if ( !$static && (IS_JURY || $pr['hastext']>0) ) {
-		     echo '<a href="problem.php?id=' . urlencode($pr['probid']) .
-			     '">' . $str . '</a></th>';
+			echo '<a href="problem.php?id=' . urlencode($pr['probid']) .
+				'">' . $str . '</a>';
 		} else {
-			echo '<a>' . $str . '</a></th>';
+			echo '<a>' . $str . '</a>';
 		}
+		if ($showpoints) {
+			$points = $pr['points'];
+			$pts = ( $points == 1 ? '1 point' : "$points points" );
+			echo "<span class='problempoints'>[$pts]</span>";
+		}
+		echo '</th>';
 	}
 	echo "</tr>\n</thead>\n\n<tbody>\n";
 
@@ -340,19 +354,23 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
                 foreach($matrix[$team] AS $t) $num_submissions += $t['num_submissions'];
                 if ( empty($limitteams) && $num_submissions == 0) continue;
 
-		// rank, team name, total correct, total time
+		// rank, team name, total points, total time
 		echo '<tr';
+		$classes = array();
 		if ( $totals['sortorder'] != $prevsortorder ) {
-			echo ' class="sortorderswitch"';
+			$classes[] = "sortorderswitch";
 			$prevsortorder = $totals['sortorder'];
 			$prevteam = null;
 		}
 		// check whether this is us, otherwise use category colour
 		if ( @$myteamid == $team ) {
-			echo ' class="scorethisisme"';
+			$classes[] = "scorethisisme";
 			unset($color);
 		} else {
 			$color = $teams[$team]['color'];
+		}
+		if ( count($classes)>0 ) {
+			echo ' class="' . implode(' ', $classes) . '"';
 		}
 		echo ' id="team:' . $teams[$team]['teamid'] . '"';
 		echo '><td class="scorepl">';
@@ -404,7 +422,7 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 			($static ? '' : '</a>') .
 			'</td>';
 		echo
-			'<td class="scorenc">' . jurylink(null,$totals['num_correct']) . '</td>' .
+			'<td class="scorenc">' . jurylink(null,$totals['num_points']) . '</td>' .
 			'<td class="scorett">' . jurylink(null,$totals['total_time'] ) . '</td>';
 
 		// for each problem
@@ -447,15 +465,22 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 	echo "</tbody>\n\n";
 
 	if ( ( empty($limitteams) && !$shuffle ) || IS_JURY ) {
-		// print a summaryline
+		// print a summaryline. Exclude the "total solved" cell if using
+		// perproblem points as it's actually total points and not useful
+		if (!$showpoints) {
+			$totalCell = '<td title="total solved" class="scorenc">' .
+			             jurylink(null,$summary['num_points'])  . '</td>';
+		} else {
+			$totalCell = '<td class="scorenc" title=" "></td>';  // Empty
+		}
 		echo '<tbody><tr id="scoresummary" title="#submitted / #correct">' .
 			'<td title="total teams">' .
 			jurylink(null,count($matrix)) . '</td>' .
 			( $SHOW_AFFILIATIONS ? '<td class="scoreaffil" title="#affiliations / #countries">' .
 			  jurylink('team_affiliations.php',count($summary['affils']) . ' / ' .
-					   count($summary['countries'])) . '</td>' : '' ) .
+			           count($summary['countries'])) . '</td>' : '' ) .
 			'<td title=" ">' . jurylink(null,'Summary') . '</td>' .
-			'<td title="total solved" class="scorenc">' . jurylink(null,$summary['num_correct'])  . '</td><td title=" "></td>';
+			$totalCell . '<td title=" "></td>';
 
 		foreach( array_keys($probs) as $prob ) {
 			$str = $summary['problems'][$prob]['num_submissions'] . '/' .
@@ -539,7 +564,7 @@ function putScoreBoard($cdata, $myteamid = NULL, $static = FALSE, $filter = FALS
 	}
 
 	// page heading with contestname and start/endtimes
-	echo "<h1>Scoreboard " . htmlspecialchars($cdata['contestname']) . "</h1>\n\n";
+	echo "<h1>Scoreboard " . htmlspecialchars($cdata['name']) . "</h1>\n\n";
 
 	if ( $fdata['showfinal'] ) {
 		echo "<h4>final standings</h4>\n\n";
@@ -568,13 +593,20 @@ function putScoreBoard($cdata, $myteamid = NULL, $static = FALSE, $filter = FALS
 		$categids = $DB->q('KEYVALUETABLE SELECT categoryid, name FROM team_category ' .
 		                   (IS_JURY ? '' : 'WHERE visible = 1 ' ));
 		// show only affilids/countries with visible teams
-		$affils = $DB->q('KEYTABLE SELECT affilid AS ARRAYKEY, team_affiliation.name, country
-		                  FROM team_affiliation
-		                  LEFT JOIN team USING(affilid)
-		                  INNER JOIN contest ON contest.cid = %i
-		                  LEFT JOIN contestteam ON contestteam.teamid = team.teamid AND contestteam.cid = contest.cid
-		                  WHERE categoryid IN %As AND contest.cid = %i AND (contest.public = 1 OR contestteam.teamid IS NOT NULL) GROUP BY affilid',
-		                 $cdata['cid'], array_keys($categids), $cdata['cid']);
+		if ( empty($categids) ) {
+			$affils = array();
+		} else {
+			$affils = $DB->q('KEYTABLE SELECT affilid AS ARRAYKEY,
+			                  team_affiliation.name, country
+			                  FROM team_affiliation
+			                  LEFT JOIN team t USING (affilid)
+			                  INNER JOIN contest c ON (c.cid = %i)
+			                  LEFT JOIN contestteam ct ON (ct.teamid = t.teamid AND ct.cid = c.cid)
+			                  WHERE categoryid IN (%As) AND c.cid = %i AND
+			                  (c.public = 1 OR ct.teamid IS NOT NULL)
+			                  GROUP BY affilid',
+			                 $cdata['cid'], array_keys($categids), $cdata['cid']);
+		}
 
 		$affilids  = array();
 		$countries = array();
@@ -586,12 +618,24 @@ function putScoreBoard($cdata, $myteamid = NULL, $static = FALSE, $filter = FALS
 		$countries = array_unique($countries);
 		sort($countries);
 
+		$filteron = array();
+		$filtertext = "";
+		foreach (array('affilid' => 'affiliation', 'country' => 'country', 'categoryid' => 'category') as $type => $text) {
+			if ( isset($filter[$type]) ) {
+				$filteron[] = $text;
+			}
+		}
+		if ( sizeof($filteron) > 0 ) {
+			$filtertext = "(filtered on " . implode(", ", $filteron) . ")";
+		}
+
 		require_once(LIBWWWDIR . '/forms.php');
 		?>
 
 <table class="scorefilter">
 <tr>
 <td><a class="collapse" href="javascript:collapse('filter')"><img src="../images/filter.png" alt="filter&hellip;" title="filter&hellip;" class="picto" /></a></td>
+<td><?= $filtertext ?></td>
 <td><div id="detailfilter">
 <?php
 
@@ -599,7 +643,7 @@ function putScoreBoard($cdata, $myteamid = NULL, $static = FALSE, $filter = FALS
 			( count($affilids) > 1 ? addSelect('affilid[]',    $affilids,  @$filter['affilid'],    TRUE,  8) : "" ) .
 			( count($countries)> 1 ? addSelect('country[]',    $countries, @$filter['country'],    FALSE, 8) : "" ) .
 			( count($categids) > 1 ? addSelect('categoryid[]', $categids,  @$filter['categoryid'], TRUE,  8) : "" ) .
-			addSubmit('filter') . addSubmit('clear', 'clear') .
+			addSubmit('filter', 'filter') . addSubmit('clear', 'clear') .
 			addEndForm();
 		?>
 </div></td></tr>
@@ -622,9 +666,39 @@ collapse("filter");
 		$lastupdate = printtime(now(),'%a %d %b %Y %T %Z');
 	}
 	echo "<p id=\"lastmod\">Last Update: $lastupdate<br />\n" .
-	     "using <a href=\"http://www.domjudge.org/\">DOMjudge</a></p>\n\n";
+	     "using <a href=\"https://www.domjudge.org/\">DOMjudge</a></p>\n\n";
 
 	return;
+}
+
+/**
+ * Reads scoreboard filter settings from a cookie and explicit POST of
+ * filter settings. Also sets the cookie, so must be called before
+ * headers are sent. Returns the scoreboard filter settings array.
+ */
+function initScorefilter()
+{
+	$scorefilter = array();
+
+	// Read scoreboard filter options from cookie and explicit POST
+	if ( isset($_COOKIE['domjudge_scorefilter']) ) {
+		$scorefilter = json_decode($_COOKIE['domjudge_scorefilter'], TRUE);
+	}
+
+	if ( isset($_REQUEST['clear']) ) $scorefilter = array();
+
+	if ( isset($_REQUEST['filter']) ) {
+		$scorefilter = array();
+		foreach( array('affilid', 'country', 'categoryid') as $type ) {
+			if ( !empty($_REQUEST[$type]) ) {
+				$scorefilter[$type] = $_REQUEST[$type];
+			}
+		}
+	}
+
+	dj_setcookie('domjudge_scorefilter', json_encode($scorefilter));
+
+	return $scorefilter;
 }
 
 /**
@@ -698,14 +772,14 @@ function putTeamRow($cdata, $teamids) {
 		$SCORES  = initScores($teams);
 		$SUMMARY = initSummary($probs);
 
-		// Calculate rank, num correct and total time from rank cache
+		// Calculate rank, num points and total time from rank cache
 		foreach ($teams as $teamid => $team ) {
-			$totals = $DB->q("MAYBETUPLE SELECT correct, totaltime
+			$totals = $DB->q("MAYBETUPLE SELECT points, totaltime
 			                  FROM rankcache_jury
 			                  WHERE cid = %i
 			                  AND teamid = %i", $cid, $teamid);
 			if ( $totals != null ) {
-				$SCORES[$teamid]['num_correct'] = $totals['correct'];
+				$SCORES[$teamid]['num_points'] = $totals['points'];
 				$SCORES[$teamid]['total_time']  = $totals['totaltime'];
 			}
 			if ($displayrank) $SCORES[$teamid]['rank'] = calcTeamRank($cdata, $teamid, $totals, true);
@@ -713,7 +787,8 @@ function putTeamRow($cdata, $teamids) {
 
 		// Get values for this team about problems from scoreboard cache
 		$MATRIX = array();
-		$scoredata = $DB->q("SELECT * FROM scorecache_jury WHERE cid = %i AND teamid IN %As", $cid, $teamids);
+		$scoredata = $DB->q("SELECT * FROM scorecache_jury WHERE cid = %i AND teamid = %i", $cid,
+		                    current($teamids));
 
 		// loop all info the scoreboard cache and put it in our own datastructure
 		while ( $srow = $scoredata->next() ) {
@@ -787,7 +862,7 @@ function calcTeamRank($cdata, $teamid, $teamtotals, $jury = FALSE) {
 	// Use jury scoreboard when jury or final scoreboard should be displayed
 	$tblname = $jury || $fdata['showfinal'] ? 'jury' : 'public';
 
-	$correct   = (isset($teamtotals['correct'])   ? $teamtotals['correct']   : 0);
+	$points    = (isset($teamtotals['points'])    ? $teamtotals['points']    : 0);
 	$totaltime = (isset($teamtotals['totaltime']) ? $teamtotals['totaltime'] : 0);
 
 	$sortorder = $DB->q('VALUE SELECT sortorder
@@ -801,20 +876,20 @@ function calcTeamRank($cdata, $teamid, $teamtotals, $jury = FALSE) {
 	                  LEFT JOIN team USING (teamid)
 	                  LEFT JOIN team_category USING (categoryid)
 	                  WHERE cid = %i AND sortorder = %i AND enabled = 1
-	                  AND (correct > %i OR (correct = %i AND totaltime < %i))",
-	                 $cid, $sortorder, $correct, $correct, $totaltime);
+	                  AND (points > %i OR (points = %i AND totaltime < %i))",
+	                 $cid, $sortorder, $points, $points, $totaltime);
 	$rank = $better + 1;
 
-	// Resolve ties based on latest correct, only necessary when we actually
+	// Resolve ties based on latest correctness points, only necessary when we actually
 	// solved at least one problem, so this list should usually be short
-	if ( $correct > 0 ) {
+	if ( $points > 0 ) {
 		$tied = $DB->q("COLUMN SELECT team.teamid
 		                FROM rankcache_$tblname AS rc
 		                LEFT JOIN team USING (teamid)
 		                LEFT JOIN team_category USING (categoryid)
 		                WHERE cid = %i AND sortorder = %i AND enabled = 1
-		                AND correct = %i AND totaltime = %i",
-		               $cid, $sortorder, $correct, $totaltime);
+		                AND points = %i AND totaltime = %i",
+		               $cid, $sortorder, $points, $totaltime);
 
 		// All teams that are tied for this position, in most cases this will
 		// only be the team we are finding the rank for, only retrieve rest of
@@ -832,7 +907,7 @@ function calcTeamRank($cdata, $teamid, $teamtotals, $jury = FALSE) {
 			                     LEFT JOIN problem p USING (probid)
 			                     LEFT JOIN contestproblem cp USING (probid, cid)
 			                     WHERE sc.cid = %i AND is_correct = 1
-			                     AND allow_submit = 1 AND teamid IN %Ai",
+			                     AND allow_submit = 1 AND teamid IN (%Ai)",
 			                    $cid, $tied);
 			while ( $srow = $scoredata->next() ) {
 				$teamdata[$srow['teamid']]['solve_times'][] = $srow['totaltime'];
@@ -885,14 +960,14 @@ function printContestStart($cdata)
  * Main score comparison function, called from the 'cmp' wrapper
  * below. Scores two arrays, $a and $b, based on the following
  * criteria:
- * - highest number of correct solutions;
+ * - highest points from correct solutions;
  * - least amount of total time spent on these solutions;
  * - the tie-breaker function below
  */
 function cmpscore($a, $b) {
-	// more correct than someone else means higher rank
-	if ( $a['num_correct'] != $b['num_correct'] ) {
-		return $a['num_correct'] > $b['num_correct'] ? -1 : 1;
+	// more correctness points than someone else means higher rank
+	if ( $a['num_points'] != $b['num_points'] ) {
+		return $a['num_points'] > $b['num_points'] ? -1 : 1;
 	}
 	// else, less time spent means higher rank
 	if ( $a['total_time'] != $b['total_time'] ) {

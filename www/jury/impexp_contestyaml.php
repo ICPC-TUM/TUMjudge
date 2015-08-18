@@ -10,8 +10,6 @@ require('init.php');
 
 requireAdmin();
 
-require(LIBEXTDIR . '/spyc/spyc.php');
-
 if ( isset($_POST['import']) ) {
 
 	if ( isset($_FILES) && isset($_FILES['import_config']) &&
@@ -30,8 +28,12 @@ if ( isset($_POST['import']) ) {
 
 		require(LIBWWWDIR . '/checkers.jury.php');
 
+		$invalid_regex = '/[^' . substr(IDENTIFIER_CHARS,1).'/';
+
 		$contest = array();
-		$contest['contestname'] = $contest_yaml_data['name'];
+		$contest['name'] = $contest_yaml_data['name'];
+		$contest['shortname'] = preg_replace($invalid_regex, '_',
+		                                     $contest_yaml_data['short-name']);
 		$contest['starttime_string'] =
 		    strftime('%Y-%m-%d %H:%M:%S', strtotime($contest_yaml_data['start-time']));
 		$contest['activatetime_string'] = '-1:00';
@@ -44,7 +46,6 @@ if ( isset($_POST['import']) ) {
 			$contest['freezetime_string'] =
 			    '+' . substr($contest_yaml_data['scoreboard-freeze'],0,-3);
 		}
-		// TODO or 1?
 		$contest['enabled'] = 1;
 
 		$contest = check_contest($contest);
@@ -98,25 +99,17 @@ if ( isset($_POST['import']) ) {
 		}
 	*/
 
-		foreach ($contest_yaml_data['problemset'] as $problem) {
+		foreach ($contest_yaml_data['problems'] as $problem) {
 			// TODO better lang-id?
-			$prob = array();
-			if ( $DB->q("MAYBEVALUE SELECT probid FROM problem
-			             WHERE probid = %s", $problem['letter']) ) {
-				echo "<p>A problem with problem id $problem[letter] already exists.</p>\n";
-				require(LIBWWWDIR . '/footer.php');
-				exit;
-			}
-			$prob['probid'] = $problem['letter'];
-			$prob['cid'] = $cid;
-			$prob['name'] = $problem['short-name'];
-			$prob['allow_submit'] = 1;
-			$prob['allow_judge'] = 1;
-			// TODO Fredrik?
-			$prob['timelimit'] = 10;
-			$prob['color'] = $problem['rgb'];
 
-			$DB->q("INSERT INTO problem SET %S", $prob);
+			$probid = $DB->q('RETURNID INSERT INTO problem
+			                  SET name = %s, timelimit = %i',
+			                 $problem['short-name'], 10);
+			// TODO: ask Fredrik about configuration of timelimit
+
+			$DB->q('INSERT INTO contestproblem (cid, probid, shortname, color)
+			        VALUES (%i, %i, %s, %s)',
+			       $cid, $probid, $problem['letter'], $problem['rgb']);
 		}
 
 		dbconfig_store();
@@ -147,8 +140,8 @@ if ( isset($_POST['import']) ) {
 	}
 
 	$contest_data = array();
-	$contest_data['name'] = $contest_row['contestname'];
-	$contest_data['short-name'] = $contest_row['contestname'];
+	$contest_data['name'] = $contest_row['name'];
+	$contest_data['short-name'] = $contest_row['name'];
 	$contest_data['start-time'] = date('c', $contest_row['starttime']);
 	$contest_data['duration'] =
 		printtimerel(calcContestTime($contest_row['endtime'], $contest_row['cid']));
@@ -174,17 +167,22 @@ if ( isset($_POST['import']) ) {
 		$contest_data['languages'][] = $language;
 
 	}
-	$contest_data['problemset'] = array();
-	$q = $DB->q("SELECT * FROM problem INNER JOIN contestproblem USING (probid) WHERE cid IN %Ai", getCurContests(FALSE));
-	while ( $prob = $q->next() ) {
+	$contest_data['problems'] = array();
+	$contests = getCurContests(FALSE);
+	if ( !empty($contests) ) {
+		$q = $DB->q("SELECT * FROM problem INNER JOIN contestproblem USING (probid) WHERE cid IN (%Ai)",
+		            $contests);
+		while ( $prob = $q->next() ) {
 
-		$problem = array();
-		$problem['letter'] = $prob['probid'];
-		$problem['short-name'] = $prob['name'];
-		$problem['color'] = $prob['color'];
-		// TODO? rgb? Fredrik?
-		$contest_data['problemset'][] = $problem;
-
+			$problem = array();
+			$problem['letter'] = $prob['probid'];
+			$problem['short-name'] = $prob['name'];
+			// Our color field can be both a HTML color name and an RGB value,
+			// so we output it only in the human-readable field "color" and
+			// leave the field "rgb" unset.
+			$problem['color'] = $prob['color'];
+			$contest_data['problems'][] = $problem;
+		}
 	}
 
 
@@ -217,7 +215,7 @@ echo addSubmit('Import', 'import') . addEndForm();
 echo "<h2>Export to YAML</h2>\n\n";
 echo addForm('impexp_contestyaml.php');
 echo '<label for="contest">Select contest: </label>';
-$contests = $DB->q("KEYVALUETABLE SELECT cid, contestname FROM contest");
+$contests = $DB->q("KEYVALUETABLE SELECT cid, name FROM contest");
 echo addSelect('contest', $contests, null, true);
 echo addSubmit('Export', 'export') . addEndForm();
 

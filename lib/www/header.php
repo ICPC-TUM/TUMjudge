@@ -47,9 +47,15 @@ if ( IS_JURY ) {
 	if (isset($printercss)) {
 		echo "<link rel=\"stylesheet\" href=\"style_printer.css\" type=\"text/css\" media=\"print\" />\n";
 	}
+	echo "<script type=\"text/javascript\" src=\"../js/jquery.min.js\"></script>\n";
+	echo "<script type=\"text/javascript\" src=\"../js/jury.js\"></script>\n";
 	if (isset($jscolor)) {
 		echo "<script type=\"text/javascript\" src=\"" .
 		"../js/jscolor.js\"></script>\n";
+	}
+	if (isset($jqtokeninput)) {
+		echo "<link rel=\"stylesheet\" href=\"../token-input.css\" type=\"text/css\" />";
+		echo "<script type=\"text/javascript\" src=\"../js/jquery.tokeninput.min.js\"></script>\n";
 	}
 	echo "<script type=\"text/javascript\" src=\"" .
 		"../js/sorttable.js\"></script>\n";
@@ -66,8 +72,9 @@ if ( IS_JURY ) {
 	global $pagename;
 	echo "<body ".$cssclass." onload=\"setInterval('updateMenu(" .
 		(int)($pagename=='clarifications.php' && $refresh_cookie) . ", " .
-		(int)($pagename=='judgehosts.php' && $refresh_cookie) . ")', 20000); " .
-		"updateMenu(0,0)\">\n";
+		(int)($pagename=='judgehosts.php'     && $refresh_cookie) . ", " .
+		(int)($pagename=='rejudgings.php'     && $refresh_cookie) . ")', 20000); " .
+		"updateMenu(0,0,0)\">\n";
 } else {
 	echo "<body ".$cssclass.">\n";
 }
