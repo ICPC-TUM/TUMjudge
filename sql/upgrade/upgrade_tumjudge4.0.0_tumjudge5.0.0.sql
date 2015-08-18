@@ -82,10 +82,6 @@ INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES
 ('judgehost_critical', '120', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "critical".'),
 ('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.');
 
--- Update compare scripts to support new Kattis 42/43 exitcode format:
-source mysql_db_files_defaultdata.sql
-source mysql_db_files_examples.sql
-
 -- Add changes not contained in last upgrade script
 ALTER TABLE `contestproblem`
   ADD COLUMN `lazy_eval_results` tinyint(1) unsigned DEFAULT NULL COMMENT 'Whether to do lazy evaluation for this problem; if set this overrides the global configuration setting' AFTER `color`;
