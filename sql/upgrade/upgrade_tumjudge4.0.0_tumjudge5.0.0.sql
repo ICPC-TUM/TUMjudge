@@ -89,3 +89,6 @@ ALTER TABLE `contestproblem`
 ALTER TABLE `contest`
   CHANGE COLUMN `contestname` `name` varchar(255) NOT NULL COMMENT 'Descriptive name';
 
+ALTER TABLE `judgehost_restriction`
+  CHANGE COLUMN `restrictionname` `name` varchar(255) NOT NULL COMMENT 'Descriptive name';
+
