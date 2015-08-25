@@ -1030,13 +1030,6 @@ function putPointsOverview($teamid) {
         //database queries, just get the data needed), ...
         global $DB;
 
-        $pointsArray = array(
-	        '#00ff00' => 4,
-        	'#ffff00' => 6,
-        	'#ff0000' => 8,
-        	'#ffffff' => 0,
-        	'default' => 1
-        );
         $coursePointArray = array();
         $courseTotalArray = array();
 
@@ -1106,12 +1099,7 @@ function putPointsOverview($teamid) {
                         $contestMaxPoints = 0;
                         //create contest problem table
                         while($pr != NULL) {
-                                if (!array_key_exists($pr['color'], $pointsArray)) {
-                                        $problemMaxPoints = $pointsArray['default'];
-                                }
-                                else {
-                                        $problemMaxPoints = $pointsArray[$pr['color']];
-                                }
+                                $problemMaxPoints = $pr['points'];
                                 $contestMaxPoints += $problemMaxPoints;
                                 //check if team has correct,incorrect or no submission for problem
                                 $solved = $DB->q('SELECT DISTINCT s.probid AS probid
@@ -1127,12 +1115,7 @@ function putPointsOverview($teamid) {
 
                                 if ($solved->next()['probid'] != NULL) {
                                         $solved = 'score_correct';
-                                        if (!array_key_exists($pr['color'], $pointsArray)) {
-                                                $problemPoints = $pointsArray['default'];
-                                        }
-                                        else {
-                                                $problemPoints = $pointsArray[$pr['color']];
-                                        }
+                                        $problemPoints = $problemMaxPoints;
                                         $contestSum += $problemPoints;
                                 }
                                 else {
