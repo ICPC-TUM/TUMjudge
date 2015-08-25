@@ -143,18 +143,20 @@ function usage()
 // fetches new executable from database if necessary
 // runs build to compile executable
 // returns absolute path to run script
-function fetch_executable($workdirpath, $execid, $md5sum) {
-	// FIXME: make sure we don't have to escape $execid
+function fetch_executable($workdirpath, $execid, $md5sum)
+{
 	$execpath = "$workdirpath/executable/" . $execid;
 	$execmd5path = $execpath . "/md5sum";
+	$execdeploypath = $execpath . "/.deployed";
 	$execbuildpath = $execpath . "/build";
 	$execrunpath = $execpath . "/run";
 	$execzippath = $execpath . "/executable.zip";
 	if ( empty($md5sum) ) {
 		error("unknown executable '" . $execid . "' specified");
 	}
-	if ( !file_exists($execpath) || !file_exists($execmd5path)
-		|| file_get_contents($execmd5path) != $md5sum ) {
+	if ( !file_exists($execpath) || !file_exists($execmd5path) ||
+	     !file_exists($execdeploypath)
+		|| file_get_contents($execmd5path) !== $md5sum ) {
 		logmsg(LOG_INFO, "Fetching new executable '" . $execid . "'");
 		system("rm -rf $execpath");
 		system("mkdir -p '$execpath'", $retval);
@@ -165,7 +167,7 @@ function fetch_executable($workdirpath, $execid, $md5sum) {
 			error("Could not create executable zip file in $execpath");
 		}
 		unset($content);
-		if ( md5_file($execzippath) != $md5sum ) {
+		if ( md5_file($execzippath) !== $md5sum ) {
 			error("Zip file corrupted during download.");
 		}
 		if ( file_put_contents($execmd5path, $md5sum) === FALSE ) {
@@ -176,25 +178,88 @@ function fetch_executable($workdirpath, $execid, $md5sum) {
 		system("unzip -q -d $execpath $execzippath", $retval);
 		if ( $retval!=0 ) error("Could not unzip zipfile in $execpath");
 
-		if ( !file_exists($execbuildpath) || !is_executable($execbuildpath) ) {
-			error("Invalid executable, must contain executable file 'build'.");
+		$do_compile = TRUE;
+		if ( !file_exists($execbuildpath) ) {
+			if ( file_exists($execrunpath) ) {
+				// 'run' already exists, 'build' does not => don't compile anything
+				logmsg(LOG_DEBUG, "'run' exists without 'build', we are done");
+				$do_compile = FALSE;
+			} else {
+				// detect lang and write build file
+				$langexts = array(
+						'c' => array('c'),
+						'cpp' => array('cpp', 'C', 'cc'),
+						'java' => array('java'),
+						'py' => array('py', 'py2', 'py3')
+				);
+				$buildscript = "#!/bin/sh\n\n";
+				$execlang = FALSE;
+				$source = "";
+				foreach ($langexts as $lang => $langext) {
+					if ( ($handle = opendir($execpath)) === FALSE ) {
+						error("Could not open $execpath");
+					}
+					while ( ($file = readdir($handle)) !== FALSE ) {
+						$ext = pathinfo($file, PATHINFO_EXTENSION);
+						if ( in_array($ext, $langext) ) {
+							$execlang = $lang;
+							$source = $file;
+							break;
+						}
+					}
+					closedir($handle);
+					if ( $execlang !== FALSE ) break;
+				}
+				if ( $execlang === FALSE ) {
+					error("executable must either provide an executable file named 'build' or a C/C++/Java or Python file.");
+				}
+				switch ( $execlang ) {
+				case 'c':
+					$buildscript .= "gcc -Wall -O2 -std=gnu99 '$source' -o $execrunpath -lm\n";
+					break;
+				case 'cpp':
+					$buildscript .= "g++ -Wall -O2 -std=c++11 '$source' -o $execrunpath\n";
+					break;
+				case 'java':
+					$source = basename($source, ".java");
+					$buildscript .= "javac -cp $execpath -d $execpath '$source'.java\n";
+					$buildscript .= "echo '#!/bin/sh' > run\n";
+					// no main class detection here
+					$buildscript .= "echo 'java -cp $execpath '$source' >> run\n";
+					break;
+				case 'py':
+					$buildscript .= "echo '#!/bin/sh' > run\n";
+					$buildscript .= "echo 'python '$source' >> run\n";
+					break;
+				}
+				if ( file_put_contents($execbuildpath, $buildscript) === FALSE ) {
+					error("Could not write file 'build' in $exepath");
+				}
+				chmod($execbuildpath, 0700);
+			}
+		} else if ( !is_executable($execbuildpath) ) {
+			error("Invalid executable, file 'build' exists but is not executable.");
 		}
 
-		logmsg(LOG_DEBUG, "Compiling");
-		$olddir = getcwd();
-		chdir($execpath);
-		system("./build", $retval);
-		if ( $retval!=0 ) error("Could not run ./build in $execpath");
-		chdir($olddir);
+		if ( $do_compile ) {
+			logmsg(LOG_DEBUG, "Compiling");
+			$olddir = getcwd();
+			chdir($execpath);
+			system("./build", $retval);
+			if ( $retval!=0 ) error("Could not run ./build in $execpath");
+			chdir($olddir);
+		}
 		if ( !file_exists($execrunpath) || !is_executable($execrunpath) ) {
 			error("Invalid build file, must produce an executable file 'run'.");
 		}
 	}
+	// Create file to mark executable successfully deployed.
+	touch($execdeploypath);
+
 	return $execrunpath;
 }
 
 $options = getopt("dv:n:hV");
-// With PHP version >= 5.3 we can also use long options.
 // FIXME: getopt doesn't return FALSE on parse failure as documented!
 if ( $options===FALSE ) {
 	echo "Error: parsing options failed.\n";
@@ -276,6 +341,10 @@ logmsg(LOG_NOTICE, "Judge started on $myhost [DOMjudge/".DOMJUDGE_VERSION."]");
 initsignals();
 
 read_credentials();
+
+// Set umask to allow group,other access, as this is needed for the
+// unprivileged user.
+umask(0022);
 
 // Warn when chroot has been disabled. This has security implications.
 if ( ! USE_CHROOT ) {
@@ -497,7 +566,7 @@ function judge($row)
 					error("Could not create $tcfile[$inout].new");
 				}
 				unset($content);
-				if ( md5_file("$tcfile[$inout].new") == $tc['md5sum_'.$inout]) {
+				if ( md5_file("$tcfile[$inout].new") === $tc['md5sum_'.$inout]) {
 					rename("$tcfile[$inout].new",$tcfile[$inout]);
 				} else {
 					error("File corrupted during download.");
@@ -506,7 +575,7 @@ function judge($row)
 			}
 			// sanity check (NOTE: performance impact is negligible with 5
 			// testcases and total 3.3 MB of data)
-			if ( md5_file($tcfile[$inout]) != $tc['md5sum_' . $inout] ) {
+			if ( md5_file($tcfile[$inout]) !== $tc['md5sum_' . $inout] ) {
 				error("File corrupted: md5sum mismatch: " . $tcfile[$inout]);
 			}
 		}
@@ -535,7 +604,7 @@ function judge($row)
 
 		system(LIBJUDGEDIR . "/testcase_run.sh $cpuset_opt $tcfile[input] $tcfile[output] " .
 		       "$row[maxruntime]:$hardtimelimit '$testcasedir' " .
-		       "'$run_runpath' '$compare_runpath'", $retval);
+		       "'$run_runpath' '$compare_runpath' '$row[compare_args]'", $retval);
 
 		// what does the exitcode mean?
 		if( ! isset($EXITCODES[$retval]) ) {
@@ -563,7 +632,7 @@ function judge($row)
 			. '&output_run='   . rest_encode_file($testcasedir . '/program.out', FALSE)
 			. '&output_error=' . rest_encode_file($testcasedir . '/program.err')
 			. '&output_system=' . rest_encode_file($testcasedir . '/system.out')
-			. '&output_diff='  . rest_encode_file($testcasedir . '/compare.out')
+			. '&output_diff='  . rest_encode_file($testcasedir . '/feedback/judgemessage.txt')
 		);
 		logmsg(LOG_DEBUG, "Testcase $tc[rank] done, result: " . $result);
 

@@ -29,7 +29,10 @@ if ( isset($_REQUEST['cmd']) &&
 	}
 }
 
-$row = $DB->q('TUPLE SELECT judgehost.*, restrictionname FROM judgehost LEFT JOIN judgehost_restriction USING (restrictionid) WHERE hostname = %s', $id);
+$row = $DB->q('TUPLE SELECT judgehost.*, r.name AS restrictionname
+               FROM judgehost
+               LEFT JOIN judgehost_restriction r USING (restrictionid)
+               WHERE hostname = %s', $id);
 
 $title = 'Judgehost '.htmlspecialchars($row['hostname']);
 
@@ -57,9 +60,9 @@ if ( empty($row['polltime']) ) {
 	echo "Judgehost never checked in.";
 } else {
 	$reltime = floor(difftime(now(),$row['polltime']));
-	if ( $reltime < JUDGEHOST_WARNING ) {
+	if ( $reltime < dbconfig_get('judgehost_warning',30) ) {
 		echo "OK";
-	} else if ( $reltime < JUDGEHOST_CRITICAL ) {
+	} else if ( $reltime < dbconfig_get('judgehost_critical',120) ) {
 		echo "Warning";
 	} else {
 		echo "Critical";
@@ -91,13 +94,16 @@ echo "<h3>Judgings by " . printhost($row['hostname']) . "</h3>\n\n";
 
 // get the judgings for a specific key and value pair
 // select only specific fields to avoid retrieving large blobs
-$res = $DB->q('SELECT judgingid, submitid, starttime, endtime, judgehost,
-               result, verified, valid FROM judging
-               WHERE cid IN %Ai AND judgehost = %s
-               ORDER BY starttime DESC, judgingid DESC',
-              getCurContests(FALSE), $row['hostname']);
+$cids = getCurContests(FALSE);
+if ( !empty($cids) ) {
+	$res = $DB->q('SELECT judgingid, submitid, starttime, endtime, judgehost,
+	               result, verified, valid FROM judging
+	               WHERE cid IN (%Ai) AND judgehost = %s
+	               ORDER BY starttime DESC, judgingid DESC',
+	              $cids, $row['hostname']);
+}
 
-if( $res->count() == 0 ) {
+if( empty($cids) || $res->count() == 0 ) {
 	echo "<p class=\"nodata\">No judgings.</p>\n\n";
 } else {
 	echo "<table class=\"list sortable\">\n<thead>\n" .

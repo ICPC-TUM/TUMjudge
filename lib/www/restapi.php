@@ -7,7 +7,7 @@
  * under the GNU GPL. See README and COPYING for details.
  */
 
-define('DOMJUDGE_API_VERSION', 1);
+define('DOMJUDGE_API_VERSION', 2);
 
 define('BAD_REQUEST', '400 Bad Request');
 define('FORBIDDEN', '403 Forbidden');
@@ -212,6 +212,7 @@ class RestApi {
 	private function createResponse($response)
 	{
 		header('Content-Type: application/json');
+		// TODO: use JSON_PRETTY_PRINT available in PHP >= 5.4.0?
 		print json_encode($response);
 		exit;
 	}

@@ -13,6 +13,31 @@ define('IDENTIFIER_CHARS', '[a-zA-Z0-9_-]');
 define('FILENAME_REGEX', '/^[a-zA-Z0-9][a-zA-Z0-9+_\.-]*$/');
 
 /**
+ * Wrapper around PHP setcookie function to automatically set some
+ * DOMjudge specific defaults and check the return value.
+ * - cookies are defined in a common path for all web interfaces
+ */
+function dj_setcookie($name, $value = null, $expire = 0,
+                      $path = null, $domain = null, $secure = false, $httponly = false)
+{
+	if ( !isset($path) ) {
+		// KLUDGE: We want to find the DOMjudge base path, but this
+		// information is not directly available as configuration, so
+		// we extract it from the executed PHP script.
+		$path = preg_replace('/(jury|public|team)\/?$/', '',
+		                     dirname($_SERVER['PHP_SELF']));
+	}
+
+	$ret = setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
+
+	if ( $ret!==true ) warning("Cookie '$name' not set properly.");
+
+	logmsg(LOG_DEBUG, "Cookie set: $name=$value, expire=$expire, path=$path");
+
+	return $ret;
+}
+
+/**
  * helperfunction to read all contents from a file.
  * If $sizelimit is true (default), then only limit this to
  * the first 50,000 bytes and attach a note saying so.
@@ -55,18 +80,22 @@ function getCurContests($fulldata = FALSE, $onlyofteam = NULL,
 	if ( $onlyofteam !== null && $onlyofteam > 0 ) {
 		$contests = $DB->q("SELECT * FROM contest
 		                    LEFT JOIN contestteam USING (cid)
-		                    WHERE (contestteam.teamid = %i OR contest.public = 1) AND enabled = 1 ${extra}
-		                    AND deactivatetime > UNIX_TIMESTAMP()
+		                    WHERE (contestteam.teamid = %i OR contest.public = 1)
+		                    AND enabled = 1 ${extra}
+		                    AND ( deactivatetime IS NULL OR
+		                          deactivatetime > UNIX_TIMESTAMP() )
 		                    ORDER BY activatetime", $onlyofteam);
 	} elseif ( $onlyofteam === -1 ) {
 		$contests = $DB->q("SELECT * FROM contest
 		                    WHERE enabled = 1 AND public = 1 ${extra}
-		                    AND deactivatetime > UNIX_TIMESTAMP()
+		                    AND ( deactivatetime IS NULL OR
+		                          deactivatetime > UNIX_TIMESTAMP() )
 		                    ORDER BY activatetime");
 	} else {
 		$contests = $DB->q("SELECT * FROM contest
 		                    WHERE enabled = 1 ${extra}
-		                    AND deactivatetime > UNIX_TIMESTAMP()
+		                    AND ( deactivatetime IS NULL OR
+		                          deactivatetime > UNIX_TIMESTAMP() )
 		                    ORDER BY activatetime");
 	}
 	$contests = $contests->getkeytable($key);
@@ -131,7 +160,8 @@ function problemVisible($probid)
  */
 function calcContestTime($walltime, $cid)
 {
-	global $cdatas;
+	// get contest data in case of non-public contests
+	$cdatas = getCurContests(TRUE);
 
 	$contesttime = difftime($walltime, $cdatas[$cid]['starttime']);
 
@@ -251,7 +281,7 @@ function calcScoreRow($cid, $team, $prob) {
  *
  * Given a contestid and teamid (re)calculate the time
  * and solved problems for a team. Third parameter indictates
- * if the cache for jury of public should be updated.
+ * if the cache for jury or public should be updated.
  *
  * Due to current transactions usage, this function MUST NOT contain
  * any START TRANSACTION or COMMIT statements.
@@ -260,6 +290,8 @@ function updateRankCache($cid, $team, $jury) {
 	global $DB;
 
 	logmsg(LOG_DEBUG, "updateRankCache '$cid' '$team' '$jury'");
+
+	$team_penalty = $DB->q("VALUE SELECT penalty FROM team WHERE teamid = %i", $team);
 
 	// Find table name
 	$tblname = $jury ? 'jury' : 'public';
@@ -272,26 +304,27 @@ function updateRankCache($cid, $team, $jury) {
 	}
 
 	// Fetch values from scoreboard cache per problem
-	$scoredata = $DB->q("SELECT submissions, is_correct, totaltime
-	                     FROM scorecache_$tblname
-	                     WHERE cid = %i and teamid = %i", $cid, $team);
-	$num_correct = 0;
-	$total_time = 0;
+	$scoredata = $DB->q("SELECT submissions, is_correct, cp.points, totaltime
+			     FROM scorecache_$tblname
+			     LEFT JOIN contestproblem cp USING(probid,cid)
+			     WHERE cid = %i and teamid = %i", $cid, $team);
+	$num_points = 0;
+	$total_time = $team_penalty;
 	while ( $srow = $scoredata->next() ) {
 		// Only count solved problems
 		if ( $srow['is_correct'] ) {
 			$penalty = calcPenaltyTime( $srow['is_correct'],
 			                            $srow['submissions'] );
-			$num_correct++;
+			$num_points += $srow['points'];
 			$total_time += $srow['totaltime'] + $penalty;
 		}
 	}
 
 	// Update the rank cache table
 	$DB->q("REPLACE INTO rankcache_$tblname
-	        (cid, teamid, correct, totaltime)
+	        (cid, teamid, points, totaltime)
 	        VALUES (%i,%i,%i,%i)",
-	       $cid, $team, $num_correct, $total_time);
+	       $cid, $team, $num_points, $total_time);
 
 	// Release the lock
 	if ( $DB->q("VALUE SELECT RELEASE_LOCK('$lockstr')") != 1 ) {
@@ -480,12 +513,6 @@ function initsignals()
 
 	$exitsignalled = FALSE;
 
-	// Tick use required between PHP 4.3.0 and 5.3.0 for handling
-	// signals, must be declared globally.
-	if ( version_compare(PHP_VERSION, '5.3', '<' ) ) {
-		declare(ticks = 1);
-	}
-
 	if ( ! function_exists('pcntl_signal') ) {
 		logmsg(LOG_INFO, "Signal handling not available");
 		return;
@@ -597,11 +624,16 @@ function submit_solution($team, $prob, $contest, $lang, $files, $filenames, $ori
 	                        WHERE teamid = %i AND enabled = 1',$team) ) {
 		error("Team '$team' not found in database or not enabled.");
 	}
-	if( ! $probid = $DB->q('MAYBEVALUE SELECT probid FROM problem
-	                        INNER JOIN contestproblem USING (probid)
-	                        WHERE probid = %s AND cid = %i AND allow_submit = 1',
-	                       $prob, $contest) ) {
+	$probdata = $DB->q('MAYBETUPLE SELECT probid, points FROM problem
+	                    INNER JOIN contestproblem USING (probid)
+	                    WHERE probid = %s AND cid = %i AND allow_submit = 1',
+	                   $prob, $contest);
+
+	if ( empty($probdata) ) {
 		error("Problem p$prob not found in database or not submittable [c$contest].");
+	} else {
+		$points = $probdata['points'];
+		$probid = $probdata['probid'];
 	}
 
 	// Reindex arrays numerically to allow simultaneously iterating
