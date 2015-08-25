@@ -92,3 +92,8 @@ ALTER TABLE `contest`
 ALTER TABLE `judgehost_restriction`
   CHANGE COLUMN `restrictionname` `name` varchar(255) NOT NULL COMMENT 'Descriptive name';
 
+-- insert actual point values
+UPDATE `contestproblem` INNER JOIN `contest` ON contestproblem.cid = contest.cid SET points = 0 WHERE color='#ffffff' AND contest.name LIKE '%Week%';
+UPDATE `contestproblem` INNER JOIN `contest` ON contestproblem.cid = contest.cid SET points = 4 WHERE color='#00ff00' AND contest.name LIKE '%Week%';
+UPDATE `contestproblem` INNER JOIN `contest` ON contestproblem.cid = contest.cid SET points = 6 WHERE color='#ffff00' AND contest.name LIKE '%Week%';
+UPDATE `contestproblem` INNER JOIN `contest` ON contestproblem.cid = contest.cid SET points = 8 WHERE color='#ff0000' AND contest.name LIKE '%Week%';
