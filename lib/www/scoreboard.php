@@ -1052,7 +1052,7 @@ function putPointsOverview($teamid) {
         $header3 = '';
         $first = '';
         while ($contest = $res->next()) {
-	        $split = explode('-', $contest['contestname']);
+	        $split = explode('-', $contest['name']);
 	        $first = trim($split[0]);
 	
                 //first course
@@ -1086,11 +1086,11 @@ function putPointsOverview($teamid) {
                                    FROM contest c
                                    WHERE c.enabled = 1
                                    AND c.starttime < UNIX_TIMESTAMP(NOW())
-                                   AND c.contestname LIKE %s
-                                   ORDER BY c.cid ASC', (empty($first) ? $contest['contestname'] : $first) . '%' );
+                                   AND c.name LIKE %s
+                                   ORDER BY c.cid ASC', (empty($first) ? $contest['name'] : $first) . '%' );
 
                 while ($contest = $try->next()) {
-                        $split = explode('-', $contest['contestname']);
+                        $split = explode('-', $contest['name']);
                         $second = ($split[1] == NULL ? 'Contest: ' : trim($split[1]).': ');
                         //get all problems in contest
                         $probs = $DB->q('SELECT *
