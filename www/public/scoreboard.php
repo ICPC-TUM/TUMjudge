@@ -10,7 +10,7 @@
 require('init.php');
 $title="Scoreboard";
 // set auto refresh
-$refresh="30;url=./";
+$refresh="30;url=./scoreboard.php";
 
 // This reads and sets a cookie, so must be called before headers are sent.
 $filter = initScorefilter();
