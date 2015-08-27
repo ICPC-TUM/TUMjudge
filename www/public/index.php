@@ -8,31 +8,16 @@
  */
 
 require('init.php');
-if(DOMSERVER_REPLICATION == 'master') {
-        header('HTTP/1.1 302 Please see this page');
-        header('Location: register.php');
-}
-$title="Scoreboard";
-// set auto refresh
-$refresh="30;url=./";
-
-// This reads and sets a cookie, so must be called before headers are sent.
-$filter = initScorefilter();
+$title="TUMjudge";
 
 $menu = true;
 require(LIBWWWDIR . '/header.php');
 
-$isstatic = @$_SERVER['argv'][1] == 'static' || isset($_REQUEST['static']);
+?>
 
-if ( ! $isstatic ) {
-	echo "<div id=\"menutopright\">\n";
-	putClock();
-	echo "</div>\n";
-}
+<h1>Welcome to TUMjudge!</h1>
 
-// call the general putScoreBoard function from scoreboard.php
-putScoreBoard($cdata, null, $isstatic, $filter);
+<p>Somebody will guide you through this website, hopefully...</p>
 
-echo "<script type=\"text/javascript\">initFavouriteTeams();</script>";
-
+<?php
 require(LIBWWWDIR . '/footer.php');

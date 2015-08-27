@@ -1,4 +1,4 @@
-<li><a href="../public/"><span class="glyphicon glyphicon-home"></span> home</a></li>
+<li><a href="../public/index.php"><span class="glyphicon glyphicon-home"></span> home</a></li>
 <li><a href="index.php"><span class="glyphicon glyphicon-star"></span> dashboard</a></li>
 <li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
