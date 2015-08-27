@@ -443,7 +443,9 @@ function updateClock()
 		fmt += left;
 	}
 
-	timeleftelt.innerHTML = what + fmt;
+	if(timeleftelt) {
+		timeleftelt.innerHTML = what + fmt;
+	}
 	offset++;
 }
 
