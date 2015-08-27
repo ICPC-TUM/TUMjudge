@@ -453,11 +453,12 @@ function putClock() {
 		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-user\"></span> ".$username."<span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
 
-		if(checkrole('jury')) {
-			echo "<li><a href=\"../jury/\">jury account</a></li>";
-		}
+		echo "<li><a href=\"../public/\">public area</a></li>";
 		if(checkrole('team')) {
-			echo "<li><a href=\"../team/\">team account</a></li>";
+			echo "<li><a href=\"../team/\">team area</a></li>";
+		}
+		if(checkrole('jury')) {
+			echo "<li><a href=\"../jury/\">jury area</a></li>";
 		}
 		if(IS_JURY) {
 			$notify_flag  =  isset($_COOKIE["domjudge_notify"])  && (bool)$_COOKIE["domjudge_notify"];
