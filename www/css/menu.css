@@ -51,7 +51,13 @@
 	border-bottom-color: #880000;
 }
 .tumjudge-test .brand {
-	background-color: #880000;
+	background: repeating-linear-gradient(
+		45deg,
+		#880000,
+		#880000 10px,
+		#885500 10px,
+		#885500 20px
+	);
 }
 .navbar .brand .dropdown-menu .tumjudge-test {
 	border-left-color: #880000;

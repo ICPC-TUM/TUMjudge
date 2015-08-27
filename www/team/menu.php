@@ -1,23 +1,20 @@
-<ul class="nav navbar-nav">
-<?php
-echo '<li><a href="index.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="overview"><span class="glyphicon glyphicon-home"></span></a></li>'."\n";
-echo '<li><a href="points.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="points overview"><span class="glyphicon glyphicon-tasks"></span></a></li>'."\n";
-
-if ( have_problemtexts() ) {
-	echo '<li><a href="problems.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="problems"><span class="glyphicon glyphicon-file"></span></a></li>'."\n";
-}
-
-if ( have_printing() ) {
-	echo '<li><a href="print.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="print"><span class="glyphicon glyphicon-print"></span></a></li>'."\n";
-}
-echo '<li><a href="scoreboard.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="scoreboard"><span class="glyphicon glyphicon-th-list"></span></a></li>'."\n";
-
-if ( checkrole('jury') || checkrole('balloon') ) {
-	echo "<li><a target=\"_top\" href=\"../jury/\" accesskey=\"j\">→jury</a></li>\n";
-}
-
-?>
-</ul>
+<li><a href="../public/"><span class="glyphicon glyphicon-home"></span> home</a></li>
+<li><a href="index.php"><span class="glyphicon glyphicon-star"></span> dashboard</a></li>
+<li class="dropdown">
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+	<span class="glyphicon glyphicon-flag"></span> course <span class="caret"></span></a>
+	<ul class="dropdown-menu" role="menu">
+		<li><a href="points.php"> points overview </a></li>
+		<?php if(have_problemtexts()) { ?>
+			<li><a href="problems.php"> problems</a></li>
+		<?php } ?>
+		<?php if(have_printing()) { ?>
+			<li><a href="print.php">print</a></li>
+		<?php } ?>
+	</ul>
+</li>
+<li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>
+<li><a href="#"><span class="glyphicon glyphicon-globe"></span> news</a></li>
 
 <?php
 putClock();
