@@ -81,3 +81,42 @@
 .tumjudge-conpra .tumjudge-instance.tumjudge-conpra {
 	display: inline;
 }
+
+.tumjudge-contest .navbar {
+	border-bottom-color: #000088;
+}
+.tumjudge-contest .brand {
+	background-color: #000088;
+}
+.navbar .brand .dropdown-menu .tumjudge-contest {
+	border-left-color: #000088;
+}
+.tumjudge-contest .tumjudge-instance.tumjudge-contest {
+	display: inline;
+}
+
+.tumjudge-gad .navbar {
+	border-bottom-color: #008888;
+}
+.tumjudge-gad .brand {
+	background-color: #008888;
+}
+.navbar .brand .dropdown-menu .tumjudge-gad {
+	border-left-color: #008888;
+}
+.tumjudge-gad .tumjudge-instance.tumjudge-gad {
+	display: inline;
+}
+
+.tumjudge-isabelle .navbar {
+	border-bottom-color: #880088;
+}
+.tumjudge-isabelle .brand {
+	background-color: #880088;
+}
+.navbar .brand .dropdown-menu .tumjudge-isabelle {
+	border-left-color: #880088;
+}
+.tumjudge-isabelle .tumjudge-instance.tumjudge-isabelle {
+	display: inline;
+}
