@@ -1,5 +1,4 @@
-<li><a href="../public/index.php"><span class="glyphicon glyphicon-home"></span> home</a></li>
-<li><a href="index.php"><span class="glyphicon glyphicon-star"></span> dashboard</a></li>
+<li><a href="index.php"><span class="glyphicon glyphicon-home"></span> home</a></li>
 <li class="dropdown">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 	<span class="glyphicon glyphicon-flag"></span> course <span class="caret"></span></a>
@@ -15,6 +14,7 @@
 </li>
 <li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>
 <li><a href="#"><span class="glyphicon glyphicon-globe"></span> news</a></li>
+<li><a href="help.php"><span class="glyphicon glyphicon-question-sign"></span> help</a></li>
 
 <?php
 putClock();

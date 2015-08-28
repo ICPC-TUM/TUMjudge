@@ -67,7 +67,7 @@ if ( ! empty($extrahead) ) echo $extrahead;
 </head>
 <?php
 
-$cssclass = (!empty($cid) ? 'contest-'.$cid.' ' : '').'tumjudge-'.explode('/', $_SERVER['HTTP_REFERER'])[3];
+$cssclass = (!empty($cid) ? 'contest-'.$cid.' ' : '').'tumjudge-'.$_GET['tumjudge_instance'];
 if ( IS_JURY ) {
 	global $pagename;
 	echo "<body class=\"".$cssclass."\" onload=\"setInterval('updateMenu(" .
