@@ -440,19 +440,6 @@ function putClock() {
 
 	echo "</ul></li>";
 
-	// timediff to end of contest
-	if ( difftime(now(), $cdata['starttime']) >= 0 &&
-	     difftime(now(), $cdata['endtime'])   <  0 ) {
-		$left = "<span class=\"glyphicon glyphicon-time\"></span>" . printtimediff(now(),$cdata['endtime']);
-	} else if ( difftime(now(), $cdata['activatetime']) >= 0 &&
-	            difftime(now(), $cdata['starttime'])    <  0 ) {
-		$left = "<span class=\"glyphicon glyphicon-time\"></span> (to start) " . printtimediff(now(),$cdata['starttime']);
-	} else {
-		$left = "";
-	}
-	if($left != "") {
-		echo "<li><a id=\"timeleft\">" . $left . "</a></li>";
-	}
 
 	if ( logged_in() ) {
 		echo "<li class=\"dropdown\">";
@@ -494,20 +481,6 @@ function putClock() {
 		}
                	echo "</ul></li>";
 	}
-
-
-	echo "<script type=\"text/javascript\">
-	var initial = " . time() . ";
-	var activatetime = " . ( isset($cdata['activatetime']) ? $cdata['activatetime'] : -1 ) . ";
-	var starttime = " . ( isset($cdata['starttime']) ? $cdata['starttime'] : -1 ) . ";
-	var endtime = " . ( isset($cdata['endtime']) ? $cdata['endtime'] : -1 ) . ";
-	var offset = 0;
-	var date = new Date(initial*1000);
-	var timeleftelt = document.getElementById(\"timeleft\");
-
-	setInterval(function(){updateClock();},1000);
-	updateClock();
-</script>\n";
 }
 
 /**
