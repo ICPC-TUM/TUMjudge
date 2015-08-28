@@ -51,8 +51,8 @@ function updateMenu(doreload_clarifications, doreload_judgehosts, doreload_rejud
 					newstr = ' <span class="label label-warning">'+nhosts+' down</span>';
 					elem.className = 'new';
 				}
-				if ( elem.innerHTML != '<span class="glyphicon glyphicon-education"></span>' + newstr ) {
-					elem.innerHTML = '<span class="glyphicon glyphicon-education"></span>' + newstr;
+				if ( elem.innerHTML != 'judgehosts' + newstr ) {
+					elem.innerHTML = 'judgehosts' + newstr;
 					if(doreload_judgehosts) {
 						location.reload()
 					}
