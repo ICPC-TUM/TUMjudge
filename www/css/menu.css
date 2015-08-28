@@ -38,84 +38,84 @@
 
 /* Design for different judge instances */
 .tumjudge-info .navbar {
-	border-bottom-color: #888800;
+	border-bottom-color: #cccc00;
 }
 .tumjudge-info .brand {
-	background-color: #888800;
+	background-color: #cccc00;
 }
 .navbar .brand .dropdown-menu .tumjudge-info {
-	border-left-color: #888800;
+	border-left-color: #cccc00;
 }
 .tumjudge-info .tumjudge-instance.tumjudge-info {
 	display: inline;
 }
 
 .tumjudge-test .navbar {
-	border-bottom-color: #880000;
+	border-bottom-color: #cc0000;
 }
 .tumjudge-test .brand {
 	background: repeating-linear-gradient(
 		45deg,
-		#880000,
-		#880000 10px,
-		#885500 10px,
-		#885500 20px
+		#cc0000,
+		#cc0000 10px,
+		#cc5500 10px,
+		#cc5500 20px
 	);
 }
 .navbar .brand .dropdown-menu .tumjudge-test {
-	border-left-color: #880000;
+	border-left-color: #cc0000;
 }
 .tumjudge-test .tumjudge-instance.tumjudge-test {
 	display: inline;
 }
 
 .tumjudge-conpra .navbar {
-	border-bottom-color: #008800;
+	border-bottom-color: #00cc00;
 }
 .tumjudge-conpra .brand {
-	background-color: #008800;
+	background-color: #00cc00;
 }
 .navbar .brand .dropdown-menu .tumjudge-conpra {
-	border-left-color: #008800;
+	border-left-color: #00cc00;
 }
 .tumjudge-conpra .tumjudge-instance.tumjudge-conpra {
 	display: inline;
 }
 
 .tumjudge-contest .navbar {
-	border-bottom-color: #000088;
+	border-bottom-color: #0000cc;
 }
 .tumjudge-contest .brand {
-	background-color: #000088;
+	background-color: #0000cc;
 }
 .navbar .brand .dropdown-menu .tumjudge-contest {
-	border-left-color: #000088;
+	border-left-color: #0000cc;
 }
 .tumjudge-contest .tumjudge-instance.tumjudge-contest {
 	display: inline;
 }
 
 .tumjudge-gad .navbar {
-	border-bottom-color: #008888;
+	border-bottom-color: #00cccc;
 }
 .tumjudge-gad .brand {
-	background-color: #008888;
+	background-color: #00cccc;
 }
 .navbar .brand .dropdown-menu .tumjudge-gad {
-	border-left-color: #008888;
+	border-left-color: #00cccc;
 }
 .tumjudge-gad .tumjudge-instance.tumjudge-gad {
 	display: inline;
 }
 
 .tumjudge-isabelle .navbar {
-	border-bottom-color: #880088;
+	border-bottom-color: #cc00cc;
 }
 .tumjudge-isabelle .brand {
-	background-color: #880088;
+	background-color: #cc00cc;
 }
 .navbar .brand .dropdown-menu .tumjudge-isabelle {
-	border-left-color: #880088;
+	border-left-color: #cc00cc;
 }
 .tumjudge-isabelle .tumjudge-instance.tumjudge-isabelle {
 	display: inline;

@@ -108,9 +108,9 @@ if ( IS_JURY ) {
             <li class="page tumjudge-info"><a href="/">Info - Information about the ICPC</a></li>
             <li><a class="pagetitle">TUMjudge</a></li>
             <li class="page tumjudge-conpra"><a href="/conpra/">ConPra - Algorithms for Programming Contests</a></li>
-            <li class="page tumjudge-conpra"><a href="/contest/">Contest - Preparation for the ACM ICPC</a></li>
-            <li class="page tumjudge-conpra"><a href="/gad/">GAD - Foundations: Algorithms and Data Structures</a></li>
-            <li class="page tumjudge-conpra"><a href="/isabelle/">Isabelle - Proving Contests</a></li>
+            <li class="page tumjudge-contest"><a href="/contest/">Contest - Preparation for the ACM ICPC</a></li>
+            <li class="page tumjudge-gad"><a href="/gad/">GAD - Foundations: Algorithms and Data Structures</a></li>
+            <li class="page tumjudge-isabelle"><a href="/isabelle/">Isabelle - Proving Contests</a></li>
             <?php if(IS_JURY): ?>
               <li class="page tumjudge-test"><a href="/test/">Test - Testing for TUMjudge Admins</a></li>
             <?php endif; ?>
