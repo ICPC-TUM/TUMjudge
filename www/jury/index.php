@@ -73,6 +73,5 @@ if ( is_readable('../images/DOMjudgelogo.png') ) {
 <p><br /><br /><br /><br /></p>
 
 <?php
-putDOMjudgeVersion();
 
 require(LIBWWWDIR . '/footer.php');

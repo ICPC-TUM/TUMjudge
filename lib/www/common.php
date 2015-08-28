@@ -453,11 +453,11 @@ function putClock() {
 		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-user\"></span> ".$username."<span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
 
-		echo "<li><a href=\"../public/\">public area</a></li>";
-		if(checkrole('team')) {
-			echo "<li><a href=\"../team/\">team area</a></li>";
-		}
-		if(checkrole('jury')) {
+		if(checkrole('jury') || checkrole('balloon')) {
+			echo "<li><a href=\"../public/\">public area</a></li>";
+			if(checkrole('team')) {
+				echo "<li><a href=\"../team/\">team area</a></li>";
+			}
 			echo "<li><a href=\"../jury/\">jury area</a></li>";
 		}
 		if(IS_JURY) {

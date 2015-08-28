@@ -40,7 +40,21 @@ td, th {
 .scoreboard td, .scoreboard th {
 	border-color: #002143;
 }
-
+.container #submitlist, .container #clarlist {  
+        position: inherit;
+        float: left;
+        width: 49%;
+        margin-bottom: 10px;
+}
+.container #submitlist {
+        float: left;
+}
+.container #clarlist {  
+        float: right;
+}
+.container #lastmod {
+	display: none;
+}
 
 /* Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
