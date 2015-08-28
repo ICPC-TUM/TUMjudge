@@ -62,6 +62,9 @@ td, th {
 .container #teamscoresummary {
 	margin-top: 0px;
 }
+.dropdown-menu {
+        left: -1px;
+}
 
 /* Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
