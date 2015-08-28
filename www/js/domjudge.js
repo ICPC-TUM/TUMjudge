@@ -415,10 +415,10 @@ function updateClock()
 	var fmt = "";
 	if (curtime >= starttime && curtime < endtime ) {
 		var left = endtime - curtime;
-		var what = "<span class=\"glyphicon glyphicon-time\"></span>";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span> ";
 	} else if (curtime >= activatetime && curtime < starttime ) {
 		var left = starttime - curtime;
-		var what = "<span class=\"glyphicon glyphicon-time\"></span> (to start) ";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span> ";
 	} else {
 		var left = 0;
 		var what = "";
@@ -443,8 +443,8 @@ function updateClock()
 		fmt += left;
 	}
 
-	if(timeleftelt) {
-		timeleftelt.innerHTML = what + fmt;
+	if(typeof(timeleft) != "undefined") {
+		timeleft.innerHTML = what + fmt;
 	}
 	offset++;
 }

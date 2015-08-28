@@ -43,9 +43,9 @@ echo "// -->\n</script>\n";
 
 // timediff to end of contest
 if ( difftime(now(), $cdata['starttime']) >= 0 && difftime(now(), $cdata['endtime'])   <  0 ) {
-  $left = "(<a id=\"timeleft\"><span class=\"glyphicon glyphicon-time\"></span>" . printtimediff(now(),$cdata['endtime']) . "</a>)";
+  $left = " (<span id=\"timeleft\" style=\"color: #333\"><span class=\"glyphicon glyphicon-time\"></span> " . printtimediff(now(),$cdata['endtime']) . "</span>)";
 } else if ( difftime(now(), $cdata['activatetime']) >= 0 && difftime(now(), $cdata['starttime'])    <  0 ) {
-  $left = "(<a id=\"timeleft\"><span class=\"glyphicon glyphicon-time\"></span>" . printtimediff(now(),$cdata['starttime']) . "</a>)";
+  $left = " (<span id=\"timeleft\" style=\"color: #333\"><span class=\"glyphicon glyphicon-time\"></span> " . printtimediff(now(),$cdata['starttime']) . "</span>)";
 } else {
   $left = "";
 }
@@ -63,7 +63,7 @@ echo "<script type=\"text/javascript\">
   </script>\n"; 
 
 // page heading with contestname and start/endtimes
-echo "<h1>Scoreboard " . htmlspecialchars($cdata['name']) . "</h1>\n\n";
+echo "<h1>" . htmlspecialchars($cdata['name']) . "</h1>\n\n";
 
 if ( $fdata['showfinal'] ) {
   echo "<h4>final standings</h4>\n\n";
