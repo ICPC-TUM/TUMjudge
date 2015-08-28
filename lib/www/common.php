@@ -387,11 +387,6 @@ function putClock() {
 	global $cid, $cdatas;
 	global $DB, $userdata, $refresh;
 
-	$team = $DB->q('MAYBETUPLE SELECT a.country FROM team t
-	                LEFT JOIN team_affiliation a ON (t.affilid = a.affilid)
-	                WHERE teamid = %i', $userdata['teamid']);
-	$usericon = "../images/countries/" . urlencode($team['country']) . ".png";
-
 	echo addForm('change_contest.php', 'get', 'selectcontestform');
 	echo addHidden('cid', $cid);
 	echo addEndForm();
@@ -442,6 +437,11 @@ function putClock() {
 
 
 	if ( logged_in() ) {
+		$team = $DB->q('MAYBETUPLE SELECT a.country FROM team t
+	                LEFT JOIN team_affiliation a ON (t.affilid = a.affilid)
+	                WHERE teamid = %i', $userdata['teamid']);
+		$usericon = "../images/countries/" . urlencode($team['country']) . ".png";
+
 		echo "<li class=\"dropdown\">";
 		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px;\" src=\"".$usericon."\" />".$username."<span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
