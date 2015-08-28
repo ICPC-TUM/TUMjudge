@@ -385,6 +385,12 @@ function putTeam($teamid) {
 function putClock() {
 	global $cdata, $username;
 	global $cid, $cdatas;
+	global $DB, $userdata, $refresh;
+
+	$team = $DB->q('MAYBETUPLE SELECT a.country FROM team t
+	                LEFT JOIN team_affiliation a ON (t.affilid = a.affilid)
+	                WHERE teamid = %i', $userdata['teamid']);
+	$usericon = "../images/countries/" . urlencode($team['country']) . ".png";
 
 	echo addForm('change_contest.php', 'get', 'selectcontestform');
 	echo addHidden('cid', $cid);
@@ -450,7 +456,7 @@ function putClock() {
 
 	if ( logged_in() ) {
 		echo "<li class=\"dropdown\">";
-		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-user\"></span> ".$username."<span class=\"caret\"></span></a>";
+		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px;\" src=\"".$usericon."\" />".$username."<span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
 
 		if(checkrole('jury') || checkrole('balloon')) {
@@ -469,17 +475,17 @@ function putClock() {
                         }
 			echo "<li id=\"notify_li\" style=\"display: none\">";
                         if($notify_flag) {
-                        	echo "<a href=\"#\" onclick=\"toggleNotifications(false); document.getElementById('notify').submit();\">notifications on</a>";
+                        	echo "<a href=\"#\" onclick=\"toggleNotifications(false); document.getElementById('notify').submit();\">disable notifications</a>";
                         } else {
-                        	echo "<a href=\"#\" onclick=\"toggleNotifications(true); document.getElementById('notify').submit();\">notifications off</a>";
+                        	echo "<a href=\"#\" onclick=\"toggleNotifications(true); document.getElementById('notify').submit();\">enable notifications</a>";
 			}
                         echo "</li>";
                         if(isset($refresh)) {
 				if($refresh_flag) {
-					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">refresh on</a></li>";
+					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">disable refresh</a></li>";
 				}
 				else {
-					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">refresh off</a></li>";
+					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">enable refresh</a></li>";
 				}
 			}
 		}

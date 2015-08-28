@@ -55,6 +55,10 @@ td, th {
 .container #lastmod {
 	display: none;
 }
+.container #djlogo {
+        position: inherit;
+        float: right;
+}
 
 /* Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
