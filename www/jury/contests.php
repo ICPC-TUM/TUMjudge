@@ -62,6 +62,7 @@ if ( isset($_GET['edited']) ) {
 		addEndForm();
 }
 
+/*
 // Display current contest data prominently
 
 echo "<fieldset><legend>Current contests: ";
@@ -165,7 +166,7 @@ if ( empty($curcids) )  {
 }
 
 echo "</fieldset>\n\n";
-
+*/
 
 // Get data. Starttime seems most logical sort criterion.
 $res = $DB->q('TABLE SELECT contest.*, COUNT(teamid) AS numteams
