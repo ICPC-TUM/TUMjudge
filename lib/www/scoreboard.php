@@ -1030,13 +1030,6 @@ function putPointsOverview($teamid) {
         //database queries, just get the data needed), ...
         global $DB;
 
-        $pointsArray = array(
-	        '#00ff00' => 4,
-        	'#ffff00' => 6,
-        	'#ff0000' => 8,
-        	'#ffffff' => 0,
-        	'default' => 1
-        );
         $coursePointArray = array();
         $courseTotalArray = array();
 
@@ -1052,7 +1045,7 @@ function putPointsOverview($teamid) {
         $header3 = '';
         $first = '';
         while ($contest = $res->next()) {
-	        $split = explode('-', $contest['contestname']);
+	        $split = explode('-', $contest['name']);
 	        $first = trim($split[0]);
 	
                 //first course
@@ -1086,11 +1079,11 @@ function putPointsOverview($teamid) {
                                    FROM contest c
                                    WHERE c.enabled = 1
                                    AND c.starttime < UNIX_TIMESTAMP(NOW())
-                                   AND c.contestname LIKE %s
-                                   ORDER BY c.cid ASC', (empty($first) ? $contest['contestname'] : $first) . '%' );
+                                   AND c.name LIKE %s
+                                   ORDER BY c.cid ASC', (empty($first) ? $contest['name'] : $first) . '%' );
 
                 while ($contest = $try->next()) {
-                        $split = explode('-', $contest['contestname']);
+                        $split = explode('-', $contest['name']);
                         $second = ($split[1] == NULL ? 'Contest: ' : trim($split[1]).': ');
                         //get all problems in contest
                         $probs = $DB->q('SELECT *
@@ -1106,12 +1099,7 @@ function putPointsOverview($teamid) {
                         $contestMaxPoints = 0;
                         //create contest problem table
                         while($pr != NULL) {
-                                if (!array_key_exists($pr['color'], $pointsArray)) {
-                                        $problemMaxPoints = $pointsArray['default'];
-                                }
-                                else {
-                                        $problemMaxPoints = $pointsArray[$pr['color']];
-                                }
+                                $problemMaxPoints = $pr['points'];
                                 $contestMaxPoints += $problemMaxPoints;
                                 //check if team has correct,incorrect or no submission for problem
                                 $solved = $DB->q('SELECT DISTINCT s.probid AS probid
@@ -1127,12 +1115,7 @@ function putPointsOverview($teamid) {
 
                                 if ($solved->next()['probid'] != NULL) {
                                         $solved = 'score_correct';
-                                        if (!array_key_exists($pr['color'], $pointsArray)) {
-                                                $problemPoints = $pointsArray['default'];
-                                        }
-                                        else {
-                                                $problemPoints = $pointsArray[$pr['color']];
-                                        }
+                                        $problemPoints = $problemMaxPoints;
                                         $contestSum += $problemPoints;
                                 }
                                 else {
