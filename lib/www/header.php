@@ -39,6 +39,7 @@ if(!isset($menu)) {
 <link rel="stylesheet" href="../style.css" type="text/css" />
 <link rel="stylesheet" href="../css/bootstrap.css" type="text/css" />
 <link rel="stylesheet" href="../css/tumjudge.css" type="text/css" />
+<link rel="stylesheet" href="../css/menu.css" type="text/css" />
 <script type="text/javascript" src="../js/jquery.js"></script>
 <script type="text/javascript" src="../js/bootstrap.js"></script>
 <?php
@@ -47,7 +48,6 @@ if ( IS_JURY ) {
 	if (isset($printercss)) {
 		echo "<link rel=\"stylesheet\" href=\"style_printer.css\" type=\"text/css\" media=\"print\" />\n";
 	}
-	echo "<script type=\"text/javascript\" src=\"../js/jquery.min.js\"></script>\n";
 	echo "<script type=\"text/javascript\" src=\"../js/jury.js\"></script>\n";
 	if (isset($jscolor)) {
 		echo "<script type=\"text/javascript\" src=\"" .
@@ -67,16 +67,16 @@ if ( ! empty($extrahead) ) echo $extrahead;
 </head>
 <?php
 
-$cssclass = !empty($cid) ? 'class="contest-'.$cid.'"' : '';
+$cssclass = (!empty($cid) ? 'contest-'.$cid.' ' : '').'tumjudge-'.$_GET['tumjudge_instance'];
 if ( IS_JURY ) {
 	global $pagename;
-	echo "<body ".$cssclass." onload=\"setInterval('updateMenu(" .
+	echo "<body class=\"".$cssclass."\" onload=\"setInterval('updateMenu(" .
 		(int)($pagename=='clarifications.php' && $refresh_cookie) . ", " .
 		(int)($pagename=='judgehosts.php'     && $refresh_cookie) . ", " .
 		(int)($pagename=='rejudgings.php'     && $refresh_cookie) . ")', 20000); " .
 		"updateMenu(0,0,0)\">\n";
 } else {
-	echo "<body ".$cssclass.">\n";
+	echo "<body class=\"".$cssclass."\">\n";
 }
 
 ?>
@@ -90,17 +90,39 @@ if ( IS_JURY ) {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.php">
-        <img src="../images/tumjudge.png" alt="TUMjudge" />
-      </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown brand">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="tumjudge-instance tumjudge-info"><span class="pagetitle">ICPC@TUM</span> Info</span>
+            <span class="tumjudge-instance tumjudge-test"><span class="pagetitle">TUMjudge</span> Test</span>
+            <span class="tumjudge-instance tumjudge-conpra"><span class="pagetitle">TUMjudge</span> ConPra</span>
+            <span class="tumjudge-instance tumjudge-contest"><span class="pagetitle">TUMjudge</span> Contest</span>
+            <span class="tumjudge-instance tumjudge-gad"><span class="pagetitle">TUMjudge</span> GAD</span>
+            <span class="tumjudge-instance tumjudge-isabelle"><span class="pagetitle">TUMjudge</span> Isabelle</span>
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a class="pagetitle">ICPC@TUM</a></li>
+            <li class="page tumjudge-info"><a href="/">Info - Information about the ICPC</a></li>
+            <li><a class="pagetitle">TUMjudge</a></li>
+            <li class="page tumjudge-conpra"><a href="/conpra/">ConPra - Algorithms for Programming Contests</a></li>
+            <li class="page tumjudge-contest"><a href="/contest/">Contest - Preparation for the ACM ICPC</a></li>
+            <li class="page tumjudge-gad"><a href="/gad/">GAD - Foundations: Algorithms and Data Structures</a></li>
+            <li class="page tumjudge-isabelle"><a href="/isabelle/">Isabelle - Proving Contests</a></li>
+            <?php if(IS_JURY): ?>
+              <li class="page tumjudge-test"><a href="/test/">Test - Testing for TUMjudge Admins</a></li>
+            <?php endif; ?>
+          </ul>
+        </li>
       <?php
         /* NOTE: here a local menu.php is included
          *       both jury and team have their own menu.php
          */
         if ( $menu ) include("menu.php");
       ?>
+      </ul>          
     </div>
   </div>
 </nav>
@@ -110,7 +132,6 @@ if ( IS_JURY ) {
   if ( 'Notification' in window && document.getElementById('notify_li') != null) {
     document.getElementById('notify_li').style.display = 'block';
   }
-  $(".dj-tooltip").tooltip();
 // -->
 </script>
 

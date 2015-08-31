@@ -1,18 +1,27 @@
-<ul class="nav navbar-nav">
+<li><a href="index.php"><span class="glyphicon glyphicon-home"></span> home</a></li>
 <li class="dropdown">
-<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span> <span class="caret"></span></a>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+<span class="glyphicon glyphicon-wrench"></span> settings <span class="caret"></span></a>
 <ul class="dropdown-menu" role="menu">
-<?php	if ( checkrole('balloon') ) { ?>
-<li><a href="balloons.php">balloon status</a></li>
-<?php	} ?>
+<?php if ( checkrole('balloon') ) { ?>
+    <li><a href="balloons.php">balloon status</a></li>
+<?php } ?>
 <?php if ( checkrole('jury') ) { ?>
 <li><a href="clarifications.php">clarifications</a></li>
 <li><a href="contests.php">contests</a></li>
 <li><a href="executables.php">executables</a></li>
-<li><a href="judgehosts.php">judgehosts</a></li>
+<li><a href="judgehosts.php" id="menu_judgehosts">judgehosts
+    <?php $ndown = count($updates['judgehosts']); if ( $ndown > 0 ) { ?><span class="label label-info"><?php echo $ndown ?> down</span><?php } ?>
+</a></li>
 <li><a href="judgehost_restrictions.php">judgehost restrictions</a></li>
 <li><a href="languages.php">languages</a></li>
+<?php if ( have_printing() ) { ?>
+    <li><a href="print.php">print</a></li>
+<?php } ?>
 <li><a href="problems.php">problems</a></li>
+<li><a href="rejudgings.php">rejudgings
+    <?php $nrejudgings = count($updates['rejudgings']); if ( $nrejudgings > 0 ) { ?><span class="label label-info"><?php echo $ndown ?> new</span><?php } ?>
+</a></li>  
 <li><a href="scoreboard.php">scoreboard</a></li>  
 <li><a href="statistics.php">statistics</a></li>  
 <li><a href="submissions.php">submissions</a></li>
@@ -23,45 +32,16 @@
 <?php } ?>
 </ul>
 </li>
-<?php	if ( IS_ADMIN ) {
-	$ndown = count($updates['judgehosts']);
-	if ( $ndown > 0 ) { ?>
-<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts" class="new dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="judgehosts"><span class="glyphicon glyphicon-education"></span> <span class="label label-warning"><?php echo $ndown ?> down</span></a></li>
-<?php	} else { ?>
-<li><a href="judgehosts.php" accesskey="j" id="menu_judgehosts" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="judgehosts"><span class="glyphicon glyphicon-education"></span></a></li>
-<?php	}
-	} ?>
-<?php	if ( checkrole('jury') ) {
-	$nunread = count($updates['clarifications']);
-	if ( $nunread > 0 ) { ?>
-<li><a href="clarifications.php" accesskey="c" id="menu_clarifications" class="new dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="clarifications"><span class="glyphicon glyphicon-envelope"></span> <span class="label label-info"><?php echo $nunread ?> new<span></a></li>
-<?php	} else { ?>
-<li><a href="clarifications.php" accesskey="c" id="menu_clarifications" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="clarifications"><span class="glyphicon glyphicon-envelope"></span></a></li>
-<?php	} ?>
-<?php	} ?>
-<li><a href="submissions.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="submissions"><span class="glyphicon glyphicon-file"></span></a></li>
-<li><a href="scoreboard.php" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="scoreboard"><span class="glyphicon glyphicon-th-list"></span></a></li>  
-<?php
-	$nrejudgings = count($updates['rejudgings']);
-	if ( $nrejudgings > 0 ) { ?>
-<a class="new" href="rejudgings.php" accesskey="r" id="menu_rejudgings">rejudgings (<?php echo $nrejudgings ?> active)</a>
-<?php	} else { ?>
-<a href="rejudgings.php" accesskey="r" id="menu_rejudgings">rejudgings</a>
-<?php	} ?>
-<?php	if ( have_printing() ) { ?>
-<li><a href="print.php" accesskey="p">print</a></li>
-<?php	} ?>
-<?php
-if ( checkrole('team') ) {
-	echo "<li><a target=\"_top\" href=\"../team/\" accesskey=\"t\">→team</a></li>\n";
-}
-?>
-</ul>
-
-<?php
-putClock();
-?>
-
+<?php if ( checkrole('jury') ) { ?>
+<li><a href="clarifications.php"><span class="glyphicon glyphicon-envelope"></span> clarifications
+    <?php $nunread = count($updates['clarifications']);if ( $nunread > 0 ) { ?><span class="label label-info"><?php echo $nunread ?> new<span><?php } ?>
+</a></li>
+<?php } ?>
+<li><a href="submissions.php"><span class="glyphicon glyphicon-file"></span> submissions</a></li>
+<li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>  
+<?php /*if ( checkrole('team') ) { ?>
+    <li><a href="../team/"><span class="glyphicon glyphicon-user"></span> team account</a></li>
+<?php } ?>
 <?php
 $notify_flag  =  isset($_COOKIE["domjudge_notify"])  && (bool)$_COOKIE["domjudge_notify"];
 $refresh_flag = !isset($_COOKIE["domjudge_refresh"]) || (bool)$_COOKIE["domjudge_refresh"];
@@ -75,16 +55,23 @@ if ( isset($refresh) ) {
 	    addEndForm();
 }
 ?>
-
-<ul class="nav navbar-nav navbar-right">
+<li id="notify_li" style="display: none">
+<?php if($notify_flag) { ?>
+    <a href="#" onclick="toggleNotifications(false); document.getElementById('notify').submit();">
+    <span class="glyphicon glyphicon-volume-up"></span> notifications on</a>
+<?php } else { ?>
+    <a href="#" onclick="toggleNotifications(true); document.getElementById('notify').submit();">
+    <span class="glyphicon glyphicon-volume-off"></span> notifications off</a>
+<?php } ?>
+</li>
+<?php if(isset($refresh)) { ?>
+<?php if($refresh_flag) { ?>
+    <li><a href="#" onclick="document.getElementById('toggles').submit();"><span class="glyphicon glyphicon-refresh"></span> refresh on</a></li>
+<?php } else { ?>
+    <li><a href="#" onclick="document.getElementById('toggles').submit();"><span class="glyphicon glyphicon-lock"></span> refresh off</a></li>
+<?php }}*/ ?>
 <?php
-if ( isset($refresh) ) {
-echo    '<li>' . ($refresh_flag ? '<a href="#" onclick="document.getElementById(\'toggles\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="disable refresh"><span class="glyphicon glyphicon-refresh"></span></a>' : '<a href="#" onclick="document.getElementById(\'toggles\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="enable refresh"><span class="glyphicon glyphicon-lock"></span></a>') . '</li>';
-}
 
-// Default hide this from view, only show when javascript and
-// notifications are available:
-echo	'<li id="notify_li" style="display: none">' .($notify_flag ? '<a href="#" onclick="toggleNotifications(false); document.getElementById(\'notify\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="disable notifications"><span class="glyphicon glyphicon-volume-up"></span></a>' : '<a href="#" onclick="toggleNotifications(true); document.getElementById(\'notify\').submit();" class="dj-tooltip" data-toggle="tooltip" data-placement="bottom" title="enable notifications"><span class="glyphicon glyphicon-volume-off"></span></a>') . '</li>';
+putClock();
 
 ?>
-</ul>

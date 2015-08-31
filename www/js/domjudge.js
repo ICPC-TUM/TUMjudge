@@ -51,8 +51,8 @@ function updateMenu(doreload_clarifications, doreload_judgehosts, doreload_rejud
 					newstr = ' <span class="label label-warning">'+nhosts+' down</span>';
 					elem.className = 'new';
 				}
-				if ( elem.innerHTML != '<span class="glyphicon glyphicon-education"></span>' + newstr ) {
-					elem.innerHTML = '<span class="glyphicon glyphicon-education"></span>' + newstr;
+				if ( elem.innerHTML != 'judgehosts' + newstr ) {
+					elem.innerHTML = 'judgehosts' + newstr;
 					if(doreload_judgehosts) {
 						location.reload()
 					}
@@ -415,10 +415,10 @@ function updateClock()
 	var fmt = "";
 	if (curtime >= starttime && curtime < endtime ) {
 		var left = endtime - curtime;
-		var what = "<span class=\"glyphicon glyphicon-time\"></span>";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span> ";
 	} else if (curtime >= activatetime && curtime < starttime ) {
 		var left = starttime - curtime;
-		var what = "<span class=\"glyphicon glyphicon-time\"></span> (to start) ";
+		var what = "<span class=\"glyphicon glyphicon-time\"></span> ";
 	} else {
 		var left = 0;
 		var what = "";
@@ -443,7 +443,9 @@ function updateClock()
 		fmt += left;
 	}
 
-	timeleftelt.innerHTML = what + fmt;
+	if(typeof(timeleft) != "undefined") {
+		timeleft.innerHTML = what + fmt;
+	}
 	offset++;
 }
 

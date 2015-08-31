@@ -41,6 +41,44 @@ if ( $fdata['cstarted'] ) {
 echo "initReload(" . $refreshtime . ");\n";
 echo "// -->\n</script>\n";
 
+// timediff to end of contest
+if ( difftime(now(), $cdata['starttime']) >= 0 && difftime(now(), $cdata['endtime'])   <  0 ) {
+  $left = " (<span id=\"timeleft\" style=\"color: #333\"><span class=\"glyphicon glyphicon-time\"></span> " . printtimediff(now(),$cdata['endtime']) . "</span>)";
+} else if ( difftime(now(), $cdata['activatetime']) >= 0 && difftime(now(), $cdata['starttime'])    <  0 ) {
+  $left = " (<span id=\"timeleft\" style=\"color: #333\"><span class=\"glyphicon glyphicon-time\"></span> " . printtimediff(now(),$cdata['starttime']) . "</span>)";
+} else {
+  $left = "";
+}
+echo "<script type=\"text/javascript\">
+  var initial = " . time() . ";
+  var activatetime = " . ( isset($cdata['activatetime']) ? $cdata['activatetime'] : -1 ) . ";
+  var starttime = " . ( isset($cdata['starttime']) ? $cdata['starttime'] : -1 ) . ";
+  var endtime = " . ( isset($cdata['endtime']) ? $cdata['endtime'] : -1 ) . ";
+  var offset = 0;
+  var date = new Date(initial*1000);
+  var timeleftelt = document.getElementById(\"timeleft\");
+
+  setInterval(function(){updateClock();},1000);
+  updateClock();
+  </script>\n"; 
+
+// page heading with contestname and start/endtimes
+echo "<h1>" . htmlspecialchars($cdata['name']) . "</h1>\n\n";
+
+if ( $fdata['showfinal'] ) {
+  echo "<h4>final standings</h4>\n\n";
+} elseif ( ! $fdata['cstarted'] ) {
+  echo "<h4>" . printContestStart($cdata) . $left . "</h4>\n\n";
+} else {
+  echo "<h4>starts: " . printtime($cdata['starttime']) .
+    " - ends: " . printtime($cdata['endtime']) . $left ;
+
+  if ( $fdata['showfrozen'] ) {
+    echo " (frozen since " . printtime($cdata['freezetime']) .")";
+  }
+  echo "</h4>\n\n";
+}
+
 // Put overview of team submissions (like scoreboard)
 putTeamRow($cdata, array($teamid));
 
