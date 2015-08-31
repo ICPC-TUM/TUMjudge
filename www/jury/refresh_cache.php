@@ -57,8 +57,10 @@ foreach ($contests as $contest) {
 	$teams = $DB->q('TABLE SELECT t.teamid FROM team t
 	                 INNER JOIN contest c ON c.cid = %i
 	                 LEFT JOIN contestteam ct ON ct.teamid = t.teamid AND ct.cid = c.cid
-	                 WHERE (c.public = 1 OR ct.teamid IS NOT NULL) ORDER BY teamid',
-	                $contest);
+	                 WHERE (c.public = 1 OR ct.teamid IS NOT NULL)
+	                 AND t.teamid IN (SELECT DISTINCT teamid FROM submission WHERE cid = %i)
+	                 ORDER BY teamid',
+	                $contest, $contest);
 	$probs = $DB->q('TABLE SELECT probid, cid FROM problem
 	                 INNER JOIN contestproblem USING (probid)
 	                 WHERE cid = %i ORDER BY shortname',
