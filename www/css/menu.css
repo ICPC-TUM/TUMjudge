@@ -50,6 +50,19 @@
 	display: inline;
 }
 
+.tumjudge-main .navbar {
+	border-bottom-color: #f0f000;
+}
+.tumjudge-main .brand {
+	background-color: #f0f000;
+}
+.navbar .brand .dropdown-menu .tumjudge-main {
+	border-left-color: #f0f000;
+}
+.tumjudge-main .tumjudge-instance.tumjudge-main {
+	display: inline;
+}
+
 .tumjudge-test .navbar {
 	border-bottom-color: #f03000;
 }
