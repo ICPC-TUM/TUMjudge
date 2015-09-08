@@ -21,6 +21,9 @@ $userdata = NULL;
 // privileges
 function checkrole($rolename, $check_superset = TRUE) {
 	global $userdata;
+        if( $rolename == 'team' && $userdata['teamid'] != NULL) {
+                return true;//everybody with a team gets the team role
+        }
 	if ( empty($userdata) || !array_key_exists('roles', $userdata) ) {
 		return false;
 	}
@@ -66,6 +69,7 @@ function logged_in()
 
 	case 'PHP_SESSIONS':
 	case 'LDAP':
+	case 'IN_TUM_LOGIN':
 		if (session_id() == "") session_start();
 		if ( isset($_SESSION['username']) ) {
 			$userdata = $DB->q('MAYBETUPLE SELECT * FROM user
@@ -89,7 +93,7 @@ function logged_in()
 	if ( !empty($teamdata) ) {
 		$teamid = $teamdata['teamid'];
 		// Is this the first visit? Record that in the team table.
-		if ( empty($teamdata['teampage_first_visited']) ) {
+		if ( empty($teamdata['teampage_first_visited']) && DOMSERVER_REPLICATION != 'slave' ) {
 			$hostname = gethostbyaddr($ip);
 			$DB->q('UPDATE team SET teampage_first_visited = %s, hostname = %s
 			        WHERE teamid = %i',
@@ -109,6 +113,7 @@ function have_logout()
 	case 'IPADDRESS':    return FALSE;
 	case 'PHP_SESSIONS': return TRUE;
 	case 'LDAP':         return TRUE;
+	case 'IN_TUM_LOGIN': return TRUE;
 	}
 	return FALSE;
 }
@@ -142,6 +147,7 @@ function show_loginpage()
 	case 'IPADDRESS':
 	case 'PHP_SESSIONS':
 	case 'LDAP':
+	case 'IN_TUM_LOGIN':
 		$title = 'Not Authenticated';
 		$menu = false;
 
@@ -153,10 +159,10 @@ function show_loginpage()
 Please supply your credentials below, or contact a staff member for assistance.
 </p>
 
-<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+<form action="<?php echo basename($_SERVER['PHP_SELF']) ?>" method="post">
 <input type="hidden" name="cmd" value="login" />
 <table>
-<tr><td><label for="login">Login:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" autofocus /></td></tr>
+<tr><td><label for="login">Login:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="255" accesskey="l" autofocus /></td></tr>
 <tr><td><label for="passwd">Password:</label></td><td><input type="password" id="passwd" name="passwd" value="" size="15" maxlength="255" accesskey="p" /></td></tr>
 <tr><td></td><td><input type="submit" value="Login" /></td></tr>
 </table>
@@ -165,7 +171,7 @@ Please supply your credentials below, or contact a staff member for assistance.
 <?php
 if (dbconfig_get('allow_registration', false)) { ?>
 <p>If you do not have an account, you can register for one below: </p>
-<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+<form action="<?php echo basename($_SERVER['PHP_SELF']) ?>" method="post">
 <input type="hidden" name="cmd" value="register" />
 <table>
 <tr><td><label for="login">Username:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" /></td></tr>
@@ -231,6 +237,28 @@ function ldap_check_credentials($user, $pass)
 	return FALSE;
 }
 
+// Check LDAP user and password credentials by trying to login to
+// the LDAP server(s).
+function ldap_check_credentials_dn($user, $pass, $ldap_dn)
+{
+	foreach ( explode(' ', LDAP_SERVERS) as $server ) {
+
+		// The connection may only be really established when needed,
+		// so execute a dummy query to test if the server is available:
+		$conn = @ldap_connect($server);
+		if ( !$conn || !ldap_get_option($conn, LDAP_OPT_PROTOCOL_VERSION, $dummy) ) {
+			continue;
+		}
+
+		// Try to login to test credentials
+		if ( @ldap_bind($conn, $ldap_dn, $pass) ) {
+			@ldap_unbind($conn);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 // Try to login a team with e.g. authentication data POST-ed. Function
 // does not return and should generate e.g. a redirect back to the
 // referring page.
@@ -239,6 +267,56 @@ function do_login()
 	global $DB, $ip, $username, $userdata;
 
 	switch ( AUTH_METHOD ) {
+	case 'IN_TUM_LOGIN':
+		$user = trim($_POST['login']);
+		$pass = trim($_POST['passwd']);
+
+		$title = 'Authenticate user';
+		$menu = false;
+
+		if ( empty($user) || empty($pass) ) {
+			show_failed_login('Please supply a username and password.');
+		}
+		
+		$userdata = $DB->q('MAYBETUPLE SELECT * FROM user
+		                    WHERE username = %s AND enabled = 1', $user);
+                if(empty($userdata['username'])) show_failed_login('This account is not registered here.');
+                $pw_null = empty($userdata['password']);
+                
+		if($pw_null) {
+			//LDAP IN TUM
+			$conn = false;
+			foreach(explode(' ', LDAP_SERVERS) as $server) {
+				if($conn == false) {
+					$conn = ldap_connect($server);
+				}
+			}
+			if(!$conn) show_failed_login('The authentification server is not online.');
+			if(!ldap_bind($conn)) show_failed_login('The authentification server does not accept connections.');
+                        
+			$entry = ldap_get_entries($conn,
+				ldap_search($conn, 'ou=Personen,ou=IN,o=TUM,c=DE', '(mail='.$user.'@in.tum.de)')
+			);
+			if($entry['count'] == 0) show_failed_login('Invalid username supplied. Please try again or contact a staff member.');
+                        
+			$authtoken = mysql_escape_string($entry[0]['dn']);
+                        
+			if (!ldap_check_credentials_dn($userdata['username'], $pass, $authtoken)) {
+				sleep(1);
+				show_failed_login('Invalid username or password supplied. ' .
+				                  'Please try again or contact a staff member.');
+			}
+
+			$username = $userdata['username'];
+		}
+		else {
+			//password
+			do_login_native($user, $pass);
+		}
+		session_start();
+		$_SESSION['username'] = $username;
+		auditlog('user', $userdata['userid'], 'logged in', $ip);
+		break;
 	// Generic authentication code for IPADDRESS and PHP_SESSIONS;
 	// some specializations are handled by if-statements.
 	case 'IPADDRESS':
@@ -256,7 +334,7 @@ function do_login()
 
 		if ( AUTH_METHOD=='IPADDRESS' ) {
 			$cnt = $DB->q('RETURNAFFECTED UPDATE user SET ip_address = %s
-				       WHERE username = %s', $ip, $username);
+			               WHERE username = %s', $ip, $username);
 			if ( $cnt != 1 ) error("cannot set IP for '$username'");
 		}
 		if ( AUTH_METHOD=='PHP_SESSIONS' ) {
@@ -306,8 +384,11 @@ function do_login()
 
 	// Authentication success. We could just return here, but we do a
 	// redirect to clear the POST data from the browser.
-	$DB->q('UPDATE user SET last_login = %s, last_ip_address = %s
-	        WHERE username = %s', now(), $ip, $username);
+	// do not update last_login and last_ip_address since this data is replicated
+	if( DOMSERVER_REPLICATION != 'slave' ) {
+		$DB->q('UPDATE user SET last_login = %s, last_ip_address = %s
+	        	WHERE username = %s', now(), $ip, $username);
+	}
 	$script = ($_SERVER['PHP_SELF']);
 	if ( preg_match( '/\/public\/login\.php$/', $_SERVER['PHP_SELF'] ) ) {
 		logged_in(); // fill userdata
@@ -412,6 +493,7 @@ function do_logout()
 	switch ( AUTH_METHOD ) {
 	case 'PHP_SESSIONS':
 	case 'LDAP':
+	case 'IN_TUM_LOGIN':
 
 		// Check that a session exists:
 		if (session_id() == "") session_start();
@@ -422,9 +504,9 @@ function do_logout()
 		// Also delete the session cookie.
 		if ( ini_get("session.use_cookies") ) {
 			$params = session_get_cookie_params();
-			setcookie(session_name(), '', time() - 42000,
-			          $params["path"], $params["domain"],
-			          $params["secure"], $params["httponly"]);
+			dj_setcookie(session_name(), '', time() - 42000,
+			             $params["path"], $params["domain"],
+			             $params["secure"], $params["httponly"]);
 		}
 
 		// Finally, destroy the session.

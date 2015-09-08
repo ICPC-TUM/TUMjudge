@@ -21,15 +21,20 @@ $teams = $DB->q('SELECT t.*, c.name AS catname,
                  GROUP BY teamid
                  ORDER BY c.sortorder, t.name COLLATE utf8_general_ci');
 
-$nsubmits = $DB->q('KEYTABLE SELECT teamid AS ARRAYKEY, COUNT(teamid) AS cnt
-                    FROM submission s
-                    WHERE cid IN %Ai GROUP BY teamid', $cids);
+if ( empty($cids) ) {
+	$nsubmits = array();
+	$ncorrect = array();
+} else {
+	$nsubmits = $DB->q('KEYTABLE SELECT teamid AS ARRAYKEY, COUNT(teamid) AS cnt
+	                    FROM submission s
+	                    WHERE cid IN (%Ai) GROUP BY teamid', $cids);
 
-$ncorrect = $DB->q('KEYTABLE SELECT teamid AS ARRAYKEY, COUNT(teamid) AS cnt
-                    FROM submission s
-                    LEFT JOIN judging j USING (submitid)
-                    WHERE j.valid = 1 AND j.result = "correct" AND s.cid IN %Ai
-                    GROUP BY teamid', $cids);
+	$ncorrect = $DB->q('KEYTABLE SELECT teamid AS ARRAYKEY, COUNT(teamid) AS cnt
+	                    FROM submission s
+	                    LEFT JOIN judging j USING (submitid)
+	                    WHERE j.valid = 1 AND j.result = "correct" AND s.cid IN (%Ai)
+	                    GROUP BY teamid', $cids);
+}
 
 require(LIBWWWDIR . '/header.php');
 
@@ -95,7 +100,7 @@ if( $teams->count() == 0 ) {
 		}
 		echo ">$link" . CIRCLE_SYM . "</a></td>";
 		echo "<td class=\"teamstat\" title=\"$numcor correct / $numsub submitted\">$link$numcor / $numsub</a></td>";
-		if ( IS_ADMIN ) {
+		if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 			echo "<td class=\"editdel\">" .
 				editLink('team', $row['teamid']) . " " .
 				delLink('team','teamid',$row['teamid']) . "</td>";
@@ -105,7 +110,7 @@ if( $teams->count() == 0 ) {
 	echo "</tbody>\n</table>\n\n";
 }
 
-if ( IS_ADMIN ) {
+if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 	echo "<p>" .addLink('team') . "</p>\n";
 }
 

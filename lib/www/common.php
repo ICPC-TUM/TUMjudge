@@ -53,63 +53,97 @@ function parseRunDiff($difftext){
 }
 
 /**
- * Print a list of submissions, either all or only those that
- * match <key> = <value>. Output is always limited to the
- * current or last contest.
+ * Print a list of submissions from contests contained in the $cdatas
+ * contest data array, either all or only those that match
+ * <key> [= <value>] pairs specified in $restrictions:
+ *  - 'verified'  if set, only list submissions that are verified
+ *  - 'judged'    if set, only list submissions with completed judgings
+ *  - 'teamid', 'probid', 'langid', 'categoryid', 'judgehost' can be
+ *    set to an ID to filter on that respective team, language, etc.
+ * Output is limited to the number $limit, or unlimited by default.
+ * If $highlight is a submission ID, then that one is highlighted.
  */
 function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 {
 	global $DB, $username;
 
 	/* We need two kind of queries: one for all submissions, and one
-	 * with the results for the valid ones. Restrictions is an array
-	 * of key/value pairs, to which the complete list of submissions
-	 * is restricted.
+	 * with the results for the valid ones.
 	 */
 
 	$cids = array_keys($cdatas);
 
+	$verifyclause = '';
 	if ( isset($restrictions['verified']) ) {
 		if ( $restrictions['verified'] ) {
-			$verifyclause = '(j.verified = 1) ';
+			$verifyclause = 'AND (j.verified = 1) ';
 		} else {
-			$verifyclause = '(j.verified = 0 OR (j.verified IS NULL AND s.judgehost IS NULL)) ';
+			$verifyclause = 'AND (j.verified = 0 OR (j.verified IS NULL AND s.judgehost IS NULL)) ';
 		}
 	}
+	$judgedclause = '';
 	if ( isset($restrictions['judged']) ) {
 		if ( $restrictions['judged'] ) {
-			$judgedclause = '(j.result IS NOT NULL) ';
+			$judgedclause = 'AND (j.result IS NOT NULL) ';
 		} else {
-			$judgedclause = '(j.result IS NULL) ';
+			$judgedclause = 'AND (j.result IS NULL) ';
+		}
+	}
+	$rejudgingclause = '';
+	if ( isset($restrictions['rejudgingdiff']) ) {
+		if ( $restrictions['rejudgingdiff'] ) {
+			$rejudgingclause = 'AND (j.result != jold.result) ';
+		} else {
+			$rejudgingclause = 'AND (j.result = jold.result) ';
 		}
 	}
 
-	$sqlbody =
-		'FROM submission s
-		 LEFT JOIN team           t  USING (teamid)
-		 LEFT JOIN problem        p  USING (probid)
-		 LEFT JOIN contestproblem cp USING (probid, cid)
-		 LEFT JOIN language       l  USING (langid)
-		 LEFT JOIN judging        j  ON (s.submitid = j.submitid AND j.valid=1)
-		 WHERE s.cid IN %Ai ' .
-	    (isset($restrictions['teamid'])    ? 'AND s.teamid = %i '    : '%_') .
-	    (isset($restrictions['categoryid'])? 'AND t.categoryid = %i ': '%_') .
-	    (isset($restrictions['probid'])    ? 'AND s.probid = %i '    : '%_') .
-	    (isset($restrictions['langid'])    ? 'AND s.langid = %s '    : '%_') .
-	    (isset($restrictions['judgehost']) ? 'AND s.judgehost = %s ' : '%_') ;
+	if ( isset($restrictions['old_result']) && !isset($restrictions['rejudgingid']) ) {
+		error('cannot specify restriction on old_result without specifying a rejudgingid');
+	}
 
+	// Special case the rejudgingid restriction by showing the
+	// corresponding judging and the old (active) judging result:
+	$sqlbody =
+	    'FROM submission s
+	     LEFT JOIN team           t  USING (teamid)
+	     LEFT JOIN problem        p  USING (probid)
+	     LEFT JOIN contestproblem cp USING (probid, cid)
+	     LEFT JOIN language       l  USING (langid) ' .
+	    (isset($restrictions['rejudgingid']) ?
+	    'LEFT JOIN judging        j    ON (s.submitid = j.submitid    AND j.rejudgingid = %i)
+	     LEFT JOIN judging        jold ON (j.prevjudgingid IS NULL AND s.submitid = jold.submitid AND jold.valid = 1 OR j.prevjudgingid = jold.judgingid) ' :
+	    'LEFT JOIN judging        j    ON (s.submitid = j.submitid    AND j.valid = 1) %_ ') .
+	    'WHERE s.cid IN (%Ai) ' . $verifyclause . $judgedclause . $rejudgingclause .
+	    (isset($restrictions['teamid'])      ? 'AND s.teamid = %i '      : '%_ ') .
+	    (isset($restrictions['categoryid'])  ? 'AND t.categoryid = %i '  : '%_ ') .
+	    (isset($restrictions['probid'])      ? 'AND s.probid = %i '      : '%_ ') .
+	    (isset($restrictions['langid'])      ? 'AND s.langid = %s '      : '%_ ') .
+	    (isset($restrictions['judgehost'])   ? 'AND s.judgehost = %s '   : '%_ ') .
+	    (isset($restrictions['rejudgingid']) ? 'AND (s.rejudgingid = %i OR ' .
+	                                           '     j.rejudgingid = %i) ' : '%_ %_ ') .
+	    (isset($restrictions['old_result'])  ? 'AND jold.result = %s '   : '%_ ') .
+	    (isset($restrictions['result'])      ? 'AND j.result = %s '   : '%_ ');
+
+	// No contests; automatically nothing found and the query can not be run...
+	if ( empty($cids) ) {
+		echo "<p class=\"nodata\">No submissions</p>\n\n";
+		return;
+	}
 	$res = $DB->q('SELECT s.submitid, s.teamid, s.probid, s.langid, s.cid,
 	               s.submittime, s.judgehost, s.valid, t.name AS teamname,
 	               cp.shortname, p.name AS probname, l.name AS langname,
 	               j.result, j.judgehost, j.verified, j.jury_member, j.seen ' .
+	              (isset($restrictions['rejudgingid']) ? ', jold.result AS oldresult ' : '') .
 	              $sqlbody .
-	              (isset($restrictions['verified']) ? 'AND ' . $verifyclause : '') .
-	              (isset($restrictions['judged'])   ? 'AND ' . $judgedclause : '') .
 	              'ORDER BY s.submittime DESC, s.submitid DESC ' .
-	              ($limit > 0 ? 'LIMIT 0, %i' : '%_'), $cids,
+	              ($limit > 0 ? 'LIMIT 0, %i' : '%_'), @$restrictions['rejudgingid'], $cids,
 	              @$restrictions['teamid'], @$restrictions['categoryid'],
 	              @$restrictions['probid'], @$restrictions['langid'],
-	              @$restrictions['judgehost'], $limit);
+	              @$restrictions['judgehost'],
+	              @$restrictions['rejudgingid'], @$restrictions['rejudgingid'],
+	              @$restrictions['old_result'], @$restrictions['result'],
+	              $limit);
 
 	// nothing found...
 	if( $res->count() == 0 ) {
@@ -133,6 +167,8 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		"<th scope=\"col\">lang</th>" .
 		"<th scope=\"col\">result</th>" .
 		(IS_JURY ? "<th scope=\"col\">verified</th><th scope=\"col\">by</th>" : '') .
+		(IS_JURY && isset($restrictions['rejudgingid']) ?
+		 "<th scope=\"col\">old result</th>" : '') .
 
 		"</tr>\n</thead>\n<tbody>\n";
 
@@ -145,7 +181,11 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		// to a different page, provided that the result is actually
 		// present and valid.
 		if ( IS_JURY ) {
-			$link = ' href="submission.php?id=' . $sid . '"';
+			// If rejudging list, link to the new rejudging:
+			$linkurl = 'submission.php?id=' . $sid .
+			    (isset($restrictions['rejudgingid']) ?
+			     '&amp;rejudgingid=' . $restrictions['rejudgingid'] : '');
+			$link = ' href="' . $linkurl . '"';
 		} elseif ( $row['submittime'] < $cdatas[$row['cid']]['endtime'] &&
 		           $row['result'] && $row['valid'] &&
 		           (!dbconfig_get('verification_required',0) || $row['verified']) ) {
@@ -229,17 +269,19 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 
 			echo "<td><a$link>$verified</a></td><td>";
 			if ( $claim ) {
-				echo "<a class=\"button\" href=\"submission.php?claim=1&amp;id=" .
-					htmlspecialchars($row['submitid']) . "\">claim</a>";
+				echo "<a class=\"button\" href=\"$linkurl&amp;claim=1\">claim</a>";
 			} else {
 				if ( !$row['verified'] && $jury_member==$username ) {
-					echo "<a class=\"button\" href=\"submission.php?unclaim=1&amp;id=" .
-						htmlspecialchars($row['submitid']) . "\">unclaim</a>";
+					echo "<a class=\"button\" href=\"$linkurl&amp;unclaim=1\">unclaim</a>";
 				} else {
 					echo "<a$link>$jury_member</a>";
 				}
 			}
 			echo "</td>";
+			if ( isset($restrictions['rejudgingid']) ) {
+				echo "<td class=\"result\"><a href=\"submission.php?id=$sid\">" .
+				    printresult($row['oldresult']) . "</a></td>";
+			}
 		}
 		echo "</tr>\n";
 
@@ -251,30 +293,21 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		echo addEndForm();
 
 		if ( $limit > 0 ) {
-			$subcnt = $DB->q('VALUE SELECT count(s.submitid) ' . $sqlbody, $cids,
-			                 @$restrictions['teamid'], @$restrictions['categoryid'],
-			                 @$restrictions['probid'], @$restrictions['langid'],
-			                 @$restrictions['judgehost']);
-			$corcnt = $DB->q('VALUE SELECT count(s.submitid) ' . $sqlbody .
-					 ' AND j.result LIKE \'correct\'', $cids,
-			                 @$restrictions['teamid'], @$restrictions['categoryid'],
-			                 @$restrictions['probid'], @$restrictions['langid'],
-			                 @$restrictions['judgehost']);
-			$igncnt = $DB->q('VALUE SELECT count(s.submitid) ' . $sqlbody .
-					 ' AND s.valid = 0', $cids,
-			                 @$restrictions['teamid'], @$restrictions['categoryid'],
-			                 @$restrictions['probid'], @$restrictions['langid'],
-			                 @$restrictions['judgehost']);
-			$vercnt = $DB->q('VALUE SELECT count(s.submitid) ' . $sqlbody .
-					 ' AND verified = 0 AND result IS NOT NULL', $cids,
-			                 @$restrictions['teamid'], @$restrictions['categoryid'],
-			                 @$restrictions['probid'], @$restrictions['langid'],
-			                 @$restrictions['judgehost']);
-			$quecnt = $DB->q('VALUE SELECT count(s.submitid) ' . $sqlbody .
-					 ' AND result IS NULL', $cids,
-			                 @$restrictions['teamid'], @$restrictions['categoryid'],
-			                 @$restrictions['probid'], @$restrictions['langid'],
-			                 @$restrictions['judgehost']);
+			$query_extras = array('subcnt' => '',
+				'corcnt' => ' AND j.result LIKE \'correct\'',
+				'igncnt' => ' AND s.valid = 0',
+				'vercnt' => ' AND verified = 0 AND result IS NOT NULL',
+				'quecnt' => ' AND result IS NULL');
+
+			foreach ( $query_extras as $cnt => $query_extra ) {
+				$$cnt = $DB->q('VALUE SELECT count(s.submitid) ' . $sqlbody . $query_extra,
+				               @$restrictions['rejudgingid'], $cids,
+				               @$restrictions['teamid'], @$restrictions['categoryid'],
+				               @$restrictions['probid'], @$restrictions['langid'],
+				               @$restrictions['judgehost'],
+				               @$restrictions['rejudgingid'], @$restrictions['rejudgingid'],
+				               @$restrictions['old_result'], @$restrictions['result']);
+			}
 		}
 		echo "<p>Total correct: $corcnt, submitted: $subcnt";
 		if ( $vercnt > 0 ) echo ", unverified: $vercnt";
@@ -351,62 +384,103 @@ function putTeam($teamid) {
  */
 function putClock() {
 	global $cdata, $username;
-
-	echo '<div id="clock">';
-	// timediff to end of contest
-	if ( difftime(now(), $cdata['starttime']) >= 0 &&
-	     difftime(now(), $cdata['endtime'])   <  0 ) {
-		$left = "time left: " . printtimediff(now(),$cdata['endtime']);
-	} else if ( difftime(now(), $cdata['activatetime']) >= 0 &&
-	            difftime(now(), $cdata['starttime'])    <  0 ) {
-		$left = "time to start: " . printtimediff(now(),$cdata['starttime']);
-	} else {
-		$left = "";
-	}
-	echo "<span id=\"timeleft\">" . $left . "</span>";
-
 	global $cid, $cdatas;
-	// Show a contest selection form, if there are contests
-	if ( count($cdatas) > 1 ) {
-		echo "<div id=\"selectcontest\">\n";
-		echo addForm('change_contest.php', 'get', 'selectcontestform');
-		$contests = array_map(function($c) { return $c['shortname']; }, $cdatas);
-		echo 'contest: ' . addSelect('cid', $contests, $cid, true);
-		echo addEndForm();
-		echo "<script type=\"text/javascript\">
-		      document.getElementById('cid').addEventListener('change', function() {
-		      document.getElementById('selectcontestform').submit();
-	});
-</script>
-";
-		echo "</div>\n";
-	} elseif ( count($cdatas) == 1 && IS_JURY ) {
-		echo "<div id=\"selectcontest\">\n";
-		$contest = $cdatas[$cid];
-		echo 'contest: ' . $contest['shortname'];
-		echo "</div>\n";
-	}
+	global $DB, $userdata, $refresh;
+
+	echo addForm('change_contest.php', 'get', 'selectcontestform');
+	echo addHidden('cid', $cid);
+	echo addEndForm();
+	echo "<script type=\"text/javascript\">
+	      function chooseContest(cid) {
+	        document.getElementById('selectcontestform').cid.value = cid;
+	        document.getElementById('selectcontestform').submit();
+              };
+              </script>";
+	echo "<li class=\"dropdown\">";
+	echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-flag\"></span> contests <span class=\"caret\"></span></a>";
+	echo "<ul class=\"dropdown-menu\" role=\"menu\">";
+
+        $current_contests = array();
+        $future_contests = array();
+        $past_contests = array();
+        foreach(array_reverse($cdatas, true) AS $tcid => $contest) {
+                if($contest['starttime'] < time() && $contest['endtime'] > time()) {
+                        $current_contests[$tcid] = $contest;
+                }
+                else if($contest['starttime'] > time()) {
+                        $future_contests[$tcid] = $contest;
+                }
+                else {
+                        $past_contests[$tcid] = $contest;
+                }
+        }
+        if(count($current_contests) > 0) {
+                echo "<li class='header'>Current Contests</li>";
+                foreach($current_contests AS $tcid => $contest) {
+                        echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
+                }
+        }
+        if(count($future_contests) > 0) {
+                echo "<li class='header'>Future Contests</li>";
+                foreach($future_contests AS $tcid => $contest) {
+                        echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
+                }
+        }
+        if(count($past_contests) > 0) {
+                echo "<li class='header'>Past Contests</li>";
+                foreach($past_contests AS $tcid => $contest) {
+                        echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
+                }
+        }
+
+	echo "</ul></li>";
+
 
 	if ( logged_in() ) {
-		echo "<div id=\"username\">logged in as " . $username
-			. ( have_logout() ? " <a href=\"../auth/logout.php\">×</a>" : "" )
-			. "</div>";
+		$team = $DB->q('MAYBETUPLE SELECT a.country FROM team t
+	                LEFT JOIN team_affiliation a ON (t.affilid = a.affilid)
+	                WHERE teamid = %i', $userdata['teamid']);
+		$usericon = "../images/countries/" . urlencode($team['country']) . ".png";
+
+		echo "<li class=\"dropdown\">";
+		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px; height: 17px;\" src=\"".$usericon."\" />".$username."<span class=\"caret\"></span></a>";
+		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
+
+		if(checkrole('jury') || checkrole('balloon')) {
+			echo "<li><a href=\"../public/\">public area</a></li>";
+			if(checkrole('team')) {
+				echo "<li><a href=\"../team/\">team area</a></li>";
+			}
+			echo "<li><a href=\"../jury/\">jury area</a></li>";
+		}
+		if(IS_JURY) {
+			$notify_flag  =  isset($_COOKIE["domjudge_notify"])  && (bool)$_COOKIE["domjudge_notify"];
+			$refresh_flag = !isset($_COOKIE["domjudge_refresh"]) || (bool)$_COOKIE["domjudge_refresh"];
+			echo addForm('toggle_notify.php', 'get', 'notify').addHidden('enable', ($notify_flag ? 0 : 1)).addEndForm();
+			if(isset($refresh)) {
+                        	echo addForm('toggle_refresh.php', 'get', 'toggles').addHidden('enable', ($refresh_flag ? 0 : 1)).addEndForm();
+                        }
+			echo "<li id=\"notify_li\" style=\"display: none\">";
+                        if($notify_flag) {
+                        	echo "<a href=\"#\" onclick=\"toggleNotifications(false); document.getElementById('notify').submit();\">disable notifications</a>";
+                        } else {
+                        	echo "<a href=\"#\" onclick=\"toggleNotifications(true); document.getElementById('notify').submit();\">enable notifications</a>";
+			}
+                        echo "</li>";
+                        if(isset($refresh)) {
+				if($refresh_flag) {
+					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">disable refresh</a></li>";
+				}
+				else {
+					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">enable refresh</a></li>";
+				}
+			}
+		}
+		if(have_logout()) {
+			echo "<li><a href=\"../auth/logout.php\">logout</a></li>";
+		}
+               	echo "</ul></li>";
 	}
-
-	echo "</div>";
-
-	echo "<script type=\"text/javascript\">
-	var initial = " . time() . ";
-	var activatetime = " . $cdata['activatetime'] . ";
-	var starttime = " . $cdata['starttime'] . ";
-	var endtime = " . $cdata['endtime'] . ";
-	var offset = 0;
-	var date = new Date(initial*1000);
-	var timeleftelt = document.getElementById(\"timeleft\");
-
-	setInterval(function(){updateClock();},1000);
-	updateClock();
-</script>\n";
 }
 
 /**
@@ -465,10 +539,9 @@ function putProblemText($probid)
 	global $DB, $cdata;
 
 	$prob = $DB->q("MAYBETUPLE SELECT cid, shortname, problemtext, problemtext_type
-			FROM problem INNER JOIN contestproblem USING (probid)
-			WHERE OCTET_LENGTH(problemtext) > 0
-			AND probid = %i
-			AND cid = %i", $probid, $cdata['cid']);
+	                FROM problem INNER JOIN contestproblem USING (probid)
+	                WHERE OCTET_LENGTH(problemtext) > 0
+	                AND probid = %i AND cid = %i", $probid, $cdata['cid']);
 
 	if ( empty($prob) ||
 	     !(IS_JURY ||
@@ -518,8 +591,9 @@ function putProblemTextList()
 
 		// otherwise, display list
 		$res = $DB->q('SELECT probid,shortname,name,color,problemtext_type
-			       FROM problem INNER JOIN contestproblem USING (probid) WHERE cid = %i AND allow_submit = 1 AND
-			       problemtext_type IS NOT NULL ORDER BY shortname', $cid);
+		               FROM problem INNER JOIN contestproblem USING (probid)
+		               WHERE cid = %i AND allow_submit = 1 AND
+		               problemtext_type IS NOT NULL ORDER BY shortname', $cid);
 
 		if ( $res->count() > 0 ) {
 			echo "<ul>\n";
@@ -544,9 +618,9 @@ function have_problemtexts()
 {
 	global $DB, $cid;
 	return $DB->q('VALUE SELECT COUNT(*) FROM problem
-		       INNER JOIN contestproblem USING (probid)
-		       WHERE problemtext_type IS NOT NULL
-		       AND cid = %i', $cid) > 0;
+	               INNER JOIN contestproblem USING (probid)
+	               WHERE problemtext_type IS NOT NULL
+	               AND cid = %i', $cid) > 0;
 }
 
 /**

@@ -8,33 +8,30 @@
  */
 
 require('init.php');
-$title="Scoreboard";
-// set auto refresh
-$refresh="30;url=./";
-
-// parse filter options
-$filter = array();
-if ( !isset($_GET['clear']) ) {
-	foreach( array('affilid', 'country', 'categoryid') as $type ) {
-		if ( !empty($_GET[$type]) ) $filter[$type] = $_GET[$type];
-	}
-	if ( count($filter) ) $refresh .= '?' . http_build_query($filter);
-}
+$title="TUMjudge";
 
 $menu = true;
 require(LIBWWWDIR . '/header.php');
 
-$isstatic = @$_SERVER['argv'][1] == 'static' || isset($_REQUEST['static']);
+?>
 
-if ( ! $isstatic ) {
-	echo "<div id=\"menutopright\">\n";
-	putClock();
-	echo "</div>\n";
-}
+<?php if(!logged_in()) { ?>
+<div style="width: 200px; float: right; margin: 20px;">
+<h2>Login</h2>
+<form action="login.php" method="post">
+<input type="hidden" name="cmd" value="login" />
+<table>
+<tr><td><label for="login">Login:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" autofocus />
+<tr><td><label for="passwd">Password:</label></td><td><input type="password" id="passwd" name="passwd" value="" size="15" maxlength="255" accesskey="p" />
+<tr><td></td><td><input type="submit" value="Login" /></td></tr>
+</table>
+</form>
+</div>
+<?php } ?>
 
-// call the general putScoreBoard function from scoreboard.php
-putScoreBoard($cdata, null, $isstatic, $filter);
+<h1>Welcome to TUMjudge!</h1>
 
-echo "<script type=\"text/javascript\">initFavouriteTeams();</script>";
+<p>Somebody will guide you through this website, hopefully...</p>
 
+<?php
 require(LIBWWWDIR . '/footer.php');

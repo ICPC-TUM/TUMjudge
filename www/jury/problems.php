@@ -15,20 +15,20 @@ echo "<h1>Problems</h1>\n\n";
 
 // Select all data
 $res = $DB->q('SELECT p.probid,p.name,p.timelimit,p.memlimit,p.outputlimit,
-               p.problemtext_type, COUNT(testcaseid) AS testcases
+               p.problemtext_type,
+			   p.difficulty,p.author,p.source,p.topic,
+			   COUNT(testcaseid) AS testcases
                FROM problem p
                LEFT JOIN testcase USING (probid)
                GROUP BY probid ORDER BY probid');
 
-// Get number of contests per problem
-$contestinfo = $DB->q("TABLE SELECT probid, cid
-		       FROM contestproblem");
-$contestproblems = array();
-foreach ($contestinfo as $row) {
-	if ( !isset($contestproblems[$row['probid']]) ) {
-		$contestproblems[$row['probid']] = array();
-	}
-	$contestproblems[$row['probid']][] = $row['cid'];
+// Get number of active contests per problem
+if ( count($cids)!=0 ) {
+	$activecontests = $DB->q("KEYVALUETABLE SELECT probid, count(cid)
+	                          FROM contestproblem
+	                          WHERE cid IN (%As) GROUP BY probid", $cids);
+} else {
+	$activecontests = array();
 }
 
 if( $res->count() == 0 ) {
@@ -36,6 +36,12 @@ if( $res->count() == 0 ) {
 } else {
 	echo "<table class=\"list sortable\">\n<thead>\n" .
 	     "<tr><th scope=\"col\">ID</th><th scope=\"col\">name</th>" .
+		 //add new fields
+		 "<th scope=\"col\">difficulty</th>" .
+		 "<th scope=\"col\">author</th>" .
+		 "<th scope=\"col\">source</th>" .
+		 "<th scope=\"col\">topic</th>" .
+		 //
 	     "<th scope=\"col\" class=\"sorttable_numeric\"># contests</th>" .
 	     "<th scope=\"col\">time<br />limit</th>" .
 	     "<th scope=\"col\">memory<br />limit</th>" .
@@ -49,18 +55,23 @@ if( $res->count() == 0 ) {
 
 	while($row = $res->next()) {
 		$classes = array();
-		if ( count(array_intersect($contestproblems[$row['probid']], $cids)) == 0 ) $classes[] = 'disabled';
+		if ( !isset($activecontests[$row['probid']]) ) $classes[] = 'disabled';
 		$link = '<a href="problem.php?id=' . urlencode($row['probid']) . '">';
 
 		echo "<tr class=\"" . implode(' ',$classes) .
 			"\"><td>" . $link . "p" .
 				htmlspecialchars($row['probid'])."</a>".
 			"</td><td>" . $link . htmlspecialchars($row['name'])."</a>".
+			//insert extra problem data
+			"</td><td>" . $link . htmlspecialchars($row['difficulty'])."</a>".
+			"</td><td>" . $link . htmlspecialchars($row['author'])."</a>".
+			"</td><td>" . $link . htmlspecialchars($row['source'])."</a>".
+			"</td><td>" . $link . htmlspecialchars($row['topic'])."</a>".
 			"</td><td>".
-			$link . htmlspecialchars(count($contestproblems[$row['probid']])) . "</a>" .
+			$link . htmlspecialchars(isset($activecontests[$row['probid']])?$activecontests[$row['probid']]:0) . "</a>" .
 			"</td><td>" . $link . (int)$row['timelimit'] . "</a>" .
-			"</td><td>" . $link . (isset($row['memlimit']) ? (int)$row['memlimit'] : '-') . "</a>" .
-			"</td><td>" . $link . (isset($row['outputlimit']) ? (int)$row['outputlimit'] : '-') . "</a>" .
+			"</td><td>" . $link . (isset($row['memlimit']) ? (int)$row['memlimit'] : 'default') . "</a>" .
+			"</td><td>" . $link . (isset($row['outputlimit']) ? (int)$row['outputlimit'] : 'default') . "</a>" .
 			"</td><td><a href=\"testcase.php?probid=" . $row['probid'] .
 			"\">" . $row['testcases'] . "</a></td>";
 		if ( !empty($row['problemtext_type']) ) {
@@ -86,7 +97,8 @@ if( $res->count() == 0 ) {
 if ( IS_ADMIN ) {
 	echo "<p>" . addLink('problem') . "</p>\n\n";
 	if ( class_exists("ZipArchive") ) {
-		$contests = $DB->q("KEYVALUETABLE SELECT cid, CONCAT('c', cid, ': ' , shortname, ' - ', contestname) FROM contest");
+		$contests = $DB->q("KEYVALUETABLE SELECT cid,
+		                    CONCAT('c', cid, ': ', shortname, ' - ', name) FROM contest");
 		$values = array(-1 => 'Do not link to a contest');
 		foreach ($contests as $cid => $contest) {
 			$values[$cid] = $contest;

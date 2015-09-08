@@ -1,0 +1,135 @@
+.navbar, .nav {
+	width: 100%;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus, .navbar-default, .dropdown-menu .header {
+	background-color: #002143;
+	color: #ffffff;
+}
+.dropdown-menu .header {
+        font-weight: bold;
+        font-size: larger;
+        padding-left: 0.5em;
+}
+.navbar > .container .navbar-brand, .navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default a, .navbar-default a:hover, .navbar-default a:focus, .navbar-default .navbar-text, #timeleft {
+	color: #ffffff;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+	color: #002143;
+	background-color: #ffffff;
+}
+.dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+	color: #002143;
+}
+.navbar {
+	border-bottom-width: 5px;
+}
+.navbar .pagetitle {
+	font-weight: bold;
+	font-size: large;
+}
+.navbar .tumjudge-instance {
+	display: none;
+}
+.navbar .brand .dropdown-menu .page {
+	border-left-style: solid;
+	border-left-width: 10px;
+	margin-bottom: 2px;
+}
+
+/* Design for different judge instances */
+.tumjudge-info .navbar {
+	border-bottom-color: #f09000;
+}
+.tumjudge-info .brand {
+	background-color: #f09000;
+}
+.navbar .brand .dropdown-menu .tumjudge-info {
+	border-left-color: #f09000;
+}
+.tumjudge-info .tumjudge-instance.tumjudge-info {
+	display: inline;
+}
+
+.tumjudge-main .navbar {
+	border-bottom-color: #f0f000;
+}
+.tumjudge-main .brand {
+	background-color: #f0f000;
+}
+.navbar .brand .dropdown-menu .tumjudge-main {
+	border-left-color: #f0f000;
+}
+.tumjudge-main .tumjudge-instance.tumjudge-main {
+	display: inline;
+}
+
+.tumjudge-test .navbar {
+	border-bottom-color: #f03000;
+}
+.tumjudge-test .brand {
+	background: repeating-linear-gradient(
+		45deg,
+		#f03000,
+		#f03000 10px,
+		#cc5500 10px,
+		#cc5500 20px
+	);
+}
+.navbar .brand .dropdown-menu .tumjudge-test {
+	border-left-color: #f03000;
+}
+.tumjudge-test .tumjudge-instance.tumjudge-test {
+	display: inline;
+}
+
+.tumjudge-conpra .navbar {
+	border-bottom-color: #00f090;
+}
+.tumjudge-conpra .brand {
+	background-color: #00f090;
+}
+.navbar .brand .dropdown-menu .tumjudge-conpra {
+	border-left-color: #00f090;
+}
+.tumjudge-conpra .tumjudge-instance.tumjudge-conpra {
+	display: inline;
+}
+
+.tumjudge-contest .navbar {
+	border-bottom-color: #0090f0;
+}
+.tumjudge-contest .brand {
+	background-color: #0090f0;
+}
+.navbar .brand .dropdown-menu .tumjudge-contest {
+	border-left-color: #0090f0;
+}
+.tumjudge-contest .tumjudge-instance.tumjudge-contest {
+	display: inline;
+}
+
+.tumjudge-gad .navbar {
+	border-bottom-color: #9000f0;
+}
+.tumjudge-gad .brand {
+	background-color: #9000f0;
+}
+.navbar .brand .dropdown-menu .tumjudge-gad {
+	border-left-color: #9000f0;
+}
+.tumjudge-gad .tumjudge-instance.tumjudge-gad {
+	display: inline;
+}
+
+.tumjudge-isabelle .navbar {
+	border-bottom-color: #f00090;
+}
+.tumjudge-isabelle .brand {
+	background-color: #f00090;
+}
+.navbar .brand .dropdown-menu .tumjudge-isabelle {
+	border-left-color: #f00090;
+}
+.tumjudge-isabelle .tumjudge-instance.tumjudge-isabelle {
+	display: inline;
+}

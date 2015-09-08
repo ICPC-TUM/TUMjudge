@@ -77,17 +77,17 @@ function putClar($clar)
 	$prefix = '';
 	if ( IS_JURY && count($cids) > 1 )
 	{
-		$prefix = $clar['contestshortname'] . ' - ';
+		$prefix = htmlspecialchars($clar['contestshortname']) . ' - ';
 	}
 	if ( is_null($clar['probid']) ) {
 		echo $prefix . "General issue";
 	} else {
 		if ( IS_JURY ) {
 			echo '<a href="problem.php?id=' . urlencode($clar['probid']) .
-			     '">' . $prefix . 'Problem ' . $clar['shortname'] . ": " .
-			     $clar['probname'] . '</a>';
+			     '">' . $prefix . 'Problem ' . htmlspecialchars($clar['shortname'] . ": " .
+			     $clar['probname']) . '</a>';
 		} else {
-			echo 'Problem ' . $clar['shortname'] . ": " . $clar['probname'];
+			echo 'Problem ' . htmlspecialchars($clar['shortname'] . ": " . $clar['probname']);
 		}
 	}
 	echo "</td></tr>\n";
@@ -118,13 +118,17 @@ function putClarification($id,  $team = NULL)
 
 	$clar = $DB->q('TUPLE SELECT * FROM clarification WHERE clarid = %i', $id);
 
-	$clars = $DB->q('SELECT c.*, cp.shortname, p.name AS probname, t.name AS toname, f.name AS fromname, co.shortname AS contestshortname
+	$clars = $DB->q('SELECT c.*, cp.shortname, p.name AS probname,
+	                 t.name AS toname, f.name AS fromname,
+	                 co.shortname AS contestshortname
 	                 FROM clarification c
-			 LEFT JOIN problem p ON (c.probid = p.probid)
+	                 LEFT JOIN problem p ON (c.probid = p.probid)
 	                 LEFT JOIN team t ON (t.teamid = c.recipient)
 	                 LEFT JOIN team f ON (f.teamid = c.sender)
-			 LEFT JOIN contest co ON (co.cid = c.cid)
-			 LEFT JOIN contestproblem cp ON (cp.probid = c.probid AND cp.cid = c.cid AND cp.allow_submit = 1)
+	                 LEFT JOIN contest co ON (co.cid = c.cid)
+	                 LEFT JOIN contestproblem cp ON (cp.probid = c.probid AND
+	                                                 cp.cid = c.cid AND
+	                                                 cp.allow_submit = 1)
 	                 WHERE c.respid = %i OR c.clarid = %i
 	                 ORDER BY c.submittime, c.clarid',
 	                $clar['clarid'], $clar['clarid']);
@@ -262,7 +266,8 @@ function putClarificationList($clars, $team = NULL)
 
 /**
  * Output a form to send a new clarification.
- * Set respid to a teamid, to make only that team (or ALL) selectable.
+ * Set respid to a clarid, to make only responses to same
+ * sender(s)/recipient(s) or ALL selectable.
  */
 function putClarificationForm($action, $respid = NULL, $onlycontest = NULL)
 {
@@ -285,13 +290,15 @@ function putClarificationForm($action, $respid = NULL, $onlycontest = NULL)
 <!--
 function confirmClar() {
 <?php if ( IS_JURY ): ?>
-	var sendto = document.forms['sendclar'].sendto.value;
+	var sendto_field = document.forms['sendclar'].sendto;
+	var sendto = sendto_field.value;
+	var sendto_text = sendto_field.options[sendto_field.selectedIndex].text;
+
 	if ( sendto=='domjudge-must-select' ) {
 		alert('You must select a recipient for this clarification.');
 		return false;
 	}
-	if ( sendto=='' ) sendto = "ALL";
-	return confirm("Send clarification to " + sendto + "?");
+	return confirm("Send clarification to " + sendto_text + "?");
 <?php else : ?>
 	return confirm("Send clarification request to Jury?");
 <?php endif; ?>
@@ -344,7 +351,7 @@ function confirmClar() {
 	$options = array();
 	foreach ($cdatas as $cid => $cdata) {
 		$row = $DB->q('TUPLE SELECT CONCAT(cid, "-general") AS c
-			       FROM contest WHERE cid = %i', $cid);
+		               FROM contest WHERE cid = %i', $cid);
 		if ( IS_JURY && count($cdatas) > 1 )
 		{
 			$options[$row['c']] = "{$cdata['shortname']} - General issue";
@@ -352,11 +359,13 @@ function confirmClar() {
 			$options[$row['c']] = "General issue";
 		}
 		if ( difftime($cdata['starttime'], now()) <= 0 ) {
-			$problem_options = $DB->q('KEYVALUETABLE SELECT CONCAT(cid, "-", probid), CONCAT(shortname, ": ", name) as name
-						   FROM problem
-						   INNER JOIN contestproblem USING (probid)
-						   WHERE cid = %i AND allow_submit = 1
-						   ORDER BY shortname ASC', $cid);
+			$problem_options =
+				$DB->q('KEYVALUETABLE SELECT CONCAT(cid, "-", probid),
+				                             CONCAT(shortname, ": ", name) as name
+				        FROM problem
+				        INNER JOIN contestproblem USING (probid)
+				        WHERE cid = %i AND allow_submit = 1
+				        ORDER BY shortname ASC', $cid);
 			if ( IS_JURY && count($cdatas) > 1 ) {
 				foreach ($problem_options as &$problem_option) {
 					$problem_option = $cdata['shortname'] . ' - ' . $problem_option;
@@ -367,7 +376,9 @@ function confirmClar() {
 		}
 	}
 	echo "<tr><td><b>Subject:</b></td><td>\n" .
-	     addSelect('problem', $options, ($respid ? $clar['probid'] : 'general'), true) .
+	     addSelect('problem', $options,
+	               ($respid ? $clar['cid'] : $cid).'-'.
+	               ($clar['probid'] ? 'general' : $clar['probid']), true) .
 	     "</td></tr>\n";
 
 	?>
@@ -390,6 +401,16 @@ Best regards,
 }
 echo addTextArea('bodytext', $body, 80, 10, 'required');
 ?></td></tr>
+<?php if ( IS_JURY ): ?>
+        <tr>
+        <td><b><label for="bonus_points">Grant bonus points</label>:</b></td>
+        <td><?php echo addInputField('number', 'bonus_points', '', ' min="1" max="10000"'); ?></td>
+        </tr>
+        <tr>
+        <td><b><label for="bonus_reason">Reason for bonus points</label>:</b></td>
+        <td><?php echo addInput('bonus_reason'); ?></td>
+        </tr>
+<?php endif; ?>
 <tr>
 <td>&nbsp;</td>
 <td><?php echo addSubmit('Send', 'submit', 'return confirmClar()'); ?></td>

@@ -1,18 +1,10 @@
-<nav><div id="menutop">
-<a href="index.php" accesskey="h">home</a>
+<li><a href="index.php"><span class="glyphicon glyphicon-home"></span> home</a></li>
+<?php /*if(!logged_in()) { ?>
+	<li><a href="login.php"><span class="glyphicon glyphicon-user"></span> login</a></li>
+<?php }*/ ?>
+<li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>
+
 <?php
-if ( have_problemtexts() ) {
-	echo "<a href=\"problems.php\" accesskey=\"p\">problems</a>\n";
-}
-logged_in(); // fill userdata
-if ( checkrole('team') ) {
-	echo "<a target=\"_top\" href=\"../team/\" accesskey=\"t\">→team</a>\n";
-}
-if ( checkrole('jury') || checkrole('balloon') ) {
-	echo "<a target=\"_top\" href=\"../jury/\" accesskey=\"j\">→jury</a>\n";
-}
-if ( !logged_in() ) {
-	echo "<a href=\"login.php\" accesskey=\"l\">login</a>\n";
-}
+putClock();
 ?>
-</div></nav>
+

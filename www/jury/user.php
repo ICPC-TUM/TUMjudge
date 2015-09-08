@@ -49,29 +49,30 @@ if ( !empty($cmd) ):
 
 ?>
 <tr><td><label for="data_0__name_">Full name:</label></td>
-<td><?php echo addInput('data[0][name]', @$row['name'], 35, 255, 'required')?></td></tr>
+<td><?php echo addInput('data[0][name]', @$row['name'], 35, 255, 'required'.(DOMSERVER_REPLICATION == 'slave' ? ' readonly' : ''))?></td></tr>
 <tr><td><label for="data_0__email_">Email:</label></td>
-<td><?php echo addInputField('email', 'data[0][email]', @$row['email'], ' size="35" maxlength="255" autocomplete="off"')?></td></tr>
+<td><?php echo addInputField('email', 'data[0][email]', @$row['email'], ' size="35" maxlength="255" autocomplete="off"'.(DOMSERVER_REPLICATION == 'slave' ? ' readonly' : ''))?></td></tr>
 
 <tr><td><label for="data_0__password_">Password:</label></td><td><?php
 if ( !empty($row['password']) ) {
 	echo "<em>set</em>";
 } else {
 	echo "<em>not set</em>";
-} ?> - to change: <?php echo addInputField('password', 'data[0][password]', "", ' size="19" maxlength="255"')?></td></tr>
+} ?> - to change: <?php echo addInputField('password', 'data[0][password]', "", ' size="19" maxlength="255"'.(DOMSERVER_REPLICATION == 'slave' ? ' readonly' : ''))?></td></tr>
 <tr><td><label for="data_0__ip_address_">IP Address:</label></td>
-<td><?php echo addInput('data[0][ip_address]', @$row['ip_address'], 35, 255)?></td></tr>
+<td><?php echo addInput('data[0][ip_address]', @$row['ip_address'], 35, 255, (DOMSERVER_REPLICATION == 'slave' ? ' readonly' : ''))?></td></tr>
 
 <tr><td><label for="data_0__enabled_">Enabled:</label></td>
-<td><?php echo addRadioButton('data[0][enabled]', (!isset($row['']) || $row['enabled']), 1)?> <label for="data_0__enabled_1">yes</label>
-<?php echo addRadioButton('data[0][enabled]', (isset($row['enabled']) && !$row['enabled']), 0)?> <label for="data_0__enabled_0">no</label></td></tr>
+<td><?php if(DOMSERVER_REPLICATION == 'slave') {echo $row['enabled'] ? 'yes' : 'no';} else { ?>
+<?php echo addRadioButton('data[0][enabled]', (!isset($row['']) || $row['enabled']), 1)?> <label for="data_0__enabled_1">yes</label>
+<?php echo addRadioButton('data[0][enabled]', (isset($row['enabled']) && !$row['enabled']), 0)?> <label for="data_0__enabled_0">no</label><?php } /*endelse*/ ?></td></tr>
 
 <!-- team selection -->
 <tr><td><label for="data_0__teamid_">Team:</label></td>
 <td><?php
 $tmap = $DB->q("KEYVALUETABLE SELECT teamid,name FROM team ORDER BY name");
 $tmap[''] = 'none';
-echo addSelect('data[0][teamid]', $tmap, isset($row['teamid'])?$row['teamid']:@$_GET['forteam'], true);
+echo addSelect('data[0][teamid]', $tmap, isset($row['teamid'])?$row['teamid']:@$_GET['forteam'], true, false, DOMSERVER_REPLICATION == 'slave');
 ?>
 </td></tr>
 
@@ -85,7 +86,7 @@ $roles = $DB->q('TABLE SELECT r.roleid, r.role, r.description, max(ur.userid=%s)
 $i=0;
 foreach ($roles as $role) {
     echo "<label>";
-    echo addCheckbox("data[0][mapping][items][$i]", $role['hasrole']==1, $role['roleid']);
+    echo addCheckbox("data[0][mapping][0][items][$i]", $role['hasrole']==1, $role['roleid']);
     echo $role['description'] . "</label><br/>";
     $i++;
 }
@@ -94,9 +95,9 @@ foreach ($roles as $role) {
 
 </table>
 <?php
-echo addHidden('data[0][mapping][fk][0]', 'userid') .
-     addHidden('data[0][mapping][fk][1]', 'roleid') .
-     addHidden('data[0][mapping][table]', 'userrole');
+echo addHidden('data[0][mapping][0][fk][0]', 'userid') .
+     addHidden('data[0][mapping][0][fk][1]', 'roleid') .
+     addHidden('data[0][mapping][0][table]', 'userrole');
 echo addHidden('cmd', $cmd) .
     addHidden('table','user') .
     addHidden('referrer', @$_GET['referrer']) .

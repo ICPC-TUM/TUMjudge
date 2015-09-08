@@ -14,9 +14,13 @@ $id = getRequestID();
 
 if ( isset($id) ) {
 
-	$req = $DB->q('MAYBETUPLE SELECT q.*, t.name AS name FROM clarification q
-		       LEFT JOIN team t ON (t.teamid = q.sender)
-		       WHERE q.cid IN %Ai AND q.clarid = %i', $cids, $id);
+	if ( empty($cids) ) {
+		$req = null;
+	} else {
+		$req = $DB->q('MAYBETUPLE SELECT q.*, t.name AS name FROM clarification q
+		               LEFT JOIN team t ON (t.teamid = q.sender)
+		               WHERE q.cid IN (%Ai) AND q.clarid = %i', $cids, $id);
+	}
 
 	if ( ! $req ) error("clarification $id not found, cids = " . implode(', ', $cids));
 
@@ -69,22 +73,31 @@ if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
 		$sendto = $_POST['sendto'];
 	}
 
-	list($cid, $problem) = explode('-', $_POST['problem']);
-	if ($problem == 'general')
-	{
-		$problem = null;
+	list($cid, $probid) = explode('-', $_POST['problem']);
+	if ( !ctype_digit($probid) ) $probid = NULL;
+
+	//insert bonus points
+	$bonus_amount = $_POST['bonus_points'];
+	$bonus_reason = $_POST['bonus_reason'];
+	if(!empty($bonus_amount)) {
+	        if(empty($bonus_reason)) error('You need to specify a reason for the bonus points.');
+	        if(is_null($sendto)) error('You can only assign bonus points to individual teams.');
+	        $DB->q('INSERT INTO bonus_points
+	                (teamid, cid, probid, points, reason)
+	                VALUES (%i, %i, %i, %i, %s)',
+	                $sendto, $cid, $probid, $bonus_amount, $bonus_reason
+	        );
 	}
 
 	$newid = $DB->q('RETURNID INSERT INTO clarification
 	                 (cid, respid, submittime, recipient, probid, body,
  	                  answered, jury_member)
 	                 VALUES (%i, ' .
-	                ($respid===NULL ? 'NULL %_' : '%i') . ', %s, %s, %s, %s, %i, ' .
+	                ($respid===NULL ? 'NULL %_' : '%i') . ', %s, %s, %i, %s, %i, ' .
 	                (isset($jury_member) ? '%s)' : 'NULL %_)'),
-	                $cid, $respid, now(), $sendto,
-			$problem,
+	                $cid, $respid, now(), $sendto, $probid,
 	                $_POST['bodytext'], 1, $jury_member);
-	auditlog('clarification', $newid, 'added');
+	auditlog('clarification', $newid, 'added', null, null, $cid);
 
 	if ( ! $isgeneral ) {
 		$DB->q('UPDATE clarification SET answered = 1, jury_member = ' .

@@ -104,9 +104,9 @@ echo "<table class=\"configcheck\">\n";
 
 // SOFTWARE
 
-if( !function_exists('version_compare') || version_compare( '5.2.0',PHP_VERSION,'>=') ) {
+if( !function_exists('version_compare') || version_compare( '5.3.3',PHP_VERSION,'>=') ) {
 	result('software', 'PHP version', 'E',
-		'You have PHP ' . PHP_VERSION . ', but need at least 5.2.0.',
+		'You have PHP ' . PHP_VERSION . ', but need at least 5.3.3.',
 		'See <a href="?phpinfo">phpinfo</a> for details.');
 } else {
 	result('software', 'PHP version', 'O',
@@ -128,6 +128,21 @@ if ( function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()==1 ) {
 	       'entries in the database.');
 } else {
 	result('software', 'PHP magic quotes', 'O', 'PHP magic quotes disabled.');
+}
+
+if ( !function_exists('gd_info') ) {
+	result('software', 'PHP GD library', 'W',
+	       'The PHP GD library is not available. Test case images cannot be uploaded.');
+} else {
+	result('software', 'PHP GD library', 'O',
+	       'The PHP GD library is available to handle test case images.');
+}
+
+if ( extension_loaded('suhosin') ) {
+	result('software', 'suhosin', 'E',
+	       'PHP suhosin extension loaded. This may result in dropping POST arguments, e.g. output_run.');
+} else {
+	result('software', 'suhosin', 'O', 'PHP suhosin extension disabled.');
 }
 
 $max_file_check = max(100,dbconfig_get('sourcefiles_limit', 100));
@@ -258,11 +273,15 @@ $res = $DB->q('SELECT * FROM contest ORDER BY cid');
 $detail = '';
 $has_errors = FALSE;
 while($cdata = $res->next()) {
+	$cp = $DB->q('SELECT * FROM contestproblem WHERE cid = %i', $cdata['cid']);
 
 	$detail .=  "c".(int)$cdata['cid'].": ";
 
 	$CHECKER_ERRORS = array();
 	check_contest($cdata, array('cid' => $cdata['cid']));
+	while( $cpdata = $cp->next() ) {
+		check_contestproblem($cpdata, array('cid' => $cpdata['cid'], 'probid' => $cpdata['probid']));
+	}
 	if ( count ( $CHECKER_ERRORS ) > 0 ) {
 		foreach($CHECKER_ERRORS as $chk_err) {
 			$detail .= $chk_err . "\n";
@@ -368,7 +387,8 @@ if ( dbconfig_get('show_affiliations', 1) ) {
 		}
 	}
 
-	$res = $DB->q('SELECT DISTINCT country FROM team_affiliation ORDER BY country');
+	$res = $DB->q('SELECT DISTINCT country FROM team_affiliation
+	               WHERE country IS NOT NULL ORDER BY country');
 	while ( $row = $res->next() ) {
 		$cflag = '../images/countries/' .
 			urlencode($row['country']) . '.png';
@@ -406,8 +426,8 @@ result('submissions and judgings', 'Submissions', $submres, $submnote);
 
 // check for non-existent problem references
 $res = $DB->q('SELECT s.submitid, s.probid, s.cid FROM submission s
-               LEFT OUTER JOIN contestproblem p USING (probid)
-               WHERE s.cid != p.cid');
+               LEFT JOIN contestproblem p USING (cid,probid)
+               WHERE p.shortname IS NULL');
 
 $details = '';
 while($row = $res->next()) {

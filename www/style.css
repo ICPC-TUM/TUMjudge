@@ -219,6 +219,15 @@ legend {
 	border-bottom: 2px solid black;
 	white-space: nowrap;
 }
+
+.problempoints {
+	font-size: smaller;
+	font-weight: normal;
+	color: #303030;
+	padding-left: 3pt;
+	padding-right: 3pt;
+}
+
 .score_correct   { background: #60e760; }
 .score_first     { background: #1daa1d !important; }
 .score_pending   { background: #6666FF; }
@@ -453,4 +462,38 @@ ul.tabbernav li.tabberactive a:hover
 .heart {
 	padding: .3em;
 	cursor: pointer;
+}
+
+table.lcsdiff {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+table.lcsdiff td.linenr {
+	background-color: darkgray;
+	text-align: right;
+	border-right: solid 1px black;
+	padding-right: 7px;
+}
+
+ins {
+	background: #dfd;
+	text-decoration: none;
+}
+del {
+	background: #fdd;
+	text-decoration: none;
+}
+
+table.rejudgetable td {
+	text-align: center;
+}
+table.rejudgetable td.changed {
+	background-color: #fdd;
+	font-weight: bold;
+}
+table.rejudgetable td.identical {
+	background-color: #dfd;
+}
+table.rejudgetable td.zero {
+	background-color: #F0F8FF;
 }

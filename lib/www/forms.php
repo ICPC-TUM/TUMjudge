@@ -22,7 +22,7 @@ function addInputField($type, $name = null, $value = null, $attributes = '') {
 	return '<input type="'.$type.'"'.
 		($name  !== null ? ' name="'.htmlspecialchars($name).'"' : '') . $id .
 		($value !== null ? ' value="'.htmlspecialchars($value).'"' : '') .
-		$attributes . " />\n";
+		' ' . $attributes . " class=\"form-control\" />\n";
 }
 
 /**
@@ -37,8 +37,8 @@ function addPwField($name , $value = null) {
  * Form checkbox
  */
 function addCheckBox($name, $checked = false, $value = null) {
-	return addInputField('checkbox', $name, $value,
-	                     ($checked ? ' checked="checked"' : ''));
+	return '<span class="checkbox">'.addInputField('checkbox', $name, $value,
+	                     ($checked ? ' checked="checked"' : '')).'</span>';
 }
 
 
@@ -46,8 +46,8 @@ function addCheckBox($name, $checked = false, $value = null) {
  * Form radio button
  */
 function addRadioButton($name, $checked = false, $value = null) {
-	return addInputField('radio', $name, $value,
-	                     ($checked ? ' checked="checked"' : ''));
+	return '<span class="radio">'.addInputField('radio', $name, $value,
+	                     ($checked ? ' checked="checked"' : '')).'</span>';
 }
 
 /**
@@ -95,15 +95,17 @@ function matchSelect($val, $default)
  * default: the key that will be selected
  * usekeys: use the keys of the array as option value or not
  * multi: multiple values are selectable, set to integer to set vertical size
+ * readonly: boolean describing whether the select is read-only
  */
-function addSelect($name, $values, $default = null, $usekeys = false, $multi = false)
+function addSelect($name, $values, $default = null, $usekeys = false, $multi = false, $readonly = false)
 {
 	$size = 5;
 	if ( is_int($multi) ) $size = $multi;
 
 	$ret = '<select name="' . htmlspecialchars($name) . '"' .
 		($multi ? " multiple=\"multiple\" size=\"$size\"" : '') .
-		' id="' . htmlspecialchars(strtr($name,'[]','__')) . "\">\n";
+		($readonly ? ' readonly': '') .
+		' id="' . htmlspecialchars(strtr($name,'[]','__')) . "\" class=\"form-control\">\n";
 	foreach ($values as $k => $v) {
 		if ( ! $usekeys ) $k = $v;
 		$ret .= '<option value="' .	htmlspecialchars( $k ) . '"' .
@@ -123,13 +125,13 @@ function addSubmit($value, $name = null, $onclick = null, $enable = true, $extra
 	return addInputField('submit', $name, $value,
 		(empty($onclick) ? null : ' onclick="'.htmlspecialchars($onclick).'"') .
 		($enable ? '' : ' disabled="disabled"') .
-		(empty($extraattrs) ? '' : " $extraattrs"));
+		' class="btn btn-default" '.(empty($extraattrs) ? '' : " $extraattrs"));
 }
 /**
  * Form reset button, $value = caption
  */
 function addReset($value) {
-	return addInputField('reset', null, $value);
+	return addInputField('reset', null, $value, ' class="btn btn-default" ');
 }
 
 /**
@@ -139,7 +141,28 @@ function addTextArea($name, $text = '', $cols = 40, $rows = 10, $attr = '') {
 	return '<textarea name="'.htmlspecialchars($name).'" '.
 		'rows="'.(int)$rows .'" cols="'.(int)$cols.'" '.
 		'id="' . htmlspecialchars(strtr($name,'[]','__')).'" ' .
-		$attr . '>'.htmlspecialchars($text) ."</textarea>\n";
+		$attr . ' class="form-control">'.htmlspecialchars($text) ."</textarea>\n";
+}
+
+/**
+ * 'Add row' button, that adds a row to a table based on a template using jQuery and javascript
+ * Usage:
+ * templateid: HTML ID of the template tag to use
+ * tableid: HTML ID of the table to add a row to
+ * value: Text to display in the button
+ * name: Name (and ID) of the button or null if not needed
+ */
+function addAddRowButton($templateid, $tableid, $value = 'Add row', $name = null)
+{
+	$return = addInputField('button', $name, $value, 'onclick="addRow(\'' .
+	                                htmlspecialchars($templateid) . '\', \'' .
+	                                htmlspecialchars($tableid) . '\')"');
+	$return .= "<script type=\"text/javascript\">
+    $(function() {
+        addFirstRow('" . htmlspecialchars($templateid) . "', '" . htmlspecialchars($tableid) . "');
+    });
+</script>";
+	return $return;
 }
 
 /**

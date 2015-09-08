@@ -17,6 +17,12 @@ require_once("common-config.php");
 //   Authenticate against one or more LDAP servers. Use PHP sessions
 //   after successful authentication. This option may be useful to
 //   integrate DOMjudge (e.g. as courseware) into a larger system.
+// IN_TUM_LOGIN
+//   Use PHP sessions with user/password authentication if a password
+//   is set. Otherwise authenticate against one or more LDAP servers.
+//   Use PHP sessions after successful authentication either way. The
+//   LDAP_DNQUERY is ignored with this option and dynamically found by
+//   looking up a user having the mail address username@in.tum.de.
 // EXTERNAL
 //   Use authentication information provided by Apache. This enables
 //   use of any authentication module available for Apache, and will
@@ -40,11 +46,6 @@ define('LDAP_DNQUERY', 'CN=&,OU=users,DC=example,DC=com');
 //define('BALLOON_CMD', 'lpr');
 define('BALLOON_CMD', '');
 
-// After what delay of a judgehost not checking in should its status
-// start displaying as warning or critical.
-define('JUDGEHOST_WARNING', 30);
-define('JUDGEHOST_CRITICAL', 120);
-
 // Internal and output character set used, don't change.
 define('DJ_CHARACTER_SET', 'utf-8');
 define('DJ_CHARACTER_SET_MYSQL', 'utf8');
@@ -55,3 +56,10 @@ define('DJ_MYSQL_CONNECT_FLAGS', null);
 // accept SSL by default. Not normally necessary if you run the DOMserver
 // and database on the same machine.
 // define('DJ_MYSQL_CONNECT_FLAGS', MYSQLI_CLIENT_SSL);
+
+// Database replication
+// Available options: master, slave and none
+// The tables team, team_category, team_affiliation and user should be
+// replicated from master servers to slave servers.
+define('DOMSERVER_REPLICATION', 'none');
+
