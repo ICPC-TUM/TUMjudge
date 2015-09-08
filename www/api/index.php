@@ -5,6 +5,7 @@
  * Part of the DOMjudge Programming Contest Jury System and licenced
  * under the GNU GPL. See README and COPYING for details.
  */
+unset($_GET['tumjudge_instance']);
 
 require('init.php');
 
