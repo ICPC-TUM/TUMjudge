@@ -22,7 +22,7 @@
 }
 
 .dropdown-menu > li > a.pagetitle:hover, .dropdown-menu > li > a.pagetitle:focus {
-    background-color: #FFFFFF !important;
+    background-color: #FFFFFF;
 }
 
 .navbar {
