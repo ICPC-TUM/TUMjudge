@@ -20,6 +20,11 @@
 .dropdown-menu > li > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
 	color: #002143;
 }
+
+.dropdown-menu > li > a.pagetitle:hover, .dropdown-menu > li > a.pagetitle:focus {
+    background-color: #FFFFFF !important;
+}
+
 .navbar {
 	border-bottom-width: 5px;
 }
