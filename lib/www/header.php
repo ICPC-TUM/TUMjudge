@@ -96,6 +96,7 @@ if ( IS_JURY ) {
         <li class="dropdown brand">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
             <span class="tumjudge-instance tumjudge-info"><span class="pagetitle">ICPC@TUM</span> Info</span>
+            <span class="tumjudge-instance tumjudge-main"><span class="pagetitle">TUMjudge</span> Main</span>
             <span class="tumjudge-instance tumjudge-test"><span class="pagetitle">TUMjudge</span> Test</span>
             <span class="tumjudge-instance tumjudge-conpra"><span class="pagetitle">TUMjudge</span> ConPra</span>
             <span class="tumjudge-instance tumjudge-contest"><span class="pagetitle">TUMjudge</span> Contest</span>
@@ -107,6 +108,9 @@ if ( IS_JURY ) {
             <li><a class="pagetitle">ICPC@TUM</a></li>
             <li class="page tumjudge-info"><a href="/">Info - Information about the ICPC</a></li>
             <li><a class="pagetitle">TUMjudge</a></li>
+            <?php if(IS_JURY): ?>
+              <li class="page tumjudge-test"><a href="/main/">Main - Account Management</a></li>
+            <?php endif; ?>
             <li class="page tumjudge-conpra"><a href="/conpra/">ConPra - Algorithms for Programming Contests</a></li>
             <li class="page tumjudge-contest"><a href="/contest/">Contest - Preparation for the ACM ICPC</a></li>
             <li class="page tumjudge-gad"><a href="/gad/">GAD - Foundations: Algorithms and Data Structures</a></li>
