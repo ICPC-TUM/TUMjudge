@@ -16,13 +16,13 @@ require(LIBWWWDIR . '/header.php');
 ?>
 
 <?php if(!logged_in()) { ?>
-<div style="width: 200px; float: right; margin: 20px;">
+<div id='login' class='navbar'>
 <h2>Login</h2>
 <form action="login.php" method="post">
 <input type="hidden" name="cmd" value="login" />
 <table>
-<tr><td><label for="login">Login:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" autofocus />
-<tr><td><label for="passwd">Password:</label></td><td><input type="password" id="passwd" name="passwd" value="" size="15" maxlength="255" accesskey="p" />
+<tr><td style="margin-right:10px;"><label for="login">Login:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" autofocus />
+<tr><td style="margin-right:10px;"><label for="passwd">Password:</label></td><td><input type="password" id="passwd" name="passwd" value="" size="15" maxlength="255" accesskey="p" />
 <tr><td></td><td><input type="submit" value="Login" /></td></tr>
 </table>
 </form>
@@ -85,17 +85,9 @@ $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"';
 
 ?>
 
-<style>
-.code {
-  font: 13px 'Courier New', Courier, monospace;
-  padding-left: 4em;
-  display: block;
-}
-</style>
-
 <h1>Welcome to TUMjudge!</h1>
 
-<p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we advice you to read this manual as well as the introduction at <a href='https://judge.in.tum.de/preparation/tumjudge'>https://judge.in.tum.de/preparation/tumjudge</a> first.</p>
+<p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we advice you to read this manual as well as the introduction at <a href='http://icpc.in.tum.de/preparation/tumjudge'>http://icpc.in.tum.de/preparation/tumjudge</a> first.</p>
 
 <h2>Login</h2>
 The TUMjudge requires you to login prior to submitting work. Your username and password is the same as in the <q>Rechnerhalle</q>, the login works via the LDAP protocol. 
@@ -106,8 +98,8 @@ Reminder: The <q>Rechnerhalle</q> username is the part before the @ in your @in.
 We use a fork of the official DOMjudge system that is also used in contests like the GCPC and ICPC. Some impressions of the systems are given in the following images.
 
 <div style="width=100%; text-align:center">
-  <img src="img/team-overview-own.png" style=' width:300px; margin:0px 30px 0px 0px;'>
-  <img src="img/team-scoreboard-own.png" style=' width:300px;'>
+  <a href='../images/team-overview-own.png'><img src="../images/team-overview-own.png" style=' width:300px; margin:0px 30px 0px 0px;'></a>
+  <a href='../images/team-scoreboard-own.png'><img src="../images/team-scoreboard-own.png" style=' width:300px;'></a>
 </div>
 
 <h2>Submitting Solutions</h2>
@@ -148,7 +140,6 @@ Both the total number of correct submissions and the current total penalty score
 The score board is visible to everyone, if you want your account NOT to be visible on the scoreboard, contact us via clarification.
 </p>
 
-<!--
 <h2>Clarifications</h2>
 
 <p>
@@ -158,7 +149,6 @@ You can communicate with the jury via clarifications. These can be found in the 
 <p>
 In order to submit new clarifications click the button <q>request clarification</q> at the bottom of the dashboard. This request is only readable for the jury which will respond as soon as possible. Answers that are relevant for everyone will be sent to everyone.
 </p>
--->
 
 <h2>Submissions</h2>
 <h3>Programming Languages</h3>
@@ -169,7 +159,10 @@ echo $data_lang[0]['name'];
 for ($i=1;$i<sizeof($data_lang)-1;$i++) {
   echo ', ' . $data_lang[$i]['name'];
 }
-echo ' or ' . $data_lang[sizeof($data_lang)-1]['name'];
+if(sizeof($data_lang) > 1) {
+  echo ' or ' . $data_lang[sizeof($data_lang)-1]['name'];
+}
+
 ?>
 . Solutions have to read all input from <q>standard in</q> and write all output to <q>standard out</q> (also known as console). You will never have to open (other) files.
 </p>
