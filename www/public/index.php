@@ -163,11 +163,11 @@ In order to submit new clarifications click the button <q>request clarification<
 <p>
 You will be allowed to submit solutions in 
 <?php 
-echo $lang['name'];
+echo $data_lang[0]['name'];
 for ($i=1;$i<sizeof($lang)-1;$i++) {
-  echo ', ' . $lang['name'];
+  echo ', ' . $data_lang[$i]['name'];
 }
-echo ' or ' . $lang['name'];
+echo ' or ' . $data_lang[sizeof($data_lang)-1]['name'];
 ?>
 . Solutions have to read all input from <q>standard in</q> and write all output to <q>standard out</q> (also known as console). You will never have to open (other) files.
 </p>
@@ -194,9 +194,9 @@ Using a different compiler or operating system than the judging system should no
 We use the following versions:
 <ul>
 <?php
-foreach($data_lang as $lang) {
+  foreach($data_lang as $lang) {
     printf('<li>%s: <span class="code">%s</span></li>', $lang['name'], $version[$lang['name']]);
-}
+  }
 ?>
 </ul>
 
