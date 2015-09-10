@@ -42,7 +42,7 @@ $version = array();
  
 $compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
 $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
-$version['Java'] = '';
+$version['Java'] = 'java version "1.8.0_60"<br />Java(TM) SE Runtime Environment (build 1.8.0_60-b27)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)';
 
 $compile_command['C'] = 'gcc -x c -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@" -lm'; 
   
@@ -50,7 +50,7 @@ $compile_command['C#'] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"
 $compile_command['C#'] .=  'mono "$DESTCLI"';
   
 $compile_command['C++'] = 'g++ -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
-$version['C++'] = '';
+$version['C++'] = 'Target: x86_64-linux-gnu<br />gcc version 4.9.2 (Debian 4.9.2-10)';
 
 $compile_command['Lua'] = 'lua "$MAINSOURCE"'; 
   
@@ -80,8 +80,6 @@ $compile_command['Scala'] = 'MAINCLASS="$(basename "$MAINSOURCE" .scala)"<br />'
 $compile_command['Scala'] .= 'scala \'$MAINCLASS\''; 
   
 $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"'; 
-
-}
 
 ?>
 
