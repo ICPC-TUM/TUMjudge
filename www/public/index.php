@@ -174,7 +174,7 @@ The top of the page shows your current position in the scoreboard as well as whi
 
 <p>
 The left column of your dashboard shows an overview of your submissions. It contains the submission time, programming language, problem and status of the submission. 
-<?php if ($config['show_sample_output'] == 1) {echo 'To view the output your submission produced using the sample output from the problem set click on the submission.';} ?>
+<?php if ($config['show_sample_output'] == 1) {echo 'To view the output your submission produced using the sample input from the problem set click on your submission.';} ?>
 </p>
 
 <p>
