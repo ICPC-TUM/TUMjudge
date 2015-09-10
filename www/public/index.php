@@ -32,88 +32,60 @@ require(LIBWWWDIR . '/header.php');
 global $DB;
 
 //Get judge config
-$config = $DB->q("KEYVALUETABLE SELECT `name` AS ARRAYKEY,`value` FROM configuration");
+$config = $DB->q('KEYVALUETABLE SELECT `name` AS ARRAYKEY,`value` FROM configuration');
 
 //Get active languages
-$data = $DB->q("KEYTABLE SELECT `langid` AS ARRAYKEY,`name`,`compile_script` FROM `language` WHERE `allow_submit` =  1");
-$desc = array();
-foreach ($data as $language) {
-    //Compute compile statement for each active language
-    switch($language['name']) {
-	case "Java": 
-  	  $desc[$language['name']] = "javac '\$MAINCLASS'<br />";
-	  $desc[$language['name']] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
-	  break; 
-	case "C": 
-	  $desc[$language['name']] = 'gcc -x c -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@" -lm'; 
-	  break;
-	case "C#": 
-	  $desc[$language['name']] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"<br />';
-	  $desc[$language['name']] .=  'mono "$DESTCLI"';
-	  break;
-	case "C++": 
-	  $desc[$language['name']] = 'g++ -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
-	  break;
-	case "Lua": 
-	  $desc[$language['name']] = 'lua "$MAINSOURCE"'; 
-	  break;
-	case "Isabelle": 
-	  //$desc[$language['name']] = ""; 
-	  break;
-	case "Coq": 
-	  //$desc[$language['name']] = ""; 
-	  break;
-	case "Ada": 
-	  $desc[$language['name']] = 'gnatmake -static -o "$DEST" "$@" -bargs -static'; 
-	  break;
-	case "AWK": 
-	  $desc[$language['name']] = 'awk -v ONLINE_JUDGE=1 -v DOMJUDGE=1 -f "$MAINSOURCE"'; 
-	  break;
-	case "Bash shell": 
-	  $desc[$language['name']] = 'bash "$MAINSOURCE"'; 
-	  break;
-	case "Fortran": 
-	  $desc[$language['name']] = 'gfortran -static -Wall -O2 -cpp -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
-	  break;
-	case "Haskell": 
-	  $desc[$language['name']] = 'ghc -Wall -Wwarn -O -static -optl-static -optl-pthread -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
-	  break;
-	case "Pascal": 
-	  $desc[$language['name']] = 'fpc -viwn -O2 -Sg -XS -dONLINE_JUDGE -dDOMJUDGE -o"$DEST" "$MAINSOURCE"'; 
-	  break;
-	case "Perl": 
-	  $desc[$language['name']] = 'perl "$MAINSOURCE"'; 
-	  break;
-	case "Prolog": 
-	  $desc[$language['name']] = 'swipl --goal=main,halt --stand_alone=true -o "$DEST" -c "$MAINSOURCE"'; 
-	  break;
-	case "Python 2": 
-	  $desc[$language['name']] = 'python "$MAINSOURCE"'; 
-	  break;
-	case "Python 3": 
-	  $desc[$language['name']] = 'python3 "$MAINSOURCE"'; 
-	  break;
-	case "Ruby": 
-	  $desc[$language['name']] = 'ruby "$MAINSOURCE"'; 
-	  break;
-	case "Scala": 
-	  $desc[$language['name']] = 'MAINCLASS="$(basename "$MAINSOURCE" .scala)"<br />'; 
-	  $desc[$language['name']] .= 'scala \'$MAINCLASS\''; 
-	  break;
-	case "POSIX shell": 
-	  $desc[$language['name']] = 'sh "$MAINSOURCE"'; 
-	  break;
-	default: break;
-    }
+$data_lang = $DB->q('KEYTABLE SELECT `langid` AS ARRAYKEY,`name`,`compile_script` FROM `language` WHERE `allow_submit` =  1');
+
+$compile_command = array();
+$version = array();
+ 
+$compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
+$compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
+$version['Java'] = '';
+
+$compile_command['C'] = 'gcc -x c -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@" -lm'; 
+  
+$compile_command['C#'] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"<br />';
+$compile_command['C#'] .=  'mono "$DESTCLI"';
+  
+$compile_command['C++'] = 'g++ -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
+$version['C++'] = '';
+
+$compile_command['Lua'] = 'lua "$MAINSOURCE"'; 
+  
+$compile_command['Ada'] = 'gnatmake -static -o "$DEST" "$@" -bargs -static'; 
+  
+$compile_command['AWK'] = 'awk -v ONLINE_JUDGE=1 -v DOMJUDGE=1 -f "$MAINSOURCE"'; 
+
+$compile_command['Bash shell'] = 'bash "$MAINSOURCE"'; 
+
+$compile_command['Fortran'] = 'gfortran -static -Wall -O2 -cpp -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
+
+$compile_command['Haskell'] = 'ghc -Wall -Wwarn -O -static -optl-static -optl-pthread -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
+
+$compile_command['Pascal'] = 'fpc -viwn -O2 -Sg -XS -dONLINE_JUDGE -dDOMJUDGE -o"$DEST" "$MAINSOURCE"'; 
+  
+$compile_command['Perl'] = 'perl "$MAINSOURCE"'; 
+  
+$compile_command['Prolog'] = 'swipl --goal=main,halt --stand_alone=true -o "$DEST" -c "$MAINSOURCE"'; 
+
+$compile_command['Python 2'] = 'python "$MAINSOURCE"'; 
+  
+$compile_command['Python 3'] = 'python3 "$MAINSOURCE"'; 
+  
+$compile_command['Ruby'] = 'ruby "$MAINSOURCE"'; 
+
+$compile_command['Scala'] = 'MAINCLASS="$(basename "$MAINSOURCE" .scala)"<br />'; 
+$compile_command['Scala'] .= 'scala \'$MAINCLASS\''; 
+  
+$compile_command['POSIX shell'] = 'sh "$MAINSOURCE"'; 
+
 }
 
 ?>
 
 <style>
-p {
-  text-align:justify;
-}
-
 .code {
   font: 13px 'Courier New', Courier, monospace;
 }
@@ -121,7 +93,7 @@ p {
 
 <h1>Welcome to TUMjudge!</h1>
 
-<p>This page contains basic information regarding the TUMjudge. If you never worked with the TUMjudge before we advice you to read this manual first. Else just log in using the login-form on the right hand side.</p>
+<p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we advice you to read this manual as well as the introduction at <a href='https://judge.in.tum.de/preparation/tumjudge'>https://judge.in.tum.de/preparation/tumjudge</a> first.</p>
 
 <h2>Login</h2>
 The TUMjudge requires you to login prior to submitting work. Your username and password is the same as in the <q>Rechnerhalle</q>, the login works via the LDAP protocol. 
@@ -145,7 +117,7 @@ Filenames must start with an alphanumerical character and may contain only alpha
 </p>
 
 <p>
-After you hit the submit button and confirm the submission, you will be redirected back to your submission list page. On this page, a message will be displayed that your submission was successful and the submission should be present in the list. An error message will be displayed if something went wrong.
+After you hit the submit button and confirm the submission, you will be redirected back to your submission list page. On this page, a message will be displayed indicating that your submission was successful and is now present in the list on the left hand side. An error message will be displayed if something went wrong.
 </p>
 
 <p>
@@ -160,23 +132,21 @@ The top of the page shows your current position in the scoreboard as well as whi
 
 <p>
 The left column of your dashboard shows an overview of your submissions. It contains the submission time, programming language, problem and status of the submission. 
-<?php if ($config['show_sample_output'] == 1) {echo 'To view the output your submission produced using the sample input from the problem set click on your submission.';} ?>
+<?php if ($config['show_sample_output'] == 1) {echo 'To view the output your submission on the sample input from the problem set click on your submission.';} ?>
 </p>
 
 <p>
 To view the public scoreboard use the link <q>scoreboard</q> in the top menu. It displays the scores of all participants that agreed to have their results publicly available. The scoreboard contains one column for each problem. This column gives the number of submissions for this problem and if the problem was solved, the time of the first correct submission in minutes since the problem set was handed out.<br />
 The scoreboard is ordered by the number of problems solved, ties are broken using a score that is computed as follows:<br />
-For each solved problem you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus 
-<?php echo $config['penalty_time'];?>
-for each failed attempt. The total penalty score is the sum of penalty scores of all solved problems.<br />
+For each solved problem, you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus <?php echo $config['penalty_time'];?> for each failed attempt. The total penalty score is the sum of penalty scores for all solved problems.<br />
 Both the total number of correct submissions and the current total penalty score can be found in the colume <q>Score</q>.
 </p>
 
 <p>
-The score board is visible to everyone, if you want your account NOT to be visible 
-on the scoreboard, contact us via clarification.
+The score board is visible to everyone, if you want your account NOT to be visible on the scoreboard, contact us via clarification.
 </p>
 
+<!--
 <h2>Clarifications</h2>
 
 <p>
@@ -186,18 +156,26 @@ You can communicate with the jury via clarifications. These can be found in the 
 <p>
 In order to submit new clarifications click the button <q>request clarification</q> at the bottom of the dashboard. This request is only readable for the jury which will respond as soon as possible. Answers that are relevant for everyone will be sent to everyone.
 </p>
+-->
 
 <h2>Submissions</h2>
 <h3>Programming Languages</h3>
 <p>
-You will be allowed to submit solutions in C++ or Java. Solutions have to read all input from <q>standard in</q> and write all output to <q>standard out</q> (also known as console). You will never have to open (other) files.
+You will be allowed to submit solutions in 
+<?php 
+echo $lang['name'];
+for ($i=1;$i<sizeof($lang)-1;$i++) {
+  echo ', ' . $lang['name'];
+}
+echo ' or ' . $lang['name'];
+?>
+. Solutions have to read all input from <q>standard in</q> and write all output to <q>standard out</q> (also known as console). You will never have to open (other) files.
 </p>
 
 <h3>Compiling</h3>
 
 <p>
-Your program will be compiled on a computer running Linux. All submitted source files will be passed to the compiler which generates a single program to run out of them; for languages where
-this is relevant, the first specified file will be considered the <q>main</q> source file.
+Your program will be compiled on a computer running Linux. All submitted source files will be passed to the compiler which generates a single program to run out of them; for languages where this is relevant, the first specified file will be considered the <q>main</q> source file.
 </p>
 
 <p>
@@ -205,26 +183,21 @@ Using a different compiler or operating system than the judging system should no
 </p>
 
 <ul>
-
 <?php 
-  foreach($desc as $key=>$value) {
-    printf('<li>%s<br /> <span class="code">%s</span></li>', $key, $value);
+  foreach($data_lang as $lang) {
+    printf('<li>%s<br /> <span class="code">%s</span></li>', $lang['name'], $compile_command[$lang['name']]);
   }
-  //TODO: Versions of languages
+  
 ?>
+</ul>
 
-<!--<li>C++<br />
-<span style="font: 13px 'Courier New', Courier, monospace;">
-g++ -Wall -O2 -std=c++11 -static -pipe -DONLINE_JUDGE
-	-DDOMJUDGE -o $DEST "$@"
-</span></li>
-
-<li>Java<br />
-<span style="font: 13px 'Courier New', Courier, monospace;">
-java -DONLINE_JUDGE=1 -DDOMJUDGE=1 -Xrs -Xss8m
-	-Xmx${MEMLIMITJAVA}k $MAINCLASS
-</span></li>
--->
+We use the following versions:
+<ul>
+<?php
+foreach($data_lang as $lang) {
+    printf('<li>%s: <span class="code">%s</span></li>', $lang['name'], $version[$lang['name']]);
+}
+?>
 </ul>
 
 <h3>Testing</h3>
@@ -240,16 +213,14 @@ In order to keep the judging system stable, prevent abuse and give everyone clea
 </p>
 
 <ul>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>compile time</b> Compilation of your program may take no longer than 30 seconds. After
-that compilation will be aborted and the result will be a compile error. In practice
-this should never give rise to problems. Should this happen to a normal program,
-please inform the course instructors right away.</li>
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>source size</b> The total amount of source code in a single submission may not exceed <?php echo $config['sourcesize_limit']?>kilobytes, otherwise your submission will be rejected. Furthermore, only up to <?php $config['sourcefiles_limit']?> files are allowed in a single submission.</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>Compile time</b>: Compilation of your program may take no longer than <?php echo $config['script_timelimit'];?> seconds. After that compilation will be aborted and the result will be a compile error. In practice this should never give rise to problems. Should this happen to a normal program, please inform the course instructors right away.</li>
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>memory</b> During execution of your program, there are <?php echo $config['memory_limit']/(1024*1024); ?>GB of memory available. This is the total amount of memory (including program code, statically and dynamically defined variables, stack, Java VM (up to 0.35GB), ...)! If your program tries to use more memory, it will abort, resulting in a run-error.</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>Source size</b>: The total amount of source code in a single submission may not exceed <?php echo $config['sourcesize_limit']?>KB, otherwise your submission will be rejected. Furthermore, only up to <?php $config['sourcefiles_limit']?> files are allowed in a single submission.</li>
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>number of processes</b> You are not supposed to create multiple processes (threads). This would be to no avail anyway, since your program has only 1 processor fully at its disposal. To increase stability of the judging system, there is a maximum of 15 processes that can be run simultaneously (including processes that started your program).<br />
+  <li style="text-indent: -1em; padding-left: 1em;"><b>Memory</b>: During execution of your program, there are <?php echo $config['memory_limit']/(1024*1024); ?>GB of memory available. This is the total amount of memory (including program code, statically and dynamically defined variables, stack, Java VM (up to 0.35GB), ...)! If your program tries to use more memory, it will abort, resulting in a run-error.</li>
+
+  <li style="text-indent: -1em; padding-left: 1em;"><b>Number of processes</b>: You are not supposed to create multiple processes (threads). This would be to no avail anyway, since your program has only 1 processor fully at its disposal. To increase stability of the judging system, there is a maximum of <?php echo $config['process_limit'];?> processes that can be run simultaneously (including processes that started your program).<br />
   People who have never programmed with multiple processes (or have never heard of <q>threads</q>) do not have to worry: a normal program runs in one process.</li>
   
 </ul>
