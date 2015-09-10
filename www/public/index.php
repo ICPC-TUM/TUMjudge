@@ -166,7 +166,7 @@ In order to submit new clarifications click the button <q>request clarification<
 You will be allowed to submit solutions in 
 <?php 
 echo $data_lang[0]['name'];
-for ($i=1;$i<sizeof($lang)-1;$i++) {
+for ($i=1;$i<sizeof($data_lang)-1;$i++) {
   echo ', ' . $data_lang[$i]['name'];
 }
 echo ' or ' . $data_lang[sizeof($data_lang)-1]['name'];
