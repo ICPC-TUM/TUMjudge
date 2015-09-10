@@ -88,6 +88,8 @@ $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"';
 <style>
 .code {
   font: 13px 'Courier New', Courier, monospace;
+  padding-left: 4em;
+  display: block;
 }
 </style>
 
