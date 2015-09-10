@@ -32,37 +32,23 @@ require(LIBWWWDIR . '/header.php');
 global $DB;
 
 //Get judge config
-$names = new array();
-$names[] = "memory_limit";
-$names[] = "sourcesize_limit";
-$names[] = "sourcefiles_limit";
-$names[] = "penalty_time";
-$names[] = "show_sample_output";
-
-$DB->q("SELECT `name`,`value` FROM configuration WHERE `name` IN ('" . implode("','",$names) . "')", $data);
-
-$config = new array();
-foreach ($data as $item) {
-     $config[$item['name']] = $item['value']; 
-}
+$config = $DB->q("KEYVALUETABLE SELECT `name` AS ARRAYKEY,`value` FROM configuration");
 
 //Get active languages
-$DB->q("SELECT `name` FROM 'language','compile_script' WHERE 'allow_submit' =  1" , $data);
-$desc = new array();
-$output = '';
+$data = $DB->q("KEYTABLE SELECT `langid` AS ARRAYKEY,`name`,`compile_script` FROM `language` WHERE `allow_submit` =  1");
+$desc = array();
 foreach ($data as $language) {
-    $output .= sprintf('<li>%s<br /><span>%d</span></li>',$language, $desc[$language]);
-    
     //Compute compile statement for each active language
     switch($language['name']) {
-	case "Java" : 
-	  $desc[$language['name']] = sprintf("java -client -Xss8m -Xmx%mk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'" , $config['memory_limit']-350000);
+	case "Java": 
+  	  $desc[$language['name']] = "javac '\$MAINCLASS'<br />";
+	  $desc[$language['name']] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
 	  break; 
 	case "C": 
 	  $desc[$language['name']] = 'gcc -x c -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@" -lm'; 
 	  break;
 	case "C#": 
-	  $desc[$language['name']] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"';
+	  $desc[$language['name']] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"<br />';
 	  $desc[$language['name']] .=  'mono "$DESTCLI"';
 	  break;
 	case "C++": 
@@ -222,7 +208,7 @@ Using a different compiler or operating system than the judging system should no
 
 <?php 
   foreach($desc as $key=>$value) {
-    printf('<li>%n<br /> <span class="code">%d</span></li>', $key, $value);
+    printf('<li>%s<br /> <span class="code">%s</span></li>', $key, $value);
   }
   //TODO: Versions of languages
 ?>
