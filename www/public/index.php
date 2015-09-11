@@ -137,9 +137,7 @@ The left column of your dashboard shows an overview of your submissions. It cont
 </p>
 
 <p>
-To view the public scoreboard use the link <q>scoreboard</q> in the top menu. It displays the scores of all participants that agreed to have their results publicly available. The scoreboard contains one column for each problem. This column gives the number of submissions for this problem and if the problem was solved, the time of the first correct submission in minutes since the problem set was handed out.<br />
-The scoreboard is ordered by the number of problems solved, ties are broken using a score that is computed as follows:<br />
-For each solved problem, you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus <?php echo $config['penalty_time'];?> for each failed attempt. The total penalty score is the sum of penalty scores for all solved problems. Both the total number of correct submissions and the current total penalty score can be found in the colume <q>Score</q>.
+To view the public scoreboard use the link <q>scoreboard</q> in the top menu. It displays the scores of all participants that agreed to have their results publicly available. The scoreboard contains one column for each problem. This column gives the number of submissions for this problem and if the problem was solved, the time of the first correct submission in minutes since the problem set was handed out. The scoreboard is ordered by the number of problems solved, ties are broken using a score that is computed as follows: For each solved problem, you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus <?php echo $config['penalty_time'];?> for each failed attempt. The total penalty score is the sum of penalty scores for all solved problems. Both the total number of correct submissions and the current total penalty score can be found in the colume <q>Score</q>.
 </p>
 
 <p>
