@@ -50,46 +50,104 @@ $data_lang = $DB->q('KEYTABLE SELECT `langid` AS ARRAYKEY,`name`,`compile_script
 
 $compile_command = array();
 $version = array();
- 
+$sample_code = array();
+
+// JAVA 
 $compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
 $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
+
 $version['Java'] = 'java version "1.8.0_60"<br />Java(TM) SE Runtime Environment (build 1.8.0_60-b27)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)';
 
+$sample_code['Java'] = nl2br(htmlspecialchars('import java.util.Scanner;
+
+public class HelloWorld {
+	public static void main(String[] args) {
+		// create scanner object
+		Scanner s = new Scanner(System.in);
+		
+		// read several types of input
+		int i = s.nextInt();
+		boolean b = s.nextBoolean();
+		String st = s.next();
+		
+		// output: use the possibility you like more
+		System.out.println("Case #"+i+": "+st);
+		System.out.format("Case %d#: %s\n", i, s);
+	}
+}'));
+
+// C
 $compile_command['C'] = 'gcc -x c -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@" -lm'; 
   
+// C#
 $compile_command['C#'] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"<br />';
 $compile_command['C#'] .=  'mono "$DESTCLI"';
   
+// C++
 $compile_command['C++'] = 'g++ -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
 $version['C++'] = 'Target: x86_64-linux-gnu<br />gcc version 4.9.2 (Debian 4.9.2-10)';
 
+$sample_code['C++'] = nl2br(htmlspecialchars('#include <iostream>
+#include <stdio.h>
+
+int main() {
+	// read several types of input
+	int i, j;
+	std::string s1;
+	char s2[101];
+
+	// use the possibility you like more
+	std::cin >> i >> s1;
+	scanf("%d %100s", &j, s2);
+
+	// output: use the possibility you like more
+	std::cout << "Case #" << i << ": " << s1 << std::endl;
+	printf("Case #%d: %s", j, s2);
+
+	return 0;
+}'));
+
+// Lua
 $compile_command['Lua'] = 'lua "$MAINSOURCE"'; 
   
+// Ada
 $compile_command['Ada'] = 'gnatmake -static -o "$DEST" "$@" -bargs -static'; 
   
+// AWK
 $compile_command['AWK'] = 'awk -v ONLINE_JUDGE=1 -v DOMJUDGE=1 -f "$MAINSOURCE"'; 
 
+// Bash Shell
 $compile_command['Bash shell'] = 'bash "$MAINSOURCE"'; 
 
+//Fortran
 $compile_command['Fortran'] = 'gfortran -static -Wall -O2 -cpp -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
 
+// Haskell
 $compile_command['Haskell'] = 'ghc -Wall -Wwarn -O -static -optl-static -optl-pthread -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
 
+// Pascal
 $compile_command['Pascal'] = 'fpc -viwn -O2 -Sg -XS -dONLINE_JUDGE -dDOMJUDGE -o"$DEST" "$MAINSOURCE"'; 
   
+// Perl
 $compile_command['Perl'] = 'perl "$MAINSOURCE"'; 
   
+// Prolog
 $compile_command['Prolog'] = 'swipl --goal=main,halt --stand_alone=true -o "$DEST" -c "$MAINSOURCE"'; 
 
+//Python 2
 $compile_command['Python 2'] = 'python "$MAINSOURCE"'; 
   
+// Python 3
 $compile_command['Python 3'] = 'python3 "$MAINSOURCE"'; 
-  
+
+// Ruby
 $compile_command['Ruby'] = 'ruby "$MAINSOURCE"'; 
 
+// Scala
 $compile_command['Scala'] = 'MAINCLASS="$(basename "$MAINSOURCE" .scala)"<br />'; 
 $compile_command['Scala'] .= 'scala \'$MAINCLASS\''; 
   
+// POSIX Shell
 $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"'; 
 
 ?>
@@ -117,10 +175,10 @@ Here you can see how your fellow contestants are doing. Each column stands for o
 </p>
 
 <ul>
-  <li>A <i>green</i> field means that he or she solved the problem</li>
-  <li>A <i>dark green</i> field means that he or she solved the problem <b>first</b>.</li>
-  <li>A <i>red</i> field means that he or she tried the problem, but could not solve it (yet).</li>
-  <li>A <i>white</i> field means that he or she did not try to solve the problem (yet).</li>
+  <li>A <b>green</b> field means that he or she solved the problem</li>
+  <li>A <b>dark green</b> field means that he or she solved the problem <b>first</b>.</li>
+  <li>A <b>red</b> field means that he or she tried the problem, but could not solve it (yet).</li>
+  <li>A <b>white</b> field means that he or she did not try to solve the problem (yet).</li>
 </ul>
 
 <h2>Problem Statements</h2>
@@ -147,7 +205,7 @@ After you hit the submit button and confirm the submission, you will be redirect
 </p>
 
 <p>
-Please note that you have to submit the source code of your program, <i>not a compiled program or the output of your program</i>. Your submission will be judged fully automated. Keep in mind that we will test your program on more cases than just the sample input. This means that you have to think about special/corner cases that could be contained in the input, for example a graph without any edges or containing multiedges.
+Please note that you have to submit the source code of your program, <i>not a compiled program or the output of your program</i>. Your submission will be judged fully automated. Keep in mind that the sample data you receive in the problem statement is merely a fraction of the complete set of sample cases which is kept secret. This means that you have to think about special/corner cases that could be contained in the secret inputs, for example a graph without any edges or containing multiedges.
 </p>
 
 <h2>Viewing the results of submissions</h2>
@@ -213,8 +271,7 @@ Using a different compiler or operating system than the judging system should no
 <?php 
   foreach($data_lang as $lang) {
     printf('<li>%s<br /> <span class="code">%s</span></li>', $lang['name'], $compile_command[$lang['name']]);
-  }
-  
+  } 
 ?>
 </ul>
 
@@ -224,6 +281,16 @@ Using a different compiler or operating system than the judging system should no
   foreach($data_lang as $lang) {
     printf('<li>%s: <span class="code">%s</span></li>', $lang['name'], $version[$lang['name']]);
   }
+?>
+</ul>
+
+<p>Sample Code:</p>
+
+<ul>
+<?php
+foreach($data_lang as $lang) {
+  printf('<li>%s: <span class="code">%s</span></li>', $lang['name'], $sample_code[$lang['name']]);
+}
 ?>
 </ul>
 
