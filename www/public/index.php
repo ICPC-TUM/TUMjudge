@@ -96,12 +96,12 @@ $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"';
 
 <h1>Welcome to TUMjudge!</h1>
 
-<p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we advice you to read this manual as well as the introduction at <a href='http://icpc.tum.de/preparation/tumjudge'>http://icpc.tum.de/preparation/tumjudge</a> first.</p>
+<p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we recommend you to read this manual first.</p>
 
 <h2>Login</h2>
 The TUMjudge requires you to login prior to submitting work. Your username and password is the same as in the <q>Rechnerhalle</q>, the login works via the LDAP protocol. 
 
-Reminder: The <q>Rechnerhalle</q> username is the part before the @ in your @in.tum.de email address.
+Reminder: The <q>Rechnerhalle</q> username is the part before the @ in your @in.tum.de email address.This also means that we are not responsible for your password. If you lose it, please contact the <a href="http://www.in.tum.de/rbg.html" target="_blank">RBG</a>, not us.
 
 <h2>Judge</h2>
 We use a fork of the official DOMjudge system that is also used in contests like the GCPC and ICPC. Some impressions of the systems are given in the following images.
@@ -110,6 +110,31 @@ We use a fork of the official DOMjudge system that is also used in contests like
   <a href='../images/team-overview-own.png'><img src="../images/team-overview-own.png" style=' width:300px; margin:0px 30px 0px 0px;'></a>
   <a href='../images/team-scoreboard-own.png'><img src="../images/team-scoreboard-own.png" style=' width:300px;'></a>
 </div>
+
+<h2>Scoreboard</h2>
+<p>
+Here you can see how your fellow contestants are doing. Each column stands for one problem.
+</p>
+
+<ul>
+  <li>A <i>green</i> field means that he or she solved the problem</li>
+  <li>A <i>dark green</i> field means that he or she solved the problem <b>first</b>.</li>
+  <li>A <i>red</i> field means that he or she tried the problem, but could not solve it (yet).</li>
+  <li>A <i>white</i> field means that he or she did not try to solve the problem (yet).</li>
+</ul>
+
+<h2>Problem Statements</h2>
+
+<p>Every problem that you will find here follows an overall structure. It will contain:</p>
+
+<ul>
+  <li>Name
+  <li>A story that describes the problem in informal terms</li>
+  <li>A more precise description of the input format</li>
+  <li>A more precise description of the output format</li>
+  <li>Constraints on the variables that appear in the input/output</li>
+  <li>Some sample cases with solutions</li>
+</ul>
 
 <h2>Submitting Solutions</h2>
 
@@ -122,7 +147,7 @@ After you hit the submit button and confirm the submission, you will be redirect
 </p>
 
 <p>
-Please note that you have to submit the source code of your program, <i>not a compiled program or the output of your program</i>. Your submission will be judged fully automated.
+Please note that you have to submit the source code of your program, <i>not a compiled program or the output of your program</i>. Your submission will be judged fully automated. Keep in mind that we will test your program on more cases than just the sample input. This means that you have to think about special/corner cases that could be contained in the input, for example a graph without any edges or containing multiedges.
 </p>
 
 <h2>Viewing the results of submissions</h2>
@@ -147,7 +172,7 @@ The score board is visible to everyone, if you want your account NOT to be visib
 <h2>Clarifications</h2>
 
 <p>
-You can communicate with the jury via clarifications. These can be found in the right column on your dashboard which is available under <q>home</q> in the top menu. Both clarification replies from the jury and requests sent by you are displayed there.
+All questions regarding the problem sets have to be sent through the clarification system, <i>not via email</i>. The clarification overview can be found in the right column on your dashboard which is available under <q>home</q> in the top menu. Both clarification replies from the jury and requests sent by you are displayed there.
 </p>
 
 <p>
@@ -209,6 +234,21 @@ Using a different compiler or operating system than the judging system should no
 <p>
 After your program has compiled successfully it will be executed and its output compared to the expected output. Before comparing the output, the exit status of your program is checked: if your program gives the correct answer, but exits with a non-zero exit code, the result will be a run-error! There are some restrictions during execution. If your program violates these, it will also be aborted with a run-error, see section <q>Restrictions</q>. The output of you problem has to match the specifications given on the problem set. Mostly, it has to match the solution exactly; in case of problem statements which do not have unique output (e.g. with floating point answers), the problem set will contain information about the expected solution.
 </p>
+
+<h3>Possible Results</h3>
+<p>
+Once you upload your code to our server, there are several possible outcomes that TUMjudge could tell you.
+</p>
+
+<ul>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>CORRECT</b> This is the best case. You have solved the problem correctly.</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>TIMELIMIT</b> There is at least one of our testcases where your program takes too long to produce an answer.</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>WRONG ANSWER</b> There is at least one of our testcases where your program yields a wrong solution.</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>COMPILER-ERROR</b> TUMjudge could not compile your program. Make sure you chose the right language and all your includes are there. Here you can also see the exact error message.</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>NO-OUTPUT</b> Your program compiles, but yields no output. Make sure you write the solution to "standard out".</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>TOO-LATE</b> You submitted your program after the contest was already over. Bummer.</li>
+</ul>
+
 
 <h3>Restrictions</h3>
 <p>
