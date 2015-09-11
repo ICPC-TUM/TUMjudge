@@ -161,13 +161,19 @@ In order to submit new clarifications click the button <q>request clarification<
 <p>
 You will be allowed to submit solutions in 
 <?php 
-echo $data_lang[0]['name'];
-for ($i=1;$i<sizeof($data_lang)-1;$i++) {
-  echo ', ' . $data_lang[$i]['name'];
+
+$i = 1;
+foreach($data_lang as $lang) {
+  if($i == 1) {
+    echo $lang['name'];
+  }elseif($i > 1 && $i < sizeof($data_lang)) {
+    echo ', ' . $lang['name'];
+  } else {
+    echo ' or ' . $lang['name'];
+  }
+  $i++;
 }
-if(sizeof($data_lang) > 1) {
-  echo ' or ' . $data_lang[sizeof($data_lang)-1]['name'];
-}
+
 
 ?>
 . Solutions have to read all input from <q>standard in</q> and write all output to <q>standard out</q> (also known as console). You will never have to open (other) files.
