@@ -169,18 +169,6 @@ We use a fork of the official DOMjudge system that is also used in contests like
   <a href='../images/team-scoreboard-own.png'><img src="../images/team-scoreboard-own.png" style=' width:40%;'></a>
 </div>
 
-<h2>Scoreboard</h2>
-<p>
-Here you can see how your fellow contestants are doing. Each column stands for one problem.
-</p>
-
-<ul>
-  <li>A <b>green</b> field means that he or she solved the problem</li>
-  <li>A <b>dark green</b> field means that he or she solved the problem <b>first</b>.</li>
-  <li>A <b>red</b> field means that he or she tried the problem, but could not solve it (yet).</li>
-  <li>A <b>white</b> field means that he or she did not try to solve the problem (yet).</li>
-</ul>
-
 <h2>Problem Statements</h2>
 
 <p>Most problems that you will find here follow an overall structure. They contain:</p>
@@ -220,7 +208,18 @@ The left column of your dashboard shows an overview of your submissions. It cont
 </p>
 
 <p>
-To view the public scoreboard use the link <q>scoreboard</q> in the top menu. It displays the scores of all participants that agreed to have their results publicly available. The scoreboard contains one column for each problem. This column gives the number of submissions for this problem and if the problem was solved, the time of the first correct submission in minutes since the problem set was handed out. The scoreboard is ordered by the number of problems solved, ties are broken using a score that is computed as follows: For each solved problem, you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus <?php echo $config['penalty_time'];?> for each failed attempt. The total penalty score is the sum of penalty scores for all solved problems. Both the total number of correct submissions and the current total penalty score can be found in the colume <q>Score</q>.
+To view the public scoreboard use the link <q>scoreboard</q> in the top menu. It displays the scores of all participants that agreed to have their results publicly available. The scoreboard contains one column for each problem. The colors of the cells indicate the following:
+</p>
+
+<ul>
+  <li>A <b>green</b> field means that he or she solved the problem.</li>
+  <li>A <b>dark green</b> field means that he or she solved the problem <b>first</b>.</li>
+  <li>A <b>red</b> field means that he or she tried the problem, but could not solve it (yet).</li>
+  <li>A <b>white</b> field means that he or she did not try to solve the problem (yet).</li>
+</ul>
+
+<p>
+Each cell contains the number of submissions for this problem and if the problem was solved, the time of the first correct submission in minutes since the problem set was handed out. The scoreboard is ordered by the number of problems solved, ties are broken using a score that is computed as follows: For each solved problem, you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus <?php echo $config['penalty_time'];?> for each failed attempt. The total penalty score is the sum of penalty scores for all solved problems. Both the total number of correct submissions and the current total penalty score can be found in the colume <q>Score</q>.
 </p>
 
 <p>
