@@ -31,7 +31,7 @@ require(LIBWWWDIR . '/header.php');
 </div>
 
 <div class="form-group" style="float:right; padding-top:0.5em;">
-    <label style="font-size:11px;"><a href='judge.in.tum.de/main/' style='color:#ffffff;'>Register new Account</a></label>
+    <label style="font-size:11px;"><a href='/main/' style='color:#ffffff;'>Register new Account</a></label>
 </div>
 
 <button type="submit" class="btn btn-default">Login</button>
@@ -101,14 +101,14 @@ $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"';
 <h2>Login</h2>
 The TUMjudge requires you to login prior to submitting work. Your username and password is the same as in the <q>Rechnerhalle</q>, the login works via the LDAP protocol. 
 
-Reminder: The <q>Rechnerhalle</q> username is the part before the @ in your @in.tum.de email address.This also means that we are not responsible for your password. If you lose it, please contact the <a href="http://www.in.tum.de/rbg.html" target="_blank">RBG</a>, not us.
+Reminder: The <q>Rechnerhalle</q> username is the part before the @ in your @in.tum.de email address.This also means that we are not responsible for your password. If you lose it, please contact the <a href="http://www.in.tum.de/rbg.html" target="_blank">RBG</a>, not us. If you have several @in.tum.de addresses any of them will work. However, make sure that you use the same address for registration and login.
 
 <h2>Judge</h2>
-We use a fork of the official DOMjudge system that is also used in contests like the GCPC and ICPC. Some impressions of the systems are given in the following images.
+We use a fork of the official DOMjudge system that is also used in contests like the ICPC. Some impressions of the systems are given in the following images.
 
 <div style="width=100%; text-align:center; padding-top:2em;">
-  <a href='../images/team-overview-own.png'><img src="../images/team-overview-own.png" style=' width:300px; margin:0px 30px 0px 0px;'></a>
-  <a href='../images/team-scoreboard-own.png'><img src="../images/team-scoreboard-own.png" style=' width:300px;'></a>
+  <a href='../images/team-overview-own.png'><img src="../images/team-overview-own.png" style=' width:40%; margin:0px 30px 0px 0px;'></a>
+  <a href='../images/team-scoreboard-own.png'><img src="../images/team-scoreboard-own.png" style=' width:40%;'></a>
 </div>
 
 <h2>Scoreboard</h2>
@@ -125,15 +125,15 @@ Here you can see how your fellow contestants are doing. Each column stands for o
 
 <h2>Problem Statements</h2>
 
-<p>Every problem that you will find here follows an overall structure. It will contain:</p>
+<p>Most problems that you will find here follow an overall structure. They contain:</p>
 
 <ul>
-  <li>Name
-  <li>A story that describes the problem in informal terms</li>
-  <li>A more precise description of the input format</li>
-  <li>A more precise description of the output format</li>
-  <li>Constraints on the variables that appear in the input/output</li>
-  <li>Some sample cases with solutions</li>
+  <li>A Name,
+  <li>a story that describes the problem in informal terms,</li>
+  <li>a more precise description of the input format,</li>
+  <li>a more precise description of the output format,</li>
+  <li>constraints on the variables that appear in the input/output,</li>
+  <li>some sample cases with solutions.</li>
 </ul>
 
 <h2>Submitting Solutions</h2>
@@ -166,7 +166,7 @@ To view the public scoreboard use the link <q>scoreboard</q> in the top menu. It
 </p>
 
 <p>
-The score board is visible to everyone, if you want your account NOT to be visible on the scoreboard, contact us via clarification.
+The score board is visible to everyone, if you want your account NOT to be visible on the scoreboard, please pick <q>invisible</q> during the registration.
 </p>
 
 <h2>Clarifications</h2>
@@ -182,8 +182,7 @@ In order to submit new clarifications click the button <q>request clarification<
 <h2>Submissions</h2>
 <h3>Programming Languages</h3>
 <p>
-You will be allowed to submit solutions in 
-<?php 
+You will be allowed to submit solutions in <?php 
 
 $i = 1;
 foreach($data_lang as $lang) {
@@ -197,9 +196,7 @@ foreach($data_lang as $lang) {
   $i++;
 }
 
-
-?>
-. Solutions have to read all input from <q>standard in</q> and write all output to <q>standard out</q> (also known as console). You will never have to open (other) files.
+?>. Solutions have to read all input from <q>standard in</q> and write all output to <q>standard out</q> (also known as console). You will never have to open (other) files.
 </p>
 
 <h3>Compiling</h3>
@@ -245,7 +242,7 @@ Once you upload your code to our server, there are several possible outcomes tha
   <li style="text-indent: -1em; padding-left: 1em;"><b>TIMELIMIT</b> There is at least one of our testcases where your program takes too long to produce an answer.</li>
   <li style="text-indent: -1em; padding-left: 1em;"><b>WRONG ANSWER</b> There is at least one of our testcases where your program yields a wrong solution.</li>
   <li style="text-indent: -1em; padding-left: 1em;"><b>COMPILER-ERROR</b> TUMjudge could not compile your program. Make sure you chose the right language and all your includes are there. Here you can also see the exact error message.</li>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>NO-OUTPUT</b> Your program compiles, but yields no output. Make sure you write the solution to "standard out".</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>NO-OUTPUT</b> Your program compiles, but yields no output. Make sure you write the solution to <q>standard out</q>.</li>
   <li style="text-indent: -1em; padding-left: 1em;"><b>TOO-LATE</b> You submitted your program after the contest was already over. Bummer.</li>
 </ul>
 
