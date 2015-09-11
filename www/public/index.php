@@ -58,23 +58,23 @@ $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=
 
 $version['Java'] = 'java version "1.8.0_60"<br />Java(TM) SE Runtime Environment (build 1.8.0_60-b27)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)';
 
-$sample_code['Java'] = nl2br(htmlspecialchars('import java.util.Scanner;
+$sample_code['Java'] = nl2br('import java.util.Scanner;
 
 public class HelloWorld {
-	public static void main(String[] args) {
-		// create scanner object
-		Scanner s = new Scanner(System.in);
+	&emsp;public static void main(String[] args) {
+		&emsp;&emsp;// create scanner object
+		&emsp;&emsp;Scanner s = new Scanner(System.in);
 		
-		// read several types of input
-		int i = s.nextInt();
-		boolean b = s.nextBoolean();
-		String st = s.next();
+		&emsp;&emsp;// read several types of input
+		&emsp;&emsp;int i = s.nextInt();
+		&emsp;&emsp;boolean b = s.nextBoolean();
+		&emsp;&emsp;String st = s.next();
 		
-		// output: use the possibility you like more
-		System.out.println("Case #"+i+": "+st);
-		System.out.format("Case %d#: %s\n", i, s);
-	}
-}'));
+		&emsp;&emsp;// output: use the possibility you like more
+		&emsp;&emsp;System.out.println("Case #"+i+": "+st);
+		&emsp;&emsp;System.out.format("Case %d#: %s\n", i, s);
+	&emsp;}
+}');
 
 // C
 $compile_command['C'] = 'gcc -x c -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@" -lm'; 
@@ -87,25 +87,25 @@ $compile_command['C#'] .=  'mono "$DESTCLI"';
 $compile_command['C++'] = 'g++ -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
 $version['C++'] = 'Target: x86_64-linux-gnu<br />gcc version 4.9.2 (Debian 4.9.2-10)';
 
-$sample_code['C++'] = nl2br(htmlspecialchars('#include <iostream>
+$sample_code['C++'] = nl2br('#include <iostream>
 #include <stdio.h>
 
 int main() {
-	// read several types of input
-	int i, j;
-	std::string s1;
-	char s2[101];
+	&emsp;// read several types of input
+	&emsp;int i, j;
+	&emsp;std::string s1;
+	&emsp;char s2[101];
 
-	// use the possibility you like more
-	std::cin >> i >> s1;
-	scanf("%d %100s", &j, s2);
+	&emsp;// use the possibility you like more
+	&emsp;std::cin >> i >> s1;
+	&emsp;scanf("%d %100s", &j, s2);
 
-	// output: use the possibility you like more
-	std::cout << "Case #" << i << ": " << s1 << std::endl;
-	printf("Case #%d: %s", j, s2);
+	&emsp;// output: use the possibility you like more
+	&emsp;std::cout << "Case #" << i << ": " << s1 << std::endl;
+	&emsp;printf("Case #%d: %s", j, s2);
 
-	return 0;
-}'));
+	&emsp;return 0;
+}');
 
 // Lua
 $compile_command['Lua'] = 'lua "$MAINSOURCE"'; 
