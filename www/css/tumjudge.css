@@ -86,13 +86,6 @@ p {
     text-align:justify;
 }
 
-/* Code font +  some indent*/
-.code {
-  font: 13px 'Courier New', Courier, monospace;
-  padding-left: 4em;
-  display: block;
-}
-
 #login-container {
   width: 250px; 
   float: right; 
