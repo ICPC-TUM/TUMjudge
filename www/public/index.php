@@ -269,7 +269,7 @@ Using a different compiler or operating system than the judging system should no
 <ul>
 <?php 
   foreach($data_lang as $lang) {
-    printf('<li>%s<br /> <pre>%s</pre></li>', $lang['name'], $compile_command[$lang['name']]);
+    printf('<li>%s<br /> <pre>%s: </pre></li>', $lang['name'], $compile_command[$lang['name']]);
   } 
 ?>
 </ul>
