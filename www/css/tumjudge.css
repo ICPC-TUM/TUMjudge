@@ -110,3 +110,8 @@ p {
   background-color:#ffffff;
   color:#002143;
 }
+
+.startpage_list li{
+  text-indent: -1em; 
+  padding-left: 1em;
+}

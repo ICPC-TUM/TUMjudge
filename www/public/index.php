@@ -303,13 +303,13 @@ After your program has compiled successfully it will be executed and its output 
 Once you upload your code to our server, there are several possible outcomes that TUMjudge could tell you.
 </p>
 
-<ul>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>CORRECT</b> This is the best case. You have solved the problem correctly.</li>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>TIMELIMIT</b> There is at least one of our testcases where your program takes too long to produce an answer.</li>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>WRONG ANSWER</b> There is at least one of our testcases where your program yields a wrong solution.</li>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>COMPILER-ERROR</b> TUMjudge could not compile your program. Make sure you chose the right language and all your includes are there. Here you can also see the exact error message.</li>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>NO-OUTPUT</b> Your program compiles, but yields no output. Make sure you write the solution to <q>standard out</q>.</li>
-  <li style="text-indent: -1em; padding-left: 1em;"><b>TOO-LATE</b> You submitted your program after the contest was already over. Bummer.</li>
+<ul class="startpage_list">
+  <li><b>CORRECT</b> This is the best case. You have solved the problem correctly.</li>
+  <li><b>TIMELIMIT</b> There is at least one of our testcases where your program takes too long to produce an answer.</li>
+  <li><b>WRONG ANSWER</b> There is at least one of our testcases where your program yields a wrong solution.</li>
+  <li><b>COMPILER-ERROR</b> TUMjudge could not compile your program. Make sure you chose the right language and all your includes are there. Here you can also see the exact error message.</li>
+  <li><b>NO-OUTPUT</b> Your program compiles, but yields no output. Make sure you write the solution to <q>standard out</q>.</li>
+  <li><b>TOO-LATE</b> You submitted your program after the contest was already over. Bummer.</li>
 </ul>
 
 
@@ -318,15 +318,15 @@ Once you upload your code to our server, there are several possible outcomes tha
 In order to keep the judging system stable, prevent abuse and give everyone clear and equal environments, there are some restrictions to which all submissions are subjected:
 </p>
 
-<ul>
+<ul class="startpage_list">
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>Compile time</b>: Compilation of your program may take no longer than <?php echo $config['script_timelimit'];?> seconds. After that compilation will be aborted and the result will be a compile error. In practice this should never give rise to problems. Should this happen to a normal program, please inform the course instructors right away.</li>
+  <li><b>Compile time</b>: Compilation of your program may take no longer than <?php echo $config['script_timelimit'];?> seconds. After that compilation will be aborted and the result will be a compile error. In practice this should never give rise to problems. Should this happen to a normal program, please inform the course instructors right away.</li>
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>Source size</b>: The total amount of source code in a single submission may not exceed <?php echo $config['sourcesize_limit']?>KB, otherwise your submission will be rejected. Furthermore, only up to <?php $config['sourcefiles_limit']?> files are allowed in a single submission.</li>
+  <li><b>Source size</b>: The total amount of source code in a single submission may not exceed <?php echo $config['sourcesize_limit']?>KB, otherwise your submission will be rejected. Furthermore, only up to <?php $config['sourcefiles_limit']?> files are allowed in a single submission.</li>
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>Memory</b>: During execution of your program, there are <?php echo $config['memory_limit']/(1024*1024); ?>GB of memory available. This is the total amount of memory (including program code, statically and dynamically defined variables, stack, Java VM (up to 0.35GB), ...)! If your program tries to use more memory, it will abort, resulting in a run-error.</li>
+  <li><b>Memory</b>: During execution of your program, there are <?php echo $config['memory_limit']/(1024*1024); ?>GB of memory available. This is the total amount of memory (including program code, statically and dynamically defined variables, stack, Java VM (up to 0.35GB), ...)! If your program tries to use more memory, it will abort, resulting in a run-error.</li>
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>Number of processes</b>: You are not supposed to create multiple processes (threads). This would be to no avail anyway, since your program has only 1 processor fully at its disposal. To increase stability of the judging system, there is a maximum of <?php echo $config['process_limit'];?> processes that can be run simultaneously (including processes that started your program). People who have never programmed with multiple processes (or have never heard of <q>threads</q>) do not have to worry: a normal program runs in one process.</li>
+  <li><b>Number of processes</b>: You are not supposed to create multiple processes (threads). This would be to no avail anyway, since your program has only 1 processor fully at its disposal. To increase stability of the judging system, there is a maximum of <?php echo $config['process_limit'];?> processes that can be run simultaneously (including processes that started your program). People who have never programmed with multiple processes (or have never heard of <q>threads</q>) do not have to worry: a normal program runs in one process.</li>
   
 </ul>
 
