@@ -93,7 +93,7 @@ p {
   display: block;
 }
 
-#login {
+#login-container {
   width: 250px; 
   float: right; 
   margin: 70px 0px 20px 20px;
@@ -102,11 +102,12 @@ p {
   color:#ffffff;  
 }
 
-#login tr {
-  height:40px;
+#login-container .form-control {
+  margin-top: 0px;
+  
 }
 
-#login input {
+#login-container input {
   background-color:#ffffff;
   color:#002143;
 }

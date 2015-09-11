@@ -16,15 +16,26 @@ require(LIBWWWDIR . '/header.php');
 ?>
 
 <?php if(!logged_in()) { ?>
-<div id='login' class='navbar'>
+<div id='login-container' class='navbar'>
 <h2>Login</h2>
-<form action="login.php" method="post">
+<form action="login.php" method="post" class="form-vertical">
 <input type="hidden" name="cmd" value="login" />
-<table>
-<tr><td style="margin-right:10px;"><label for="login">Login:</label></td><td><input type="text" id="login" name="login" value="" size="15" maxlength="15" accesskey="l" autofocus />
-<tr><td style="margin-right:10px;"><label for="passwd">Password:</label></td><td><input type="password" id="passwd" name="passwd" value="" size="15" maxlength="255" accesskey="p" />
-<tr><td></td><td><input type="submit" value="Login" /></td></tr>
-</table>
+<div class="form-group">
+    <label for="login">User</label>
+    <input type="text" class="form-control" id="login" name="login" value="" placeholder="User" autofocus>
+</div>
+
+<div class="form-group">
+    <label for="passwd">Password</label>
+    <input type="password" class="form-control" id="passwd" name="passwd" value="" placeholder="Password">
+</div>
+
+<div class="form-group" style="float:right; padding-top:0.5em;">
+    <label style="font-size:11px;"><a href='judge.in.tum.de/main/' style='color:#ffffff;'>Register new Account</a></label>
+</div>
+
+<button type="submit" class="btn btn-default">Login</button>
+    
 </form>
 </div>
 <?php } 
@@ -85,7 +96,7 @@ $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"';
 
 <h1>Welcome to TUMjudge!</h1>
 
-<p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we advice you to read this manual as well as the introduction at <a href='http://icpc.in.tum.de/preparation/tumjudge'>http://icpc.in.tum.de/preparation/tumjudge</a> first.</p>
+<p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we advice you to read this manual as well as the introduction at <a href='http://icpc.tum.de/preparation/tumjudge'>http://icpc.tum.de/preparation/tumjudge</a> first.</p>
 
 <h2>Login</h2>
 The TUMjudge requires you to login prior to submitting work. Your username and password is the same as in the <q>Rechnerhalle</q>, the login works via the LDAP protocol. 
@@ -95,7 +106,7 @@ Reminder: The <q>Rechnerhalle</q> username is the part before the @ in your @in.
 <h2>Judge</h2>
 We use a fork of the official DOMjudge system that is also used in contests like the GCPC and ICPC. Some impressions of the systems are given in the following images.
 
-<div style="width=100%; text-align:center">
+<div style="width=100%; text-align:center; padding-top:2em;">
   <a href='../images/team-overview-own.png'><img src="../images/team-overview-own.png" style=' width:300px; margin:0px 30px 0px 0px;'></a>
   <a href='../images/team-scoreboard-own.png'><img src="../images/team-scoreboard-own.png" style=' width:300px;'></a>
 </div>
@@ -103,9 +114,7 @@ We use a fork of the official DOMjudge system that is also used in contests like
 <h2>Submitting Solutions</h2>
 
 <p>
-Solutions can be submitted from your dashboard which is available under <q>home</q> once you are logged in.<br />
-In the left column click <b>Select file...</b> to select the file(s) for submission. TUMjudge will try to determine the problem and language from the base and extension of the filename respectively. If the automatic recognition fails select the appropriate values using the dropdown menues below the file selection.<br />
-Filenames must start with an alphanumerical character and may contain only alphanumerical characters, - and _.
+Solutions can be submitted from your dashboard which is available under <q>home</q> once you are logged in. In the left column click <b>Select file...</b> to select the file(s) for submission. TUMjudge will try to determine the problem and language from the base and extension of the filename respectively. If the automatic recognition fails select the appropriate values using the dropdown menues below the file selection. Filenames must start with an alphanumerical character and may contain only alphanumerical characters, - and _.
 </p>
 
 <p>
@@ -130,8 +139,7 @@ The left column of your dashboard shows an overview of your submissions. It cont
 <p>
 To view the public scoreboard use the link <q>scoreboard</q> in the top menu. It displays the scores of all participants that agreed to have their results publicly available. The scoreboard contains one column for each problem. This column gives the number of submissions for this problem and if the problem was solved, the time of the first correct submission in minutes since the problem set was handed out.<br />
 The scoreboard is ordered by the number of problems solved, ties are broken using a score that is computed as follows:<br />
-For each solved problem, you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus <?php echo $config['penalty_time'];?> for each failed attempt. The total penalty score is the sum of penalty scores for all solved problems.<br />
-Both the total number of correct submissions and the current total penalty score can be found in the colume <q>Score</q>.
+For each solved problem, you receive a penalty score. This score is equal to the time of the first correct submission in minutes since the problem set was handed out plus <?php echo $config['penalty_time'];?> for each failed attempt. The total penalty score is the sum of penalty scores for all solved problems. Both the total number of correct submissions and the current total penalty score can be found in the colume <q>Score</q>.
 </p>
 
 <p>
@@ -184,7 +192,7 @@ Using a different compiler or operating system than the judging system should no
 ?>
 </ul>
 
-We use the following versions:
+<p>We use the following versions:</p>
 <ul>
 <?php
   foreach($data_lang as $lang) {
@@ -195,9 +203,7 @@ We use the following versions:
 
 <h3>Testing</h3>
 <p>
-After your program has compiled successfully it will be executed and its output compared to the expected output. Before comparing the output, the exit status of your program is checked: if your program gives the correct answer, but exits with a non-zero exit code, the result will be a run-error! There are some restrictions during execution. If your program violates these, it will also be aborted with a run-error, see section <q>Restrictions</q>. <br />
-
-The output of you problem has to match the specifications given on the problem set. Mostly, it has to match the solution exactly; in case of problem statements which do not have unique output (e.g. with floating point answers), the problem set will contain information about the expected solution.
+After your program has compiled successfully it will be executed and its output compared to the expected output. Before comparing the output, the exit status of your program is checked: if your program gives the correct answer, but exits with a non-zero exit code, the result will be a run-error! There are some restrictions during execution. If your program violates these, it will also be aborted with a run-error, see section <q>Restrictions</q>. The output of you problem has to match the specifications given on the problem set. Mostly, it has to match the solution exactly; in case of problem statements which do not have unique output (e.g. with floating point answers), the problem set will contain information about the expected solution.
 </p>
 
 <h3>Restrictions</h3>
@@ -213,8 +219,7 @@ In order to keep the judging system stable, prevent abuse and give everyone clea
 
   <li style="text-indent: -1em; padding-left: 1em;"><b>Memory</b>: During execution of your program, there are <?php echo $config['memory_limit']/(1024*1024); ?>GB of memory available. This is the total amount of memory (including program code, statically and dynamically defined variables, stack, Java VM (up to 0.35GB), ...)! If your program tries to use more memory, it will abort, resulting in a run-error.</li>
 
-  <li style="text-indent: -1em; padding-left: 1em;"><b>Number of processes</b>: You are not supposed to create multiple processes (threads). This would be to no avail anyway, since your program has only 1 processor fully at its disposal. To increase stability of the judging system, there is a maximum of <?php echo $config['process_limit'];?> processes that can be run simultaneously (including processes that started your program).<br />
-  People who have never programmed with multiple processes (or have never heard of <q>threads</q>) do not have to worry: a normal program runs in one process.</li>
+  <li style="text-indent: -1em; padding-left: 1em;"><b>Number of processes</b>: You are not supposed to create multiple processes (threads). This would be to no avail anyway, since your program has only 1 processor fully at its disposal. To increase stability of the judging system, there is a maximum of <?php echo $config['process_limit'];?> processes that can be run simultaneously (including processes that started your program). People who have never programmed with multiple processes (or have never heard of <q>threads</q>) do not have to worry: a normal program runs in one process.</li>
   
 </ul>
 
@@ -224,8 +229,7 @@ Furthermore, any tampering with the system will result in penalties. Please also
 
 <h3>Do not fool the Judge</h3>
 <p>
-Do not fool with the system. Do not try to do anything you are obviously not intended to do, for instance opening files, using network connections, hacking our system etc. Submissions with such bevaviour will be killed by the judge and we may remove points from your score or apply other penalties.<br />
-Also, do not share code. You are free to discuss algorithms and problems, but please do not share solutions or code lines.<br />
+Do not fool with the system. Do not try to do anything you are obviously not intended to do, for instance opening files, using network connections, hacking our system etc. Submissions with such bevaviour will be killed by the judge and we may remove points from your score or apply other penalties. Also, do not share code. You are free to discuss algorithms and problems, but please do not share solutions or code lines.<br />
 <b>Have fun!</b>
 </p>
 
