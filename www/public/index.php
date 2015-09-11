@@ -303,7 +303,7 @@ After your program has compiled successfully it will be executed and its output 
 Once you upload your code to our server, there are several possible outcomes that TUMjudge could tell you.
 </p>
 
-<ul class="startpage_list">
+<ul class="indent_list">
   <li><b>CORRECT</b> This is the best case. You have solved the problem correctly.</li>
   <li><b>TIMELIMIT</b> There is at least one of our testcases where your program takes too long to produce an answer.</li>
   <li><b>WRONG ANSWER</b> There is at least one of our testcases where your program yields a wrong solution.</li>
@@ -318,7 +318,7 @@ Once you upload your code to our server, there are several possible outcomes tha
 In order to keep the judging system stable, prevent abuse and give everyone clear and equal environments, there are some restrictions to which all submissions are subjected:
 </p>
 
-<ul class="startpage_list">
+<ul class="indent_list">
 
   <li><b>Compile time</b>: Compilation of your program may take no longer than <?php echo $config['script_timelimit'];?> seconds. After that compilation will be aborted and the result will be a compile error. In practice this should never give rise to problems. Should this happen to a normal program, please inform the course instructors right away.</li>
 
