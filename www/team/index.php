@@ -98,6 +98,7 @@ if ( $fdata['cstarted'] ) {
 		    "<p id=\"submitform\">\n\n";
 
 		echo "<input type=\"file\" name=\"code[]\" id=\"maincode\" required";
+		$mult_files = "";
 		if ( $maxfiles > 1 ) {
 			echo " multiple";
 			$mult_files = "s";
