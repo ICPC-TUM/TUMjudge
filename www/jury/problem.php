@@ -192,15 +192,9 @@ endif;
 
 $data = $DB->q('TUPLE SELECT p.probid,p.name,
                              p.timelimit,p.memlimit,p.outputlimit,
-<<<<<<< HEAD
-                             p.special_run,p.special_compare,
-                             p.problemtext_type,
-							 p.difficulty,p.author,p.source,p.topic,
-							 count(rank) AS ntestcases
-=======
                              p.special_run,p.special_compare,p.special_compare_args,
                              p.problemtext_type, count(rank) AS ntestcases
->>>>>>> domjudge/master
+                             p.difficulty,p.author,p.source,p.topic,
                 FROM problem p
                 LEFT JOIN testcase USING (probid)
                 WHERE probid = %i GROUP BY probid', $id);
