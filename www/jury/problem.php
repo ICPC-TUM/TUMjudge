@@ -193,8 +193,8 @@ endif;
 $data = $DB->q('TUPLE SELECT p.probid,p.name,
                              p.timelimit,p.memlimit,p.outputlimit,
                              p.special_run,p.special_compare,p.special_compare_args,
-                             p.problemtext_type, count(rank) AS ntestcases
-                             p.difficulty,p.author,p.source,p.topic,
+                             p.problemtext_type, count(rank) AS ntestcases,
+                             p.difficulty, p.author, p.source, p.topic
                 FROM problem p
                 LEFT JOIN testcase USING (probid)
                 WHERE probid = %i GROUP BY probid', $id);
