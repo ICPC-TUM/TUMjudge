@@ -98,10 +98,12 @@ if ( $fdata['cstarted'] ) {
 		    "<p id=\"submitform\">\n\n";
 
 		echo "<input type=\"file\" name=\"code[]\" id=\"maincode\" required";
+		$mult_files = "";
 		if ( $maxfiles > 1 ) {
 			echo " multiple";
+			$mult_files = "s";
 		}
-		echo " class=\"form-control\" />\n";
+		echo " class=\"form-control\" value=\"Select file" . $mult_files . "...\"/>\n";
 
 
 		$probs = array();
