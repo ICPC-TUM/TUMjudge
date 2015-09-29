@@ -81,3 +81,30 @@ td, th {
 .contest-24 .scoreboard .score_correct.score_first {
         background-image: url('../images/stars_gold.png') !important;
 }
+
+p {
+    text-align:justify;
+}
+
+#login-container {
+  width: 250px; 
+  float: right; 
+  margin: 70px 0px 20px 20px;
+  background: #002143;
+  padding: 0px 20px 20px 20px; 
+  color:#ffffff;  
+}
+
+#login-container .form-control {
+  margin-top: 0px;  
+}
+
+#login-container input {
+  background-color:#ffffff;
+  color:#002143;
+}
+
+.indent_list li{
+  text-indent: -1em; 
+  padding-left: 1em;
+}
