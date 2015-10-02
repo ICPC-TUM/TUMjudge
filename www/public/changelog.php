@@ -17,9 +17,14 @@ D-85748 Garching
 
 <h2>Changelog</h2>
 
+<h3>v5.0.1.0</h3>
+<ul>
+<li>update to DOMjudge 5.0.1 (bugfixes)</li>
+</ul>
+
 <h3>v5.0.0.0</h3>
 <ul>
-<li>update to DOMjudge 5.0 (points per problem customizable, rejudging, memory/output limits, judgehosts for multiple instances)</li>
+<li>update to DOMjudge 5.0.0 (points per problem customizable, rejudging, memory/output limits, judgehosts for multiple instances)</li>
 <li>completely redesign the website and menu structure</li>
 <li>add a help page for contestants with live data</li>
 </ul>
