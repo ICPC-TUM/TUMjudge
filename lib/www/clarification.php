@@ -390,6 +390,7 @@ if ( $respid ) {
 	$text = explode("\n",wrap_unquoted($clar['body']),75);
 	foreach($text as $line) $body .= "> $line\n";
 }
+global $teamdata;
 if (!IS_JURY) {
 $body = 'Dear jury,
 
@@ -401,7 +402,7 @@ Best regards,
 '.$body;
 }
 else {
-$body = 'Dear $teamdata['name'],
+$body = 'Dear '.(empty($clar['toname']) ? 'participants' : $clar['toname']).',
 
 ...
 
