@@ -6,7 +6,7 @@ require('init.php');
 require(LIBWWWDIR . '/header.php');
 
 echo '<h1>Welcome to TUMjudge!</h1>';
-echo 'If you already have an account please choose a TUMjudge instance on the top-left corner of rthis page.';
+echo 'If you already have an account please choose a TUMjudge instance in the top-left corner of this page.';
 
 if(DOMSERVER_REPLICATION != 'master') {
   require(LIBWWWDIR . '/footer.php');
