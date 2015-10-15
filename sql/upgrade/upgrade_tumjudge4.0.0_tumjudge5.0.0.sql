@@ -80,7 +80,8 @@ UPDATE `configuration` SET `name` = 'output_limit', `description` = 'Maximum out
 INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES
 ('judgehost_warning', '30', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "warning".'),
 ('judgehost_critical', '120', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "critical".'),
-('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.');
+('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.'),
+('links', '{}', 'array_keyval', 'Links to website that should be listed in the menu of participants. List the link names on the left and the URLs on the right.');
 
 -- Add changes not contained in last upgrade script
 ALTER TABLE `contestproblem`
