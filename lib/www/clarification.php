@@ -391,13 +391,24 @@ if ( $respid ) {
 	foreach($text as $line) $body .= "> $line\n";
 }
 if (!IS_JURY) {
-global $teamdata;
 $body = 'Dear jury,
 
 ...
 
 Best regards,
-'.$teamdata['name'];
+'.$teamdata['name'].'
+
+'.$body;
+}
+else {
+$body = 'Dear $teamdata['name'],
+
+...
+
+Best regards,
+'.$teamdata['name'].'
+
+'.$body;
 }
 echo addTextArea('bodytext', $body, 80, 10, 'required');
 ?></td></tr>
