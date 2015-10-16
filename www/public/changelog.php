@@ -19,6 +19,7 @@ D-85748 Garching
 
 <h3>v5.0.1.0</h3>
 <ul>
+<li>add more premade answers to clarification forms</li>
 </ul>
 
 <h3>v5.0.0.0</h3>
