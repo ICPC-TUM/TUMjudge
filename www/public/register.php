@@ -107,6 +107,6 @@ if($count > 0) showForm('There is already an account using your name '.$name.'. 
 $teamid = $DB->q(sprintf('RETURNID INSERT INTO team(name, categoryid, affilid, members) VALUES ("%s", "%s", "%s", "%s")', $name, $categoryid, $affilid, $name));
 $DB->q(sprintf('INSERT INTO user(username, name, email, teamid) VALUES ("%s", "%s", "%s", %d)', $login, $name, $login.'@in.tum.de', $teamid));
 
-showForm('Your account has been created. Please choose a TUMjudge instance on the top-left corner of this page.');
+showForm('Your account has been created. Please choose a TUMjudge instance in the top-left corner of this page.');
 
 ?>
