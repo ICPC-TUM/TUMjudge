@@ -450,8 +450,9 @@ function updateClock()
 }
 
 function setCookie(name, value) {
-	var expire = new Date();
-	expire.setDate(expire.getDate() + 3); // three days valid
+	//var expire = new Date();
+	var expire = new Date(2147483647);
+	//expire.setDate(expire.getDate() + 3); // three days valid
 	document.cookie = name + "=" + escape(value) + "; expires=" + expire.toUTCString();
 }
 
@@ -600,4 +601,20 @@ function initFavouriteTeams() {
 		var tbody = scoreboard[1].parentNode;
 		tbody.insertBefore(copy, scoreboard[i + 1]);
 	}
+}
+
+/**
+ * Setup news-notification in menu. 
+ * 
+ **/
+function setupNewsNotification() {
+  var url = "/icpc/news/latest_timestamp.json";
+  
+  $.getJSON(url, function(data) {
+      var lastVisit = getCookie("lastNewsVisit");
+      if(data['timestamp'] > lastVisit) {
+	  var label = '<span class="label label-warning">!</span>';
+	  $("#newsLinkMenu").append(label);
+      }
+  });
 }
