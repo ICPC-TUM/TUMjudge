@@ -117,6 +117,8 @@ p {
 }
 .tumjudge-conpra.contest-42 .scoreboard .score_correct {
         background-image: url('../images/pumpkin.png') !important;
+}
+.tumjudge-conpra.contest-42 .scoreboard .score_correct, .tumjudge-conpra.contest-42 .scoreboard .score_correct a {
 	color: #ffffff !important;
 }
 .tumjudge-conpra.contest-42 .scoreboard .score_first {
