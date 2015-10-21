@@ -223,7 +223,7 @@ legend {
 .problempoints {
 	font-size: smaller;
 	font-weight: normal;
-	color: #303030;
+	/*color: #303030;*/
 	padding-left: 3pt;
 	padding-right: 3pt;
 }
