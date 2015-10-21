@@ -84,7 +84,7 @@ $compile_command['C#'] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"
 mono "$DESTCLI';
   
 // C++
-$compile_command['C++'] = 'g++ -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
+$compile_command['C++'] = 'g++ -Wall -std=c++11 -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
 $version['C++'] = 'Target: x86_64-linux-gnu<br />gcc version 4.9.2 (Debian 4.9.2-10)';
 
 $sample_code['C++'] = '#include <iostream>
