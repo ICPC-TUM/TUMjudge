@@ -118,11 +118,15 @@ p {
 .tumjudge-conpra.contest-42 .scoreboard .score_correct {
         background-image: url('../images/pumpkin2.png') !important;
 }
+.tumjudge-conpra.contest-42 .scoreboard .score_correct, .tumjudge-conpra.contest-42 .scoreboard .score_correct a {
+	font-weight: bold;
+}
 .tumjudge-conpra.contest-42 .scoreboard .score_first {
         background-image: url('../images/pumpkin.png') !important;
 }
 .tumjudge-conpra.contest-42 .scoreboard .score_first, .tumjudge-conpra.contest-42 .scoreboard .score_first a {
 	color: #ffffff !important;
+	font-weight: bold;
 }
 .tumjudge-conpra.contest-42 .scoreboard .score_incorrect {
         background-image: url('../images/blood.png') !important;
