@@ -17,6 +17,11 @@ D-85748 Garching
 
 <h2>Changelog</h2>
 
+<h3>v5.0.1.0</h3>
+<ul>
+<li>add a news page that pulls displays news from icpc.tum.de</li>
+</ul>
+
 <h3>v5.0.0.0</h3>
 <ul>
 <li>update to DOMjudge 5.0 (points per problem customizable, rejudging, memory/output limits, judgehosts for multiple instances)</li>
