@@ -15,7 +15,7 @@ require(LIBWWWDIR . '/header.php');
   function setCookie(name, value) {
 	var expire = new Date();
 	//var expire = new Date(2147483647);
-	expire.setDate(expire.getDate() + 10000); // three days valid
+	expire.setDate(expire.getDate() + 10000); // valid for a long time :)
 	document.cookie = name + "=" + escape(value) + "; expires=" + expire.toUTCString()+";";
   }
 
