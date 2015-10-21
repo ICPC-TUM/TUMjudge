@@ -124,6 +124,9 @@ p {
 .tumjudge-conpra.contest-42 .scoreboard .score_first, .tumjudge-conpra.contest-42 .scoreboard .score_first a {
 	color: #ffffff !important;
 }
+.tumjudge-conpra.contest-42 .scoreboard .score_incorrect {
+        background-image: url('../images/blood.png') !important;
+}
 .tumjudge-conpra.contest-42 .navbar-default {
 	background-image: url('../images/bats.png') !important;
 	background-repeat: repeat;
