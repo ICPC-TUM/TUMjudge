@@ -613,7 +613,7 @@ function setupNewsNotification() {
   $.getJSON(url, function(data) {
       var lastVisit = getCookie("lastNewsVisit");
       if(data['timestamp'] > lastVisit) {
-	  var label = '<span class="label label-warning">!</span>';
+	  var label = '<span class="label label-information">new</span>';
 	  $("#newsLinkMenu").append(label);
       }
   });
