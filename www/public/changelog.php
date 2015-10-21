@@ -19,6 +19,7 @@ D-85748 Garching
 
 <h3>v5.0.1.0</h3>
 <ul>
+<li>add links to the team menu, configuration in the admin area</li>
 <li>add more premade answers to clarification forms</li>
 </ul>
 
