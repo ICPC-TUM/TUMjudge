@@ -4,19 +4,19 @@
 require('init.php');
 require(LIBWWWDIR . '/header.php');
 ?>
-<script language="javascript">
+<script language="text/javascript">
   var lastNewsVisit;
   $(function() {
     lastNewsVisit = getLastVisit();
     loadNews();
-    
+    setLastVisit();
   });
   
   function setCookie(name, value) {
-	//var expire = new Date();
-	var expire = new Date(2147483647);
-	//expire.setDate(expire.getDate() + 3); // three days valid
-	document.cookie = name + "=" + escape(value) + "; expires=" + expire.toUTCString();
+	var expire = new Date();
+	//var expire = new Date(2147483647);
+	expire.setDate(expire.getDate() + 10000); // three days valid
+	document.cookie = name + "=" + escape(value) + "; expires=" + expire.toUTCString()+";";
   }
 
   function getCookie(name) {
@@ -37,28 +37,47 @@ require(LIBWWWDIR . '/header.php');
     return getCookie("lastNewsVisit");
   }
   
+  function setLastVisit() {
+    if(!Date.now) {
+      Date.now = function() { return new Date().getTime(); }
+    }
+  
+    setCookie("lastNewsVisit" , Math.floor(Date.now() / 1000) );
+  }
+  
   function loadNews() {
+    //Testdata
+    /*
+    var data = $.parseJSON('[{"title": "abc","content": "<p>dasd sds adsd asd asd sad sad as das</p>","timestamp": 1234},{"title": "abc","content": "<p>dasd sds adsd asd asd sad sad as das</p>","timestamp": 1234}]');
+    
+    for (index = 0; index < data.length; index++) {
+	renderNewsItem(data[index]);
+    }
+  */
+    //TODO: Fix url
     var url = "icpc/news/latest.json";
     $.getJSON(url, function(data) {
       for (index = 0; index < data.length; index++) {
 	renderNewsItem(data[index]);
       }
     });
-  
   }
   
   function renderNewsItem(data) {
     if(data['timestamp'] > getLastVisit()) {
-    
+      var html = "<h3>" + data['title'] + "</h3>";
+      html += data['content'];
+      $(html).insertBefore("#news-container>small");
     }
-    var html = "<h3>" + data['title'] + "</h3>";
-    html += data['content'];
-    $(".news-container").append(html);
   }
   
 </script>
 
-<div id="news-container" style="width:100%;height:100%;">
+<div id="news-container" class='container'>
+  
+<small class="text-muted" style="float: right">
+	TUMjudge version 4.1.0.4, a fork of DOMjudge version 5.0.1	<a href="../public/changelog.php">Imprint / Changelog</a>
+</small>
 </div>
 
 <?
