@@ -13,7 +13,7 @@
 	</ul>
 </li>
 <li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>
-<li><a href="#" id="newsLinkMenu"><span class="glyphicon glyphicon-globe"></span> news</a></li>
+<li><a href="news.php" id="newsLinkMenu"><span class="glyphicon glyphicon-globe"></span> news</a></li>
 <li><a href="help.php"><span class="glyphicon glyphicon-question-sign"></span> help</a></li>
 
 <?php
