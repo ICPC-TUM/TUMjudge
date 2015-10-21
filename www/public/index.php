@@ -10,6 +10,11 @@
 require('init.php');
 $title="TUMjudge";
 
+if(DOMSERVER_REPLICATION === 'master') {
+  header('Location: register.php');
+  exit;
+}
+
 $menu = true;
 require(LIBWWWDIR . '/header.php');
 
