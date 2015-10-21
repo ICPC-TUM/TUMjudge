@@ -111,8 +111,8 @@ p {
 }
 
 /* Conpra, Contest 42: Halloween Week of Conpra WS15/16 */
-.tumjudge-conpra.contest-51 th, .tumjudge-conpra.contest-51 .scoreboard th a, .tumjudge-conpra.contest-51 h3.teamoverview, .tumjudge-conpra.contest-51 #login-container, .tumjudge-conpra.contest-51 .dropdown-menu > .active > a, .tumjudge-conpra.contest-51 .dropdown-menu > .active > a:hover, .tumjudge-conpra.contest-51 .dropdown-menu > .active > a:focus, .tumjudge-conpra.contest-51 .navbar-default, .tumjudge-conpra.contest-51 .dropdown-menu .header {
-	background-color: orange;
+.tumjudge-conpra.contest-42 th, .tumjudge-conpra.contest-42 .scoreboard th a, .tumjudge-conpra.contest-42 h3.teamoverview, .tumjudge-conpra.contest-42 #login-container, .tumjudge-conpra.contest-42 .dropdown-menu > .active > a, .tumjudge-conpra.contest-42 .dropdown-menu > .active > a:hover, .tumjudge-conpra.contest-42 .dropdown-menu > .active > a:focus, .tumjudge-conpra.contest-42 .navbar-default, .tumjudge-conpra.contest-42 .dropdown-menu .header {
+	background-color: #cc6600;
 	color: #000000;
 }
 
