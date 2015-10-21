@@ -66,21 +66,6 @@ td, th {
         left: -1px;
 }
 
-/* Contest 24: Christmas Week of Conpra WS14/15 */
-@font-face {
-	font-family:"Frostbitten";
-	src: url("../fonts/frostbitten.ttf");
-}
-.contest-24 h1, .contest-24 h2, .contest-24 h3, .contest-24 h4, .contest-24 #menutop *, .contest-24 .nodata, .contest-24 .scoreboard td, .contest-24 .scoreboard th {
-        font-family: "Frostbitten";
-}
-.contest-24 .scoreboard .score_correct {
-        background-image: url('../images/stars_silver.png') !important;
-        background-position: 0px -10px !important;
-}
-.contest-24 .scoreboard .score_correct.score_first {
-        background-image: url('../images/stars_gold.png') !important;
-}
 
 p {
     text-align:justify;
@@ -107,4 +92,36 @@ p {
 .indent_list li{
   text-indent: -1em; 
   padding-left: 1em;
+}
+
+/* Conpra, Contest 24: Christmas Week of Conpra WS14/15 */
+@font-face {
+	font-family:"Frostbitten";
+	src: url("../fonts/frostbitten.ttf");
+}
+.tumjudge-conpra.contest-24 h1, .tumjudge-conpra.contest-24 h2, .tumjudge-conpra.contest-24 h3, .tumjudge-conpra.contest-24 h4, .tumjudge-conpra.contest-24 #menutop *, .tumjudge-conpra.contest-24 .nodata, .tumjudge-conpra.contest-24 .scoreboard td, .tumjudge-conpra.contest-24 .scoreboard th {
+        font-family: "Frostbitten";
+}
+.tumjudge-conpra.contest-24 .scoreboard .score_correct {
+        background-image: url('../images/stars_silver.png') !important;
+        background-position: 0px -10px !important;
+}
+.tumjudge-conpra.contest-24 .scoreboard .score_correct.score_first {
+        background-image: url('../images/stars_gold.png') !important;
+}
+
+/* Conpra, Contest 51: Christmas Week of Conpra WS15/16 */
+@font-face {
+	font-family:"Frostbitten";
+	src: url("../fonts/frostbitten.ttf");
+}
+.tumjudge-conpra.contest-51 h1, .tumjudge-conpra.contest-51 h2, .tumjudge-conpra.contest-51 h3, .tumjudge-conpra.contest-51 h4, .tumjudge-conpra.contest-51 #menutop *, .tumjudge-conpra.contest-51 .nodata, .tumjudge-conpra.contest-51 .scoreboard td, .tumjudge-conpra.contest-51 .scoreboard th {
+        font-family: "Frostbitten";
+}
+.tumjudge-conpra.contest-51 .scoreboard .score_correct {
+        background-image: url('../images/stars_silver.png') !important;
+        background-position: 0px -10px !important;
+}
+.tumjudge-conpra.contest-51 .scoreboard .score_correct.score_first {
+        background-image: url('../images/stars_gold.png') !important;
 }
