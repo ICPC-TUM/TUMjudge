@@ -143,7 +143,7 @@ p {
 }
 
 /* Contest, Contest 21: Halloween Contest */
-.tumjudge-contest.contest-21 th, .tumjudge-contest.contest-21 .scoreboard th a, .tumjudge-contest.contest-21 h3.teamoverview, .tumjudge-contest.contest-21 #login-container, .tumjudge-contest.contest-21 .dropdown-menu > .active > a, .tumjudge
+.tumjudge-contest.contest-21 th, .tumjudge-contest.contest-21 .scoreboard th a, .tumjudge-contest.contest-21 h3.teamoverview, .tumjudge-contest.contest-21 #login-container, .tumjudge-contest.contest-21 .dropdown-menu > .active > a, .tumjudge-contest.contest-21 .dropdown-menu > .active > a:hover, .tumjudge-contest.contest-21 .dropdown-menu > .active > a:focus, .tumjudge-contest.contest-21 .navbar-default, .tumjudge-contest.contest-21 .dropdown-menu .header {
         background-color: #cc6600;
         color: #000000;
 }
