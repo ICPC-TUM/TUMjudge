@@ -608,7 +608,7 @@ function initFavouriteTeams() {
  * 
  **/
 function setupNewsNotification() {
-  var url = "/news/latest-timestamp";
+  var url = "/news/latest-timestamp.json";
   
   $.getJSON(url, function(data) {
       var lastVisit = getCookie("lastNewsVisit");
