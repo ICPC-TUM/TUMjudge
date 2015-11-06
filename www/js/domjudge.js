@@ -608,11 +608,11 @@ function initFavouriteTeams() {
  * 
  **/
 function setupNewsNotification() {
-  var url = "/icpc/news/latest_timestamp.json";
+  var url = "https://judge.in.tum.de/news/latest-timestamp";
   
   $.getJSON(url, function(data) {
       var lastVisit = getCookie("lastNewsVisit");
-      if(data['timestamp'] > lastVisit) {
+      if(data > lastVisit) {
 	  var label = '<span class="label label-information">new</span>';
 	  $("#newsLinkMenu").append(label);
       }

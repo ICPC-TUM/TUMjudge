@@ -14,7 +14,6 @@ require(LIBWWWDIR . '/header.php');
   
   function setCookie(name, value) {
 	var expire = new Date();
-	//var expire = new Date(2147483647);
 	expire.setDate(expire.getDate() + 10000); // valid for a long time :)
 	document.cookie = name + "=" + escape(value) + "; expires=" + expire.toUTCString()+";";
   }
@@ -46,16 +45,7 @@ require(LIBWWWDIR . '/header.php');
   }
   
   function loadNews() {
-    //Testdata
-    /*
-    var data = $.parseJSON('[{"title": "abc","content": "<p>dasd sds adsd asd asd sad sad as das</p>","timestamp": 1234},{"title": "abc","content": "<p>dasd sds adsd asd asd sad sad as das</p>","timestamp": 1234}]');
-    
-    for (index = 0; index < data.length; index++) {
-	renderNewsItem(data[index]);
-    }
-  */
-    //TODO: Fix url
-    var url = "icpc/news/latest.json";
+    var url = "https://judge.in.tum.de/news/latest";
     $.getJSON(url, function(data) {
       for (index = 0; index < data.length; index++) {
 	renderNewsItem(data[index]);
