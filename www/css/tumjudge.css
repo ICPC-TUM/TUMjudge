@@ -66,21 +66,6 @@ td, th {
         left: -1px;
 }
 
-/* Contest 24: Christmas Week of Conpra WS14/15 */
-@font-face {
-	font-family:"Frostbitten";
-	src: url("../fonts/frostbitten.ttf");
-}
-.contest-24 h1, .contest-24 h2, .contest-24 h3, .contest-24 h4, .contest-24 #menutop *, .contest-24 .nodata, .contest-24 .scoreboard td, .contest-24 .scoreboard th {
-        font-family: "Frostbitten";
-}
-.contest-24 .scoreboard .score_correct {
-        background-image: url('../images/stars_silver.png') !important;
-        background-position: 0px -10px !important;
-}
-.contest-24 .scoreboard .score_correct.score_first {
-        background-image: url('../images/stars_gold.png') !important;
-}
 
 p {
     text-align:justify;
@@ -108,3 +93,100 @@ p {
   text-indent: -1em; 
   padding-left: 1em;
 }
+
+/* Conpra, Contest 24: Christmas Week of Conpra WS14/15 */
+@font-face {
+	font-family:"Frostbitten";
+	src: url("../fonts/frostbitten.ttf");
+}
+.tumjudge-conpra.contest-24 h1, .tumjudge-conpra.contest-24 h2, .tumjudge-conpra.contest-24 h3, .tumjudge-conpra.contest-24 h4, .tumjudge-conpra.contest-24 #menutop *, .tumjudge-conpra.contest-24 .nodata, .tumjudge-conpra.contest-24 .scoreboard td, .tumjudge-conpra.contest-24 .scoreboard th {
+        font-family: "Frostbitten";
+}
+.tumjudge-conpra.contest-24 .scoreboard .score_correct {
+        background-image: url('../images/stars_silver.png') !important;
+        background-position: 0px -10px !important;
+}
+.tumjudge-conpra.contest-24 .scoreboard .score_first {
+        background-image: url('../images/stars_gold.png') !important;
+}
+
+/* Conpra, Contest 42: Halloween Week of Conpra WS15/16 */
+.tumjudge-conpra.contest-42 th, .tumjudge-conpra.contest-42 .scoreboard th a, .tumjudge-conpra.contest-42 h3.teamoverview, .tumjudge-conpra.contest-42 #login-container, .tumjudge-conpra.contest-42 .dropdown-menu > .active > a, .tumjudge-conpra.contest-42 .dropdown-menu > .active > a:hover, .tumjudge-conpra.contest-42 .dropdown-menu > .active > a:focus, .tumjudge-conpra.contest-42 .navbar-default, .tumjudge-conpra.contest-42 .dropdown-menu .header {
+	background-color: #cc6600;
+	color: #000000;
+}
+.tumjudge-conpra.contest-42 .scoreboard .score_correct {
+        background-image: url('../images/pumpkin2.png') !important;
+}
+.tumjudge-conpra.contest-42 .scoreboard .score_correct, .tumjudge-conpra.contest-42 .scoreboard .score_correct a {
+	font-weight: bold;
+}
+.tumjudge-conpra.contest-42 .scoreboard .score_first {
+        background-image: url('../images/pumpkin.png') !important;
+}
+.tumjudge-conpra.contest-42 .scoreboard .score_first, .tumjudge-conpra.contest-42 .scoreboard .score_first a {
+	color: #ffffff !important;
+	font-weight: bold;
+}
+.tumjudge-conpra.contest-42 .scoreboard .score_incorrect {
+        background-image: url('../images/blood.png') !important;
+}
+.tumjudge-conpra.contest-42 .navbar-default {
+	background-image: url('../images/bats.png') !important;
+	background-repeat: repeat;
+}
+.tumjudge-conpra.contest-42 .navbar {
+        border-bottom-color: #000000;
+}
+.tumjudge-conpra.contest-42 .brand {
+        background-color: #000000;
+}
+
+/* Contest, Contest 21: Halloween Contest */
+.tumjudge-contest.contest-21 th, .tumjudge-contest.contest-21 .scoreboard th a, .tumjudge-contest.contest-21 h3.teamoverview, .tumjudge-contest.contest-21 #login-container, .tumjudge-contest.contest-21 .dropdown-menu > .active > a, .tumjudge-contest.contest-21 .dropdown-menu > .active > a:hover, .tumjudge-contest.contest-21 .dropdown-menu > .active > a:focus, .tumjudge-contest.contest-21 .navbar-default, .tumjudge-contest.contest-21 .dropdown-menu .header {
+        background-color: #cc6600;
+        color: #000000;
+}
+.tumjudge-contest.contest-21 .scoreboard .score_correct {
+        background-image: url('../images/pumpkin2.png') !important;
+}
+.tumjudge-contest.contest-21 .scoreboard .score_correct, .tumjudge-contest.contest-21 .scoreboard .score_correct a {
+        font-weight: bold;
+}
+.tumjudge-contest.contest-21 .scoreboard .score_first {
+        background-image: url('../images/pumpkin.png') !important;
+}
+.tumjudge-contest.contest-21 .scoreboard .score_first, .tumjudge-contest.contest-21 .scoreboard .score_first a {
+        color: #ffffff !important;
+        font-weight: bold;
+}
+.tumjudge-contest.contest-21 .scoreboard .score_incorrect {
+        background-image: url('../images/blood.png') !important;
+}
+.tumjudge-contest.contest-21 .navbar-default {
+        background-image: url('../images/bats.png') !important;
+        background-repeat: repeat;
+}
+.tumjudge-contest.contest-21 .navbar {
+        border-bottom-color: #000000;
+}
+.tumjudge-contest.contest-21 .brand {
+        background-color: #000000;
+}
+
+/* Conpra, Contest 51: Christmas Week of Conpra WS15/16 */
+@font-face {
+	font-family:"Frostbitten";
+	src: url("../fonts/frostbitten.ttf");
+}
+.tumjudge-conpra.contest-51 h1, .tumjudge-conpra.contest-51 h2, .tumjudge-conpra.contest-51 h3, .tumjudge-conpra.contest-51 h4, .tumjudge-conpra.contest-51 #menutop *, .tumjudge-conpra.contest-51 .nodata, .tumjudge-conpra.contest-51 .scoreboard td, .tumjudge-conpra.contest-51 .scoreboard th {
+        font-family: "Frostbitten";
+}
+.tumjudge-conpra.contest-51 .scoreboard .score_correct {
+        background-image: url('../images/stars_silver.png') !important;
+        background-position: 0px -10px !important;
+}
+.tumjudge-conpra.contest-51 .scoreboard .score_first {
+        background-image: url('../images/stars_gold.png') !important;
+}
+

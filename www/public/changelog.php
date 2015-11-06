@@ -20,6 +20,7 @@ D-85748 Garching
 <h3>v5.0.1.1</h3>
 <ul>
 <li>add a news page that pulls news from icpc.tum.de</li>
+<li>add Halloween and Christmas themes</li>
 </ul>
 
 <h3>v5.0.1.0</h3>
