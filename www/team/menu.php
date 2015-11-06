@@ -10,6 +10,9 @@
 		<?php if(have_printing()) { ?>
 			<li><a href="print.php">print</a></li>
 		<?php } ?>
+		<?php foreach($LIBDBCONFIG['links']['value'] AS $name => $url) { ?>
+			<li><a href="<?php echo $url; ?>" target="_blank"><?php echo $name; ?></a></li>
+		<?php } ?>
 	</ul>
 </li>
 <li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>
