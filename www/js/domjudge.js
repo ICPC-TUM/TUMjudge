@@ -608,7 +608,7 @@ function initFavouriteTeams() {
  * 
  **/
 function setupNewsNotification() {
-  var url = "https://judge.in.tum.de/news/latest-timestamp";
+  var url = "/news/latest-timestamp";
   
   $.getJSON(url, function(data) {
       var lastVisit = getCookie("lastNewsVisit");
@@ -618,3 +618,7 @@ function setupNewsNotification() {
       }
   });
 }
+
+$(function() {
+  setupNewsNotification();
+});
