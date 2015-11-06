@@ -608,11 +608,11 @@ function initFavouriteTeams() {
  * 
  **/
 function setupNewsNotification() {
-  var url = "/news/latest-timestamp.json";
+  var url = "/news/latest-timestamp";
   
   $.getJSON(url, function(data) {
       var lastVisit = getCookie("lastNewsVisit");
-      if(data > lastVisit) {
+      if(data['timestamp'] > lastVisit) {
 	  var label = '<span class="label label-info">new</span>';
 	  $("#newsLinkMenu").append(" ").append(label);
       }
