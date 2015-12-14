@@ -25,24 +25,25 @@ if( $res->count() == 0 ) {
 		"<th>shortname</th>" .
 		"<th>name</th>" .
 		"<th>country</th>" .
-		"<th>#teams</th></tr>\n</thead>\n<tbody>\n";
+		"<th>#teams</th>" .
+		"<th></th></tr>\n</thead>\n<tbody>\n";
 
 	while($row = $res->next()) {
 		$countryflag = "../images/countries/" . urlencode($row['country']) . ".png";
 		$link = '<a href="team_affiliation.php?id=' . urlencode($row['affilid']) . '">';
-		echo '<tr><td>' . $link . htmlspecialchars($row['affilid']) .
-			'</a></td><td>' . $link . htmlspecialchars($row['shortname']) .
-			'</a></td><td>' . $link . htmlspecialchars($row['name']) .
+		echo '<tr><td>' . $link . specialchars($row['affilid']) .
+			'</a></td><td>' . $link . specialchars($row['shortname']) .
+			'</a></td><td>' . $link . specialchars($row['name']) .
 			'</a></td><td class="tdcenter">' . $link .
-			htmlspecialchars($row['country']) .
+			specialchars($row['country']) .
 			( is_readable($countryflag) ? ' <img src="' . $countryflag .
-			  '" alt="' . htmlspecialchars($row['country']) . '" />' : '&nbsp;' ) .
+			  '" alt="' . specialchars($row['country']) . '" />' : '&nbsp;' ) .
 			'</a></td><td class="tdright">' . $link .
 			(int)$row['cnt'] .
 			'</a></td>';
 		if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 			echo "<td class=\"editdel\">" .
-				editLink('team_affiliation', $row['affilid']) . " " .
+				editLink('team_affiliation', $row['affilid']) . "&nbsp;" .
 				delLink('team_affiliation', 'affilid', $row['affilid']) . "</td>";
 		}
 		echo "</tr>\n";

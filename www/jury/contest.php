@@ -7,20 +7,16 @@
  */
 
 require('init.php');
+require(LIBWWWDIR . '/checkers.jury.php');
 
 $id = getRequestID();
-$title = ucfirst((empty($_GET['cmd']) ? '' : htmlspecialchars($_GET['cmd']) . ' ') .
-                 'contest' . ($id ? ' c'.htmlspecialchars(@$id) : ''));
+$title = ucfirst((empty($_GET['cmd']) ? '' : specialchars($_GET['cmd']) . ' ') .
+                 'contest' . ($id ? ' c'.specialchars(@$id) : ''));
 
 $jscolor=true;
 $jqtokeninput = true;
 
 require(LIBWWWDIR . '/header.php');
-
-$pattern_datetime  = "\d\d\d\d\-\d\d\-\d\d\ \d\d:\d\d:\d\d";
-$pattern_offset    = "\d?\d:\d\d";
-$pattern_dateorneg = "($pattern_datetime|\-$pattern_offset)";
-$pattern_dateorpos = "($pattern_datetime|\+$pattern_offset)";
 
 if ( !empty($_GET['cmd']) ):
 
@@ -40,40 +36,53 @@ if ( !empty($_GET['cmd']) ):
 
 		echo "<tr><td>Contest ID:</td><td>" .
 			addHidden('keydata[0][cid]', $row['cid']) .
-			'c' . htmlspecialchars($row['cid']) .
+			'c' . specialchars($row['cid']) .
 			"</td></tr>\n";
 	}
 ?>
 
 <tr><td><label for="data_0__shortname_">Short name:</label></td>
-<td><?php echo addInput('data[0][shortname]', @$row['shortname'], 40, 10, 'required')?></td></tr>
+<td colspan="2"><?php echo addInput('data[0][shortname]', @$row['shortname'], 40, 10, 'required')?></td></tr>
 <tr><td><label for="data_0__name_">Contest name:</label></td>
-<td><?php echo addInput('data[0][name]', @$row['name'], 40, 255, 'required')?></td></tr>
+<td colspan="2"><?php echo addInput('data[0][name]', @$row['name'], 40, 255, 'required')?></td></tr>
 <tr><td><label for="data_0__activatetime_string_">Activate time:</label></td>
-<td><?php echo addInput('data[0][activatetime_string]', (empty($row['activatetime_string'])?strftime('%Y-%m-%d %H:%M:00'):$row['activatetime_string']), 20, 19, 'required pattern="' . $pattern_dateorneg . '"')?> (yyyy-mm-dd hh:mm:ss <i>or</i> -hh:mm)</td></tr>
+<td><?php echo addInput('data[0][activatetime_string]', (empty($row['activatetime_string'])?strftime('%Y-%m-%d %H:%M:00 ').date_default_timezone_get():$row['activatetime_string']), 30, 64, 'required pattern="' . $pattern_dateorneg . '"')?></td>
+<td rowspan="6">
+<b>Specification of contest times:</b><br />
+Each of the contest times can be specified as absolute time or relative<br />
+to the start time (except for start time itself). Use up to 6 subsecond<br />
+decimals and a timezone from the
+<a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">
+time zone database</a>.
+<br /><br />
+Absolute time format: <b><kbd><?php echo $human_abs_datetime ?></kbd></b>
+<a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">
+<img src="../images/b_help.png" class="smallpicto" alt="?"></a><br />
+Relative time format: <b><kbd><?php echo $human_rel_datetime ?></kbd></b><br />
+</td></tr>
 
 <tr><td><label for="data_0__starttime_string_">Start time:</label></td>
-<td><?php echo addInput('data[0][starttime_string]', @$row['starttime_string'], 20, 19, 'required pattern="' . $pattern_datetime . '"')?> (yyyy-mm-dd hh:mm:ss)</td></tr>
+<td><?php echo addInput('data[0][starttime_string]', @$row['starttime_string'], 30, 64, 'required pattern="' . $pattern_datetime . '"')?></td></tr>
 
 <tr><td><label for="data_0__freezetime_string_">Scoreboard freeze time:</label></td>
-<td><?php echo addInput('data[0][freezetime_string]', @$row['freezetime_string'], 20, 19, 'pattern="' . $pattern_dateorpos . '"')?> (yyyy-mm-dd hh:mm:ss <i>or</i> +hh:mm)</td></tr>
+<td><?php echo addInput('data[0][freezetime_string]', @$row['freezetime_string'], 30, 64, 'pattern="' . $pattern_dateorpos . '"')?></td></tr>
 
 <tr><td><label for="data_0__endtime_string_">End time:</label></td>
-<td><?php echo addInput('data[0][endtime_string]', @$row['endtime_string'], 20, 19, 'required pattern="' . $pattern_dateorpos . '"')?> (yyyy-mm-dd hh:mm:ss <i>or</i> +hh:mm)</td></tr>
+<td><?php echo addInput('data[0][endtime_string]', @$row['endtime_string'], 30, 64, 'required pattern="' . $pattern_dateorpos . '"')?></td></tr>
 
 <tr><td><label for="data_0__unfreezetime_string_">Scoreboard unfreeze time:</label></td>
-<td><?php echo addInput('data[0][unfreezetime_string]', @$row['unfreezetime_string'], 20, 19, 'pattern="' . $pattern_dateorpos . '"')?> (yyyy-mm-dd hh:mm:ss <i>or</i> +hh:mm)</td></tr>
+<td><?php echo addInput('data[0][unfreezetime_string]', @$row['unfreezetime_string'], 30, 64, 'pattern="' . $pattern_dateorpos . '"')?></td></tr>
 
 <tr><td><label for="data_0__deactivatetime_string_">Deactivate time:</label></td>
-<td><?php echo addInput('data[0][deactivatetime_string]', @$row['deactivatetime_string'], 20, 19, 'pattern="' . $pattern_dateorpos . '"')?> (yyyy-mm-dd hh:mm:ss <i>or</i> +hh:mm)</td></tr>
+<td><?php echo addInput('data[0][deactivatetime_string]', @$row['deactivatetime_string'], 30, 64, 'pattern="' . $pattern_dateorpos . '"')?></td></tr>
 
 <tr><td>Process balloons:</td><td>
 <?php echo addRadioButton('data[0][process_balloons]', (!isset($row['process_balloons']) ||  $row['process_balloons']), 1)?> <label for="data_0__process_balloons_1">yes</label>
-<?php echo addRadioButton('data[0][process_balloons]', ( isset($row['process_balloons']) && !$row['process_balloons']), 0)?> <label for="data_0__process_balloons_0">no</label></td></tr>
+<?php echo addRadioButton('data[0][process_balloons]', ( isset($row['process_balloons']) && !$row['process_balloons']), 0)?> <label for="data_0__process_balloons_0">no</label></td><td></td></tr>
 
 <tr><td>Public:</td><td>
 <?php echo addRadioButton('data[0][public]', (!isset($row['public']) ||  $row['public']), 1)?> <label for="data_0__public_1">yes</label>
-<?php echo addRadioButton('data[0][public]', ( isset($row['public']) && !$row['public']), 0)?> <label for="data_0__public_0">no</label></td></tr>
+<?php echo addRadioButton('data[0][public]', ( isset($row['public']) && !$row['public']), 0)?> <label for="data_0__public_0">no</label></td><td></td></tr>
 
 <tr id="teams" <?php if (!isset($row['public']) || $row['public']): ?>style="display: none; "<?php endif; ?>>
 	<td>Teams:</td>
@@ -98,12 +107,12 @@ if ( !empty($_GET['cmd']) ):
 				});
 			});
 		</script>
-	</td>
+	</td><td></td>
 </tr>
 
 <tr><td>Enabled:</td><td>
 <?php echo addRadioButton('data[0][enabled]', (!isset($row['enabled']) ||  $row['enabled']), 1)?> <label for="data_0__enabled_1">yes</label>
-<?php echo addRadioButton('data[0][enabled]', ( isset($row['enabled']) && !$row['enabled']), 0)?> <label for="data_0__enabled_0">no</label></td></tr>
+<?php echo addRadioButton('data[0][enabled]', ( isset($row['enabled']) && !$row['enabled']), 0)?> <label for="data_0__enabled_0">no</label></td><td></td></tr>
 
 <tr><td>Shuffle Scoreboard:</td><td>
 <?php echo addRadioButton('data[0][shuffle]', (isset($row['shuffle']) &&  $row['shuffle']), 1)?> <label for="data_0__shuffle_1">yes</label>
@@ -256,7 +265,7 @@ $(function() {
 	</td>
 	<td>
 		<?php echo addInputField('number',"data[0][mapping][0][extra][{id}][points]",
-                                 '{points}', ' min="0" max="9999" required'); ?>
+                                 '{points}', ' style="width:10ex" min="0" max="9999" required'); ?>
 	</td>
 	<td>
 		<?php echo addRadioButton("data[0][mapping][0][extra][{id}][allow_submit]", true, 1); ?>
@@ -271,12 +280,12 @@ $(function() {
 		<label for='data_0__mapping__0__extra__{id}__allow_judge_0'>no</label>
 	</td>
 	<td>
-		<?php echo addInput("data[0][mapping][0][extra][{id}][color]", '{color}', 15, 25,
+		<?php echo addInput("data[0][mapping][0][extra][{id}][color]", '{color}', 10, 25,
                             'class="color {required:false,adjust:false,hash:true,caps:false}"'); ?>
 	</td>
 	<td>
 		<?php echo addInputField('number',"data[0][mapping][0][extra][{id}][lazy_eval_results]",
-                                 '{lazy_eval_results}', ' min="0" max="1"'); ?>
+                                 '{lazy_eval_results}', ' style="width:10ex" min="0" max="1"'); ?>
 	</td>
 </tr>
 </script>
@@ -292,7 +301,7 @@ $(function() {
 		<th>color
 		<a target="_blank" href="http://www.w3schools.com/cssref/css_colornames.asp">
 		<img src="../images/b_help.png" class="smallpicto" alt="?"></a></th>
-		<th>lazy evaluation</th>
+		<th>lazy eval</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -319,7 +328,7 @@ echo addHidden('cmd', $cmd) .
 	addHidden('table','contest') .
 	addHidden('referrer', @$_GET['referrer'] . ( $cmd == 'edit'?(strstr(@$_GET['referrer'],'?') === FALSE?'?edited=1':'&edited=1'):'')) .
 	addSubmit('Save', null, 'clearTeamsOnPublic()') .
-	addSubmit('Cancel', 'cancel', null, true, 'formnovalidate' . (isset($_GET['referrer']) ? ' formaction="' . htmlspecialchars($_GET['referrer']) . '"':'')) .
+	addSubmit('Cancel', 'cancel', null, true, 'formnovalidate' . (isset($_GET['referrer']) ? ' formaction="' . specialchars($_GET['referrer']) . '"':'')) .
 	addEndForm();
 
 require(LIBWWWDIR . '/footer.php');
@@ -345,7 +354,7 @@ if ( isset($_GET['edited']) ) {
 
 $data = $DB->q('TUPLE SELECT * FROM contest WHERE cid = %i', $id);
 
-echo "<h1>Contest: ".htmlspecialchars($data['name'])."</h1>\n\n";
+echo "<h1>Contest: ".specialchars($data['name'])."</h1>\n\n";
 
 if ( in_array($data['cid'], $cids) ) {
 	echo "<p><em>This is an active contest.</em></p>\n\n";
@@ -366,28 +375,28 @@ echo "<table>\n";
 echo '<tr><td>CID:</td><td>c' .
 	(int)$data['cid'] . "</td></tr>\n";
 echo '<tr><td>Short name:</td><td>' .
-     htmlspecialchars($data['shortname']) .
+     specialchars($data['shortname']) .
      "</td></tr>\n";
 echo '<tr><td>Name:</td><td>' .
-	htmlspecialchars($data['name']) .
+	specialchars($data['name']) .
 	"</td></tr>\n";
 echo '<tr><td>Activate time:</td><td>' .
-	htmlspecialchars(@$data['activatetime_string']) .
+	specialchars(@$data['activatetime_string']) .
 	"</td></tr>\n";
 echo '<tr><td>Start time:</td><td>' .
-	htmlspecialchars($data['starttime_string']) .
+	specialchars($data['starttime_string']) .
 	"</td></tr>\n";
 echo '<tr><td>Scoreboard freeze:</td><td>' .
-	(empty($data['freezetime_string']) ? "-" : htmlspecialchars(@$data['freezetime_string'])) .
+	(empty($data['freezetime_string']) ? "-" : specialchars(@$data['freezetime_string'])) .
 	"</td></tr>\n";
 echo '<tr><td>End time:</td><td>' .
-	htmlspecialchars($data['endtime_string']) .
+	specialchars($data['endtime_string']) .
 	"</td></tr>\n";;
 echo '<tr><td>Scoreboard unfreeze:</td><td>' .
-	(empty($data['unfreezetime_string']) ? "-" : htmlspecialchars(@$data['unfreezetime_string'])) .
+	(empty($data['unfreezetime_string']) ? "-" : specialchars(@$data['unfreezetime_string'])) .
 	"</td></tr>\n";
 echo '<tr><td>Dectivate time:</td><td>' .
-     htmlspecialchars(@$data['deactivatetime_string']) .
+     specialchars(@$data['deactivatetime_string']) .
      "</td></tr>\n";
 echo '<tr><td>Process balloons:</td><td>' .
      ($data['process_balloons'] ? 'yes' : 'no') .
@@ -420,12 +429,13 @@ echo '</td></tr>';
 echo "</table>\n\n";
 
 if ( IS_ADMIN ) {
-	if ( in_array($data['cid'], $cids) ) {
-		echo "<p>". rejudgeForm('contest', $data['cid']) . "</p>\n\n";
-	}
 	echo "<p>" .
 		editLink('contest',$data['cid']) . "\n" .
 		delLink('contest','cid',$data['cid']) ."</p>\n\n";
+
+	if ( in_array($data['cid'], $cids) ) {
+		echo rejudgeForm('contest', $data['cid']) . "<br />\n\n";
+	}
 }
 
 echo "<h3>Problems</h3>\n\n";
@@ -449,6 +459,7 @@ else {
 	echo "<th scope=\"col\">allow<br />judge</th>";
 	echo "<th class=\"sorttable_nosort\" scope=\"col\">colour</th>\n";
 	echo "<th scope=\"col\">lazy eval</th>\n";
+	echo "<th scope=\"col\"></th>\n";
 	echo "</tr>\n</thead>\n<tbody>\n";
 
 	$iseven = false;
@@ -460,15 +471,15 @@ else {
 		     ($iseven ? 'roweven' : 'rowodd') . '">' .
 		     "<td class=\"tdright\">" . $link .
 		     "p" . (int)$row['probid'] . "</a></td>\n";
-		echo "<td>" . $link . htmlspecialchars($row['name']) . "</a></td>\n";
-		echo "<td>" . $link . htmlspecialchars($row['shortname']) . "</a></td>\n";
-		echo "<td>" . $link . htmlspecialchars($row['points']) . "</a></td>\n";
+		echo "<td>" . $link . specialchars($row['name']) . "</a></td>\n";
+		echo "<td>" . $link . specialchars($row['shortname']) . "</a></td>\n";
+		echo "<td>" . $link . specialchars($row['points']) . "</a></td>\n";
 		echo "<td class=\"tdcenter\">" . $link . printyn($row['allow_submit']) . "</a></td>\n";
 		echo "<td class=\"tdcenter\">" . $link . printyn($row['allow_judge']) . "</a></td>\n";
 		echo ( !empty($row['color'])
-			? '<td title="' . htmlspecialchars($row['color']) .
+			? '<td title="' . specialchars($row['color']) .
 			  '">' . $link . '<div class="circle" style="background-color: ' .
-			  htmlspecialchars($row['color']) .
+			  specialchars($row['color']) .
 			  ';"></div></a></td>'
 			: '<td>'. $link . '&nbsp;</a></td>' );
 		echo "<td>" . $link . ( isset($row['lazy_eval_results']) ?

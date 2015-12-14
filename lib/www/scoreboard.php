@@ -323,10 +323,10 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 		'<th title="# solved / penalty time" colspan="2" scope="col">' .
 		jurylink(null, 'score') . '</th>' . "\n";
 	foreach( $probs as $pr ) {
-		echo '<th title="problem \'' . htmlspecialchars($pr['name']) . '\'" scope="col">';
-		$str = htmlspecialchars($pr['shortname']) .
+		echo '<th title="problem \'' . specialchars($pr['name']) . '\'" scope="col">';
+		$str = specialchars($pr['shortname']) .
 		       (!empty($pr['color']) ? ' <div class="circle" style="background: ' .
-			htmlspecialchars($pr['color']) . ';"></div>' : '') ;
+			specialchars($pr['color']) . ';"></div>' : '') ;
 
 		if ( !$static && (IS_JURY || $pr['hastext']>0) ) {
 			echo '<a href="problem.php?id=' . urlencode($pr['probid']) .
@@ -397,10 +397,10 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 					echo ' ';
 					if ( is_readable($countryflag) ) {
 						echo '<img src="' . $countryflag . '"' .
-							' alt="'   . htmlspecialchars($teams[$team]['country']) . '"' .
-							' title="' . htmlspecialchars($teams[$team]['country']) . '" />';
+							' alt="'   . specialchars($teams[$team]['country']) . '"' .
+							' title="' . specialchars($teams[$team]['country']) . '" />';
 					} else {
-						echo htmlspecialchars($teams[$team]['country']);
+						echo specialchars($teams[$team]['country']);
 					}
 				}
 				if ( IS_JURY ) echo '</a>';
@@ -409,14 +409,14 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 		}
 		$affilname = '';
 		if ( $SHOW_AFFILIATIONS && isset($teams[$team]['affilid']) ) {
-				$affilname = htmlspecialchars($teams[$team]['affilname']);
+				$affilname = specialchars($teams[$team]['affilname']);
 		}
 		echo
 			'<td class="scoretn"' .
 			(!empty($color) ? ' style="background: ' . $color . ';"' : '') .
-			(IS_JURY ? ' title="' . htmlspecialchars($team) . '"' : '') . '>' .
+			(IS_JURY ? ' title="' . specialchars($team) . '"' : '') . '>' .
 			($static ? '' : '<a href="team.php?id=' . urlencode($team) . '">') .
-			htmlspecialchars($teams[$team]['name']) .
+			specialchars($teams[$team]['name']) .
 			($SHOW_AFFILIATIONS ? '<br /><span class="univ">' . $affilname .
 			 '</span>' : '') .
 			($static ? '' : '</a>') .
@@ -509,7 +509,7 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 				              $cat['color'] . ';"' : '') . '>' .
 				    '<td>' .
 				    jurylink('team_category.php?id=' . urlencode($cat['categoryid']),
-				             htmlspecialchars($cat['name'])) .	"</td></tr>\n";
+				             specialchars($cat['name'])) .	"</td></tr>\n";
 			}
 			echo "</tbody>\n</table>\n&nbsp;\n";
 		}
@@ -584,7 +584,7 @@ function putScoreBoard($cdata, $myteamid = NULL, $static = FALSE, $filter = FALS
           </script>\n"; 
 
 	// page heading with contestname and start/endtimes
-	echo "<h1>Scoreboard " . htmlspecialchars($cdata['name']) . "</h1>\n\n";
+	echo "<h1>Scoreboard " . specialchars($cdata['name']) . "</h1>\n\n";
 
 	if ( $fdata['showfinal'] ) {
 		echo "<h4>final standings</h4>\n\n";
@@ -774,7 +774,7 @@ function putTeamRow($cdata, $teamids) {
 
 			global $teamdata;
 			echo "<h2 id=\"teamwelcome\">welcome team <span id=\"teamwelcometeam\">" .
-				htmlspecialchars($teamdata['name']) . "</span>!</h2>\n\n";
+				specialchars($teamdata['name']) . "</span>!</h2>\n\n";
 			echo "<h3 id=\"contestnotstarted\">contest is " .
 				printContestStart($cdata) . "</h3>\n\n";
 		}

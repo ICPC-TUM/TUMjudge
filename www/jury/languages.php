@@ -22,24 +22,25 @@ if( $res->count() == 0 ) {
 		"<tr><th scope=\"col\">ID/ext</th><th scope=\"col\">name</th>" .
 		"<th scope=\"col\">allow<br />submit</th>" .
 		"<th scope=\"col\">allow<br />judge</th><th scope=\"col\">timefactor</th>" .
-		"<th scope=\"col\">extensions</th>" .
+		"<th scope=\"col\">extensions</th><th scope=\"col\"></th>" .
 		"</tr>\n</thead>\n<tbody>\n";
 
 	while($row = $res->next()) {
 		$link = '<a href="language.php?id=' . urlencode($row['langid']) . '">';
 		echo "<tr".
 			( $row['allow_submit'] ? '': ' class="disabled"').
-			"><td>" . $link . htmlspecialchars($row['langid'])."</a>".
-			"</td><td>" . $link . htmlspecialchars($row['name'])."</a>".
+			"><td>" . $link . specialchars($row['langid'])."</a>".
+			"</td><td>" . $link . specialchars($row['name'])."</a>".
 			"</td><td>" . $link .
 				printyn($row['allow_submit']) . "</a>" .
 			"</td><td>" . $link .
 				printyn($row['allow_judge']) . "</a>" .
-			"</td><td>" . $link . htmlspecialchars($row['time_factor']) . "</a>" .
-			"</td><td>" . $link . htmlspecialchars($row['extensions']) . "</a>";
+			"</td><td>" . $link . specialchars($row['time_factor']) . "</a>" .
+			"</td><td>" . $link .
+			specialchars(implode(', ',json_decode($row['extensions']))) . "</a>";
 			if ( IS_ADMIN ) {
 				echo "</td><td class=\"editdel\">" .
-					editLink('language', $row['langid']) . " " .
+					editLink('language', $row['langid']) . "&nbsp;" .
 					delLink('language','langid',$row['langid']);
 			}
 		echo "</td></tr>\n";

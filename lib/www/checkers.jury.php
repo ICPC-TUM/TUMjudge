@@ -160,6 +160,10 @@ function check_language($data, $keydata = null)
 			         $data['compile_script']);
 		}
 	}
+	$exts = json_decode($data['extensions'], false, 2);
+	if ( $exts==null || !is_array($exts) || count($exts)==0 ) {
+		ch_error("Language extension list is not a valid JSON array");
+	}
 
 	return $data;
 }
@@ -177,15 +181,41 @@ function check_executable($data, $keydata = null)
 	return $data;
 }
 
-function check_relative_time($time, $starttime, $field)
+// Regex patterns for absolute/relative contest time formats. These
+// are also used in www/jury/contest.php.
+$pattern_timezone  = "[A-Za-z][A-Za-z0-9_\/+-]{1,35}";
+$pattern_datetime  = "\d\d\d\d\-\d\d\-\d\d \d\d:\d\d:\d\d(\.\d{1,6})? $pattern_timezone";
+$pattern_offset    = "\d{1,4}:\d\d(:\d\d(\.\d{1,6})?)?";
+$pattern_dateorneg = "($pattern_datetime|\-$pattern_offset)";
+$pattern_dateorpos = "($pattern_datetime|\+$pattern_offset)";
+// Human readable versions of the patterns:
+$human_abs_datetime = "YYYY-MM-DD HH:MM:SS[.uuuuuu] timezone";
+$human_rel_datetime = "&pm;[HHH]H:MM[:SS[.uuuuuu]]";
+
+// Returns an absolute Unix Epoch timestamp from a formatted absolute
+// or relative (to $basetime timestamp, if set) time. $field is a
+// descriptive name of the current time for error messages.
+function check_relative_time($time, $basetime, $field)
 {
+	global $pattern_datetime, $pattern_offset, $human_abs_datetime, $human_rel_datetime;
+
 	if ( empty($time) ) return null;
 	if ($time[0] == '+' || $time[0] == '-') {
+		// First check that this is allowed to be a relative time.
+		if ( $basetime===null ) {
+			ch_error($field . ' must be specified as absolute time');
+			return null;
+		}
+		// Time string seems relative, check correctness.
+		if ( preg_match("/^(\-|\+)$pattern_offset\$/", $time)!==1 ) {
+			ch_error($field . " is not correctly formatted, expecting: $human_rel_datetime");
+			return null;
+		}
 		// convert relative times to absolute ones
 		$neg = ($time[0] == '-');
 		$time[0] = '0';
 		$times = explode(':', $time, 3);
-		if ( count($times) == 2 ) $times[2] = 0;
+		if ( count($times) == 2 ) $times[2] = '00';
 		if ( count($times) == 3 &&
 		     is_numeric($times[0]) &&
 		     is_numeric($times[1]) && $times[1] < 60 &&
@@ -197,14 +227,35 @@ function check_relative_time($time, $starttime, $field)
 			if ($neg) {
 				$seconds *= -1;
 			}
-			$ret = $starttime + $seconds;
+			$ret = $basetime + $seconds;
 		} else {
-			ch_error($field . " is not correctly formatted, expecting: +/-hh:mm(:ss)");
-			$ret = null;
+			ch_error($field . " is not correctly formatted, expecting: $human_rel_datetime");
+			return null;
 		}
 	} else {
-		// Time string is absolute, just convert to Unix epoch
-		$ret = strtotime($time);
+		// Time string is absolute, just convert to Unix epoch, but
+		// first detect and strip subseconds and timezone, since
+		// strtotime doesn't handle these.
+		if ( preg_match("/^".$pattern_datetime.'$/', $time)!==1 ) {
+			ch_error($field . " is not correctly formatted, expecting: $human_abs_datetime");
+			return null;
+		}
+		// Detect and strip timezone and subseconds.
+		$orig_timezone = date_default_timezone_get();
+		$timezone = explode(' ', $time)[2];
+		$time = substr($time,0,-(strlen($timezone)+1));
+		if ( date_default_timezone_set($timezone)!==true ) {
+			error($field . " contains invalid time zone '$timezone'");
+			date_default_timezone_set($orig_timezone);
+			return null;
+		}
+		$subsec = 0;
+		if ( preg_match('/\.[0-9]{1,6}$/', $time, $match)===1 ) {
+			$subsec = floatval('0'.$match[0]);
+			$time = explode('.', $time)[0];
+		}
+		$ret = floatval(strtotime($time)) + $subsec;
+		date_default_timezone_set($orig_timezone);
 	}
 
 	return $ret;
@@ -219,18 +270,12 @@ function check_contest($data, $keydata = null)
 	// are these dates valid?
 	foreach ( array('starttime','endtime','freezetime',
 			'unfreezetime','activatetime','deactivatetime') as $f ) {
-		if ( $f == 'starttime' ) {
-			$data[$f] = strtotime($data[$f.'_string']);
-			if ( $data[$f] === FALSE ) {
-				error("Cannot parse starttime: " . $data[$f.'_string']);
-			}
-		} else {
-			// The true input date/time strings are preserved in the
-			// *_string variables, since these may be relative times
-			// that need to be kept as is.
-			$data[$f] = $data[$f.'_string'];
-			$data[$f] = check_relative_time($data[$f], $data['starttime'], $f);
-		}
+		// The true input date/time strings are preserved in the
+		// *_string variables, since these may be relative times
+		// that need to be kept as is.
+		$data[$f] = $data[$f.'_string'];
+		$data[$f] = check_relative_time($data[$f],
+		                                ($f=='starttime' ? null : $data['starttime']), $f);
 	}
 
 	// are required times specified?

@@ -44,7 +44,7 @@ This is a (rough) list of the requirements for DOMjudge.
 <itemize>
 <item>At least one machine running Linux, with (sudo) root access
 <item>Apache web server with PHP 5.3.3 or newer and PHP-command line interface
-<item>MySQL or MariaDB database server version 4.1.0 or newer
+<item>MySQL or MariaDB database server version 5.3.3 or newer
 <item>Compilers for the languages you want to support
 </itemize>
 
@@ -125,6 +125,9 @@ to name them here too (with non-GPL licences listed where applicable):
        licenced under the GPL and MIT licences, see <tt>COPYING</tt>
        and <tt>COPYING.MIT</tt>. It was downloaded from
        <url url="https://github.com/loopj/jquery-tokeninput">.
+<item> The Spyc PHP YAML parser by Chris Wanstrath and Vlad Andersen,
+       licenced under the MIT licence, see <tt>COPYING.MIT</tt>. It
+       was downloaded from <url url="https://github.com/mustangostang/spyc/">.
 <item> The default compare script was included from the
        Kattis problemtools package, and licenced under the MIT
        licence, see <tt>COPYING.MIT</tt>. It was downloaded from

@@ -6,25 +6,30 @@ include $(TOPDIR)/Makefile.global
 TARGETS =
 OBJECTS =
 
-SUBST_FILES = save_sources2file restore_sources2db static_scoreboard \
-              combined_scoreboard judging_statistics balloons \
-              simulate_contest create_cgroups create_accounts
+SUBST_DOMSERVER = save_sources2file restore_sources2db static_scoreboard \
+                  combined_scoreboard judging_statistics balloons \
+                  simulate_contest create_accounts
+
+SUBST_JUDGEHOST = create_cgroups dj_make_chroot
+
+SUBST_FILES = $(SUBST_DOMSERVER) $(SUBST_JUDGEHOST)
 
 build: $(TARGETS) $(SUBST_FILES)
 
-domserver: balloons create_accounts
+domserver: $(SUBST_DOMSERVER)
 
-judgehost: create_cgroups
+judgehost: $(SUBST_JUDGEHOST)
 
 $(SUBST_FILES): %: %.in $(TOPDIR)/paths.mk
 	$(substconfigvars)
 	chmod a+x $@
 
 install-domserver:
-	$(INSTALL_PROG) -t $(DESTDIR)$(domserver_bindir) balloons create_accounts
+	$(INSTALL_PROG) -t $(DESTDIR)$(domserver_bindir) $(SUBST_DOMSERVER)
 
 install-judgehost:
-	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) dj_make_*chroot create_cgroups
+	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) $(SUBST_JUDGEHOST) \
+		dj_make_ubuntu_java_chroot
 
 clean-l:
 	-rm -f $(TARGETS) $(OBJECTS)

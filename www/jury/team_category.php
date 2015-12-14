@@ -10,8 +10,8 @@ require('init.php');
 require(LIBWWWDIR . '/scoreboard.php');
 
 $id = getRequestID();
-$title = ucfirst((empty($_GET['cmd']) ? '' : htmlspecialchars($_GET['cmd']) . ' ') .
-                 'category' . ($id ? ' '.htmlspecialchars(@$id) : ''));
+$title = ucfirst((empty($_GET['cmd']) ? '' : specialchars($_GET['cmd']) . ' ') .
+                 'category' . ($id ? ' '.specialchars(@$id) : ''));
 
 $jscolor = true;
 require(LIBWWWDIR . '/header.php');
@@ -34,7 +34,7 @@ if ( !empty($_GET['cmd']) ):
 
 		echo "<tr><td>Category ID:</td><td>" .
 			addHidden('keydata[0][categoryid]', $row['categoryid']) .
-			htmlspecialchars($row['categoryid']) . "</td></tr>\n";
+			specialchars($row['categoryid']) . "</td></tr>\n";
 	}
 
 ?>
@@ -61,9 +61,13 @@ src="../images/b_help.png" class="smallpicto" alt="?" /></a></td></tr>
 <?php
 echo addHidden('cmd', $cmd) .
 	addHidden('table','team_category') .
-	addHidden('referrer', @$_GET['referrer']) .
+	addHidden('referrer', @$_GET['referrer'] .
+	          ( $cmd == 'edit' ? (strstr(@$_GET['referrer'],'?')===FALSE ?
+	                             '?edited=1' : '&edited=1') : '' )) .
 	addSubmit('Save') .
-	addSubmit('Cancel', 'cancel', null, true, 'formnovalidate') .
+	addSubmit('Cancel', 'cancel', null, true, 'formnovalidate' .
+	          ( isset($_GET['referrer']) ? ' formaction="' .
+	            specialchars($_GET['referrer']) . '"' : '' )) .
 	addEndForm();
 
 require(LIBWWWDIR . '/footer.php');
@@ -74,16 +78,27 @@ endif;
 $data = $DB->q('TUPLE SELECT * FROM team_category WHERE categoryid = %i', $id);
 if ( !$data ) error("Missing or invalid category id");
 
-echo "<h1>Category: " . htmlspecialchars($data['name']) . "</h1>\n\n";
+if ( isset($_GET['edited']) ) {
+
+	echo addForm('refresh_cache.php') .
+		msgbox("Warning: Refresh scoreboard cache",
+		       "If the category sort order was changed, it may be necessary to " .
+		       "recalculate any cached scoreboards.<br /><br />" .
+		       addSubmit('recalculate caches now', 'refresh')) .
+		addHidden('cid', $id) .
+		addEndForm();
+}
+
+echo "<h1>Category: " . specialchars($data['name']) . "</h1>\n\n";
 
 echo "<table>\n";
-echo '<tr><td>ID:</td><td>' . htmlspecialchars($data['categoryid']) . "</td></tr>\n";
-echo '<tr><td>Name:</td><td>' . htmlspecialchars($data['name']) . "</td></tr>\n";
-echo '<tr><td>Sortorder:</td><td>' . htmlspecialchars($data['sortorder']) . "</td></tr>\n";
+echo '<tr><td>ID:</td><td>' . specialchars($data['categoryid']) . "</td></tr>\n";
+echo '<tr><td>Name:</td><td>' . specialchars($data['name']) . "</td></tr>\n";
+echo '<tr><td>Sortorder:</td><td>' . specialchars($data['sortorder']) . "</td></tr>\n";
 if ( isset($data['color']) ) {
 	echo '<tr><td>Colour:       </td><td style="background: ' .
-		htmlspecialchars($data['color']) .
-		';">' . htmlspecialchars($data['color']) . "</td></tr>\n";
+		specialchars($data['color']) .
+		';">' . specialchars($data['color']) . "</td></tr>\n";
 }
 echo '<tr><td>Visible:</td><td>' . printyn($data['visible']) . "</td></tr>\n";
 
@@ -96,7 +111,7 @@ if ( IS_ADMIN && DOMSERVER_REPLICATION != 'slave' ) {
 		delLink('team_category','categoryid',$data['categoryid']) . "</p>\n\n";
 }
 
-echo "<h2>Teams in " . htmlspecialchars($data['name']) . "</h2>\n\n";
+echo "<h2>Teams in " . specialchars($data['name']) . "</h2>\n\n";
 
 $listteams = array();
 $teams = $DB->q('SELECT teamid,name FROM team WHERE categoryid = %i', $id);
@@ -110,12 +125,12 @@ if ( $teams->count() == 0 ) {
 		$listteams[] = $team['teamid'];
 		$link = '<a href="team.php?id=' . urlencode($team['teamid']) . '">';
 		echo "<tr><td>" .
-		$link . "t" . htmlspecialchars($team['teamid']) . "</a></td><td>" .
-		$link . htmlspecialchars($team['name']) . "</a></td></tr>\n";
+		$link . "t" . specialchars($team['teamid']) . "</a></td><td>" .
+		$link . specialchars($team['name']) . "</a></td></tr>\n";
 	}
 	echo "</tbody>\n</table>\n\n";
 
-	echo "<h2>Submissions for " . htmlspecialchars($data['name']) . "</h2>\n\n";
+	echo "<h2>Submissions for " . specialchars($data['name']) . "</h2>\n\n";
 
 	$restrictions = array( 'categoryid' => $id );
 	putSubmissions($cdatas, $restrictions);

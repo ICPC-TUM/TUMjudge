@@ -74,7 +74,11 @@ if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
 	}
 
 	list($cid, $probid) = explode('-', $_POST['problem']);
-	if ( !ctype_digit($probid) ) $probid = NULL;
+	$category = NULL;
+	if ( !ctype_digit($probid) ) {
+		$category = $probid;
+		$probid = NULL;
+	}
 
 	//insert bonus points
 	$bonus_amount = $_POST['bonus_points'];
@@ -90,12 +94,12 @@ if ( isset($_POST['submit']) && !empty($_POST['bodytext']) ) {
 	}
 
 	$newid = $DB->q('RETURNID INSERT INTO clarification
-	                 (cid, respid, submittime, recipient, probid, body,
+	                 (cid, respid, submittime, recipient, probid, category, body,
  	                  answered, jury_member)
 	                 VALUES (%i, ' .
-	                ($respid===NULL ? 'NULL %_' : '%i') . ', %s, %s, %i, %s, %i, ' .
+	                ($respid===NULL ? 'NULL %_' : '%i') . ', %s, %s, %i, %s, %s, %i, ' .
 	                (isset($jury_member) ? '%s)' : 'NULL %_)'),
-	                $cid, $respid, now(), $sendto, $probid,
+	                $cid, $respid, now(), $sendto, $probid, $category,
 	                $_POST['bodytext'], 1, $jury_member);
 	auditlog('clarification', $newid, 'added', null, null, $cid);
 
@@ -162,7 +166,7 @@ if ( !$req['answered'] ) {
 	if ( empty($req['jury_member']) ) {
 		echo '; ';
 	} else {
-		echo ', by ' . htmlspecialchars($req['jury_member']) . '; ' .
+		echo ', by ' . specialchars($req['jury_member']) . '; ' .
 		    addSubmit('unclaim', 'unclaim') . ' or ';
 	}
 	echo addSubmit('claim', 'claim') . '</p>' .
@@ -177,7 +181,7 @@ if ( ! empty ( $req['respid'] ) ) {
 		'">original clarification ' . $respid . '</a> by ' .
 		( $orig['sender']==NULL ? 'Jury' :
 			'<a href="team.php?id=' . urlencode($orig['sender']) . '">' .
-			htmlspecialchars($orig['name'] . " (t" . $orig['sender'] . ")") .
+			specialchars($orig['name'] . " (t" . $orig['sender'] . ")") .
 			'</a>' ) .
 		"</p>\n\n";
 
