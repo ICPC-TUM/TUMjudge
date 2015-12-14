@@ -102,22 +102,28 @@ if ( IS_JURY ) {
             <span class="tumjudge-instance tumjudge-contest"><span class="pagetitle">TUMjudge</span> Contest</span>
             <span class="tumjudge-instance tumjudge-gad"><span class="pagetitle">TUMjudge</span> GAD</span>
             <span class="tumjudge-instance tumjudge-isabelle"><span class="pagetitle">TUMjudge</span> Isabelle</span>
+            <span class="tumjudge-instance tumjudge-gcpc"><span class="pagetitle">TUMjudge</span> GCPC</span>
+            <span class="tumjudge-instance tumjudge-ioide"><span class="pagetitle">TUMjudge</span> IOI Germany</span>
+            <span class="tumjudge-instance tumjudge-ioiat"><span class="pagetitle">TUMjudge</span> IOI Austria</span>
+            <span class="tumjudge-instance tumjudge-challenge"><span class="pagetitle">TUMjudge</span> Challenge</span>
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" role="menu">
             <li><a class="pagetitle">ICPC@TUM</a></li>
-            <li class="page tumjudge-info"><a href="/">Info - Information about the ICPC</a></li>
+            <li class="page tumjudge-info"><a href="/">Website - Information about the ICPC</a></li>
             <li><a class="pagetitle">TUMjudge</a></li>
             <?php if(IS_JURY): ?>
               <li class="page tumjudge-test"><a href="/main/">Main - Account Management</a></li>
-            <?php endif; ?>
-            <li class="page tumjudge-conpra"><a href="/conpra/">ConPra - Algorithms for Programming Contests</a></li>
-            <li class="page tumjudge-contest"><a href="/contest/">Contest - Preparation for the ACM ICPC</a></li>
-            <li class="page tumjudge-gad"><a href="/gad/">GAD - Foundations: Algorithms and Data Structures</a></li>
-            <li class="page tumjudge-isabelle"><a href="/isabelle/">Isabelle - Proving Contests</a></li>
-            <?php if(IS_JURY): ?>
               <li class="page tumjudge-test"><a href="/test/">Test - Testing for TUMjudge Admins</a></li>
             <?php endif; ?>
+            <li class="page tumjudge-conpra"><a href="/conpra/">ConPra - Lecture &ldquo;Algorithms for Programming Contests&rdquo;</a></li>
+            <li class="page tumjudge-contest"><a href="/contest/">Contest - Preparation for the ACM ICPC</a></li>
+            <li class="page tumjudge-gad"><a href="/gad/">GAD - Lecture &ldquo;Foundations: Algorithms and Data Structures&rdquo;</a></li>
+            <li class="page tumjudge-isabelle"><a href="/isabelle/">Isabelle - Proving Contests</a></li>
+            <li class="page tumjudge-gcpc"><a href="/gcpc/">GCPC - German Collegiate Programming Contest</a></li>
+            <li class="page tumjudge-ioide"><a href="/ioide/">IOI Germany - Preparation for the IOI</a></li>
+            <li class="page tumjudge-ioiat"><a href="/ioiat/">IOI Austria - Preparation for the IOI</a></li>
+            <li class="page tumjudge-challenge"><a href="/challenge/">Challenge - Yet Another Programming Contest</a></li>
           </ul>
         </li>
       <?php
