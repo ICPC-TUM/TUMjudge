@@ -19,6 +19,7 @@ D-85748 Garching
 
 <h3>v5.0.1.1</h3>
 <ul>
+<li>add four more judge instances</li>
 <li>add Halloween and Christmas themes</li>
 </ul>
 
