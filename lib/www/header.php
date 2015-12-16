@@ -113,7 +113,7 @@ if ( IS_JURY ) {
             <li class="page tumjudge-info"><a href="/">Website - Information about the ICPC</a></li>
             <li><a class="pagetitle">TUMjudge</a></li>
             <?php if(IS_JURY): ?>
-              <li class="page tumjudge-test"><a href="/main/">Main - Account Management</a></li>
+              <li class="page tumjudge-main"><a href="/main/">Main - Account Management</a></li>
               <li class="page tumjudge-test"><a href="/test/">Test - Testing for TUMjudge Admins</a></li>
             <?php endif; ?>
             <li class="page tumjudge-conpra"><a href="/conpra/">ConPra - Lecture &ldquo;Algorithms for Programming Contests&rdquo;</a></li>
