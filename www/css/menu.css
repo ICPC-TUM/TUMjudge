@@ -41,6 +41,15 @@
 	margin-bottom: 2px;
 }
 
+.navbar .brand .dropdown-menu li {
+	width: 600px;
+}
+
+.navbar .brand .dropdown-menu .description {
+	position: absolute;
+	left: 130px;
+}
+
 /* Design for different judge instances */
 .tumjudge-info .navbar {
 	border-bottom-color: #ffcd00;
