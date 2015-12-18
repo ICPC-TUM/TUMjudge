@@ -41,100 +41,163 @@
 	margin-bottom: 2px;
 }
 
+.navbar .brand .dropdown-menu li {
+	width: 600px;
+}
+
+.navbar .brand .dropdown-menu .description {
+	position: absolute;
+	left: 130px;
+}
+
 /* Design for different judge instances */
 .tumjudge-info .navbar {
-	border-bottom-color: #f09000;
+	border-bottom-color: #ffcd00;
 }
 .tumjudge-info .brand {
-	background-color: #f09000;
+	background-color: #ffcd00;
 }
 .navbar .brand .dropdown-menu .tumjudge-info {
-	border-left-color: #f09000;
+	border-left-color: #ffcd00;
 }
 .tumjudge-info .tumjudge-instance.tumjudge-info {
 	display: inline;
 }
 
 .tumjudge-main .navbar {
-	border-bottom-color: #f0f000;
+	border-bottom-color: #feff00;
 }
 .tumjudge-main .brand {
-	background-color: #f0f000;
+	background-color: #feff00;
 }
 .navbar .brand .dropdown-menu .tumjudge-main {
-	border-left-color: #f0f000;
+	border-left-color: #feff00;
 }
 .tumjudge-main .tumjudge-instance.tumjudge-main {
 	display: inline;
 }
 
 .tumjudge-test .navbar {
-	border-bottom-color: #f03000;
+	border-bottom-color: #bae806;
 }
 .tumjudge-test .brand {
 	background: repeating-linear-gradient(
 		45deg,
-		#f03000,
-		#f03000 10px,
+		#bae806,
+		#bae806 10px,
 		#cc5500 10px,
 		#cc5500 20px
 	);
 }
 .navbar .brand .dropdown-menu .tumjudge-test {
-	border-left-color: #f03000;
+	border-left-color: #bae806;
 }
 .tumjudge-test .tumjudge-instance.tumjudge-test {
 	display: inline;
 }
 
 .tumjudge-conpra .navbar {
-	border-bottom-color: #00f090;
+	border-bottom-color: #2ece0c;
 }
 .tumjudge-conpra .brand {
-	background-color: #00f090;
+	background-color: #2ece0c;
 }
 .navbar .brand .dropdown-menu .tumjudge-conpra {
-	border-left-color: #00f090;
+	border-left-color: #2ece0c;
 }
 .tumjudge-conpra .tumjudge-instance.tumjudge-conpra {
 	display: inline;
 }
 
 .tumjudge-contest .navbar {
-	border-bottom-color: #0090f0;
+	border-bottom-color: #0c99ce;
 }
 .tumjudge-contest .brand {
-	background-color: #0090f0;
+	background-color: #0c99ce;
 }
 .navbar .brand .dropdown-menu .tumjudge-contest {
-	border-left-color: #0090f0;
+	border-left-color: #0c99ce;
 }
 .tumjudge-contest .tumjudge-instance.tumjudge-contest {
 	display: inline;
 }
 
 .tumjudge-gad .navbar {
-	border-bottom-color: #9000f0;
+	border-bottom-color: #0c5bce;
 }
 .tumjudge-gad .brand {
-	background-color: #9000f0;
+	background-color: #0c5bce;
 }
 .navbar .brand .dropdown-menu .tumjudge-gad {
-	border-left-color: #9000f0;
+	border-left-color: #0c5bce;
 }
 .tumjudge-gad .tumjudge-instance.tumjudge-gad {
 	display: inline;
 }
 
 .tumjudge-isabelle .navbar {
-	border-bottom-color: #f00090;
+	border-bottom-color: #1f0cce;
 }
 .tumjudge-isabelle .brand {
-	background-color: #f00090;
+	background-color: #1f0cce;
 }
 .navbar .brand .dropdown-menu .tumjudge-isabelle {
-	border-left-color: #f00090;
+	border-left-color: #1f0cce;
 }
 .tumjudge-isabelle .tumjudge-instance.tumjudge-isabelle {
 	display: inline;
 }
+
+.tumjudge-gcpc .navbar {
+	border-bottom-color: #800cce;
+}
+.tumjudge-gcpc .brand {
+	background-color: #800cce;
+}
+.navbar .brand .dropdown-menu .tumjudge-gcpc {
+	border-left-color: #800cce;
+}
+.tumjudge-gcpc .tumjudge-instance.tumjudge-gcpc {
+	display: inline;
+}
+
+.tumjudge-ioide .navbar {
+	border-bottom-color: #ce0c82;
+}
+.tumjudge-ioide .brand {
+	background-color: #ce0c82;
+}
+.navbar .brand .dropdown-menu .tumjudge-ioide {
+	border-left-color: #ce0c82;
+}
+.tumjudge-ioide .tumjudge-instance.tumjudge-ioide {
+	display: inline;
+}
+
+.tumjudge-ioiat .navbar {
+	border-bottom-color: #ff0000;
+}
+.tumjudge-ioiat .brand {
+	background-color: #ff0000;
+}
+.navbar .brand .dropdown-menu .tumjudge-ioiat {
+	border-left-color: #ff0000;
+}
+.tumjudge-ioiat .tumjudge-instance.tumjudge-ioiat {
+	display: inline;
+}
+
+.tumjudge-challenge .navbar {
+	border-bottom-color: #ff6000;
+}
+.tumjudge-challenge .brand {
+	background-color: #ff6000;
+}
+.navbar .brand .dropdown-menu .tumjudge-challenge {
+	border-left-color: #ff6000;
+}
+.tumjudge-challenge .tumjudge-instance.tumjudge-challenge {
+	display: inline;
+}
+
+/*more colors: #ff9a00*/

@@ -54,7 +54,7 @@ function printyn ($val) {
 function printtime($datetime, $format = NULL) {
 	if ( empty($datetime) ) return '';
 	if ( is_null($format) ) $format = dbconfig_get('time_format', '%H:%M');
-	return htmlspecialchars(strftime($format,floor($datetime)));
+	return specialchars(strftime($format,floor($datetime)));
 }
 
 /**
@@ -69,7 +69,7 @@ function printhost($hostname, $full = FALSE) {
 		$hostname = array_shift($expl);
 	}
 
-	return "<span class=\"hostname\">".htmlspecialchars($hostname)."</span>";
+	return "<span class=\"hostname\">".specialchars($hostname)."</span>";
 }
 
 /**
@@ -81,12 +81,12 @@ function printtimediff($start, $end = NULL)
 	$ret = '';
 	$diff = floor($end - $start);
 
-	if ( $diff > 24*60*60 ) {
+	if ( $diff >= 24*60*60 ) {
 		$d = floor($diff/(24*60*60));
 		$ret .= $d . "d ";
 		$diff -= $d * 24*60*60;
 	}
-	if ( $diff > 60*60 ) {
+	if ( $diff >= 60*60 || isset($d) ) {
 		$h = floor($diff/(60*60));
 		$ret .= $h . ":";
 		$diff -= $h * 60*60;
@@ -118,9 +118,14 @@ function printsize($size, $decimals = 1)
 }
 
 /**
- * print the relative time in h:mm:ss format
+ * Print the relative time in h:mm:ss[.uuuuuu] format.
  */
-function printtimerel($rel_time) {
+function printtimerel($rel_time, $use_microseconds = FALSE)
+{
+	if ( $use_microseconds ) {
+		$frac_str = explode('.', sprintf('%.6f', $rel_time))[1];
+	}
+	$rel_time = (int) floor($rel_time);
 
 	$h = floor($rel_time/3600);
 	$rel_time %= 3600;
@@ -130,10 +135,14 @@ function printtimerel($rel_time) {
 		$m = '0' . $m;
 	}
 	$rel_time %= 60;
-	
+
 	$s = $rel_time;
 	if ($s < 10) {
 		$s = '0' . $s;
+	}
+
+	if ( $use_microseconds ) {
+		$s .= '.' . $frac_str;
 	}
 
 	return $h . ':' . $m . ':' . $s;

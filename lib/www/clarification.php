@@ -33,6 +33,20 @@ function canViewClarification($team, $clar)
 }
 
 /**
+ * Returns the list of clarification categories as a key,value array.
+ * Keys should be non-numeric to distinguish them from problem IDs.
+ */
+function getClarCategories()
+{
+	$categs = dbconfig_get('clar_categories');
+
+	$clarcategories = array();
+	foreach ( $categs as $key => $val ) $clarcategories[$key] = $val;
+
+	return $clarcategories;
+}
+
+/**
  * Output a single clarification.
  * Helperfunction for putClarification, do _not_ use directly!
  */
@@ -42,13 +56,13 @@ function putClar($clar)
 
 	// $clar['sender'] is set to the team ID, or empty if sent by the jury.
 	if ( !empty($clar['sender']) ) {
-		$from = htmlspecialchars($clar['fromname'] . ' (t'.$clar['sender'] . ')') ;
+		$from = specialchars($clar['fromname'] . ' (t'.$clar['sender'] . ')') ;
 	} else {
 		$from = 'Jury';
-		if ( IS_JURY ) $from .= ' (' . htmlspecialchars($clar['jury_member']) . ')';
+		if ( IS_JURY ) $from .= ' (' . specialchars($clar['jury_member']) . ')';
 	}
 	if ( $clar['recipient'] && empty($clar['sender']) ) {
-		$to = htmlspecialchars($clar['toname'] . ' (t'.$clar['recipient'] . ')') ;
+		$to = specialchars($clar['toname'] . ' (t'.$clar['recipient'] . ')') ;
 	} else {
 		$to = ( $clar['sender'] ) ? 'Jury' : 'All';
 	}
@@ -73,21 +87,29 @@ function putClar($clar)
 	}
 	echo "</td></tr>\n";
 
+	$categs = getClarCategories();
+
 	echo '<tr><td>Subject:</td><td>';
 	$prefix = '';
 	if ( IS_JURY && count($cids) > 1 )
 	{
-		$prefix = htmlspecialchars($clar['contestshortname']) . ' - ';
+		$prefix = specialchars($clar['contestshortname']) . ' - ';
 	}
 	if ( is_null($clar['probid']) ) {
-		echo $prefix . "General issue";
+		if ( is_null($clar['category']) ) {
+			// FIXME: why does it make sense to keep clars for a dropped problem and relabel them to general issue?
+			echo $prefix . "General issue";
+		} else {
+			// FIXME: add check if the category still exists?
+			echo $prefix . specialchars($categs[$clar['category']]);
+		}
 	} else {
 		if ( IS_JURY ) {
 			echo '<a href="problem.php?id=' . urlencode($clar['probid']) .
-			     '">' . $prefix . 'Problem ' . htmlspecialchars($clar['shortname'] . ": " .
+			     '">' . $prefix . 'Problem ' . specialchars($clar['shortname'] . ": " .
 			     $clar['probname']) . '</a>';
 		} else {
-			echo 'Problem ' . htmlspecialchars($clar['shortname'] . ": " . $clar['probname']);
+			echo 'Problem ' . specialchars($clar['shortname'] . ": " . $clar['probname']);
 		}
 	}
 	echo "</td></tr>\n";
@@ -97,7 +119,7 @@ function putClar($clar)
 	echo "</td></tr>\n";
 
 	echo '<tr><td></td><td class="filename">';
-	echo '<pre class="output_text">' . htmlspecialchars(wrap_unquoted($clar['body'],80)) . "</pre>";
+	echo '<pre class="output_text">' . specialchars(wrap_unquoted($clar['body'],80)) . "</pre>";
 	echo "</td></tr>\n";
 
 	echo "</table>\n";
@@ -156,7 +178,7 @@ function summarizeClarification($body)
 	foreach($split as $line) {
 		if ( strlen($line) > 0 && $line{0} != '>' ) $newbody .= $line . ' ';
 	}
-	return htmlspecialchars( str_cut( ( empty($newbody) ? $body : $newbody ), 80) );
+	return specialchars( str_cut( ( empty($newbody) ? $body : $newbody ), 80) );
 }
 
 /**
@@ -180,6 +202,8 @@ function putClarificationList($clars, $team = NULL)
 		( IS_JURY ? "<th scope=\"col\">answered</th><th scope=\"col\">by</th>" : "") .
 	     "</tr>\n</thead>\n<tbody>\n";
 
+	$categs = getClarCategories();
+
 	while ( $clar = $clars->next() ) {
 		// check viewing permission for teams
 		if ( ! IS_JURY && !canViewClarification($team, $clar) ) continue;
@@ -202,15 +226,23 @@ function putClarificationList($clars, $team = NULL)
 
 		echo '<td>' . $link . printtime($clar['submittime']) . '</a></td>';
 
-		if ( $clar['sender']  == NULL ) {
+		if ( $clar['sender'] == NULL ) {
 			$sender = 'Jury';
 			if ( $clar['recipient'] == NULL ) {
 				$recipient = 'All';
 			} else {
-				$recipient = htmlspecialchars($clar['toname']);
+				if ( $team != NULL && $clar['recipient'] == $team ) {
+					$recipient = 'You';
+				} else {
+					$recipient = specialchars($clar['toname']);
+				}
 			}
 		} else {
-			$sender = htmlspecialchars($clar['fromname']);
+			if ( $team != NULL && $clar['sender'] == $team ) {
+				$sender = 'You';
+			} else {
+				$sender = specialchars($clar['fromname']);
+			}
 			$recipient = 'Jury';
 		}
 
@@ -219,7 +251,13 @@ function putClarificationList($clars, $team = NULL)
 
 		echo '<td>' . $link;
 		if ( is_null($clar['probid']) ) {
+		if ( is_null($clar['category']) ) {
+			// FIXME: why does it make sense to keep clars for a dropped problem and relabel them to general issue?
 			echo "general";
+		} else {
+			// FIXME: add check if the category still exists?
+			echo specialchars($categs[$clar['category']]);
+		}
 		} else {
 			echo "problem ".$clar['shortname'];
 		}
@@ -235,7 +273,7 @@ function putClarificationList($clars, $team = NULL)
 			if ( empty($clar['jury_member']) ) {
 				$jury_member = '&nbsp;';
 			} else {
-				$jury_member = htmlspecialchars($clar['jury_member']);
+				$jury_member = specialchars($clar['jury_member']);
 			}
 			if ( !$clar['answered'] ) {
 				if ( empty($clar['jury_member']) ) {
@@ -248,11 +286,11 @@ function putClarificationList($clars, $team = NULL)
 			echo "<td>$link $answered</a></td><td>";
 			if ( $claim && isset($clar['sender']) ) {
 				echo "<a class=\"button\" href=\"clarification.php?claim=1&amp;id=" .
-					htmlspecialchars($clar['clarid']) . "\">claim</a>";
+					specialchars($clar['clarid']) . "\">claim</a>";
 			} else {
 				if ( !$clar['answered'] && $jury_member==$username ) {
 					echo "<a class=\"button\" href=\"clarification.php?unclaim=1&amp;id=" .
-						htmlspecialchars($clar['clarid']) . "\">unclaim</a>";
+						specialchars($clar['clarid']) . "\">unclaim</a>";
 				} else {
 					echo "$link $jury_member</a>";
 				}
@@ -329,7 +367,8 @@ function confirmClar() {
 		if ( ! $respid ) {
 			$teams = $DB->q('KEYVALUETABLE SELECT teamid, name
 			                 FROM team
-			                 ORDER BY categoryid ASC, team.name COLLATE utf8_general_ci ASC');
+			                 ORDER BY categoryid ASC, team.name
+			                 COLLATE '. DJ_MYSQL_COLLATION . ' ASC');
 			$options += $teams;
 		} else {
 			if ( $clar['sender'] ) {
@@ -347,16 +386,18 @@ function confirmClar() {
 	}
 
 	// Select box for a specific problem (only when the contest
-	// has started) or general issue.
+	// has started) or other issues.
+	$categs = getClarCategories();
+	$defclar = key($categs);
 	$options = array();
 	foreach ($cdatas as $cid => $cdata) {
-		$row = $DB->q('TUPLE SELECT CONCAT(cid, "-general") AS c
-		               FROM contest WHERE cid = %i', $cid);
-		if ( IS_JURY && count($cdatas) > 1 )
-		{
-			$options[$row['c']] = "{$cdata['shortname']} - General issue";
-		} else {
-			$options[$row['c']] = "General issue";
+
+		foreach($categs as $categid => $categname) {
+			if ( IS_JURY && count($cdatas) > 1 ) {
+				$options["$cid-$categid"] = "{$cdata['shortname']} - $categname";
+			} else {
+				$options["$cid-$categid"] = $categname;
+			}
 		}
 		if ( difftime($cdata['starttime'], now()) <= 0 ) {
 			$problem_options =
@@ -375,10 +416,14 @@ function confirmClar() {
 			$options += $problem_options;
 		}
 	}
+	if ( is_null($clar['probid']) ) {
+		$selected = $clar['category'];
+	} else {
+		$selected = $clar['probid'];
+	}
 	echo "<tr><td><b>Subject:</b></td><td>\n" .
 	     addSelect('problem', $options,
-	               ($respid ? $clar['cid'] : $cid).'-'.
-	               ($clar['probid'] ? 'general' : $clar['probid']), true) .
+	               ($respid ? $clar['cid'].'-'.$selected : $defclar), true) .
 	     "</td></tr>\n";
 
 	?>

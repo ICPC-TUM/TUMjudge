@@ -80,8 +80,8 @@ if ( empty($curcids) )  {
 		echo "<form action=\"contests.php\" method=\"post\">\n";
 		echo addHidden('cid', $row['cid']);
 		echo "<p>No active contest. Upcoming:<br/> <em>" .
-		     htmlspecialchars($row['name']) .
-		     ' (' . htmlspecialchars($row['shortname']) . ')' .
+		     specialchars($row['name']) .
+		     ' (' . specialchars($row['shortname']) . ')' .
 		     "</em>; active from " . printtime($row['activatetime'], '%a %d %b %Y %T %Z') .
 		     "<br /><br />\n";
 		if ( IS_ADMIN ) echo addSubmit("activate now", "donow[activate]");
@@ -107,7 +107,7 @@ if ( empty($curcids) )  {
 		$hasunfrozen = !empty($row['unfreezetime']) &&
 			       difftime($row['unfreezetime'], $now) <= 0;
 
-		$contestname = htmlspecialchars(sprintf('%s (%s - c%d)',
+		$contestname = specialchars(sprintf('%s (%s - c%d)',
 							$row['name'],
 							$row['shortname'],
 							$row['cid']));
@@ -203,9 +203,9 @@ if( count($res) == 0 ) {
 			(in_array($row['cid'], $curcids) ? ' highlight':'') . '">' .
 			"<td class=\"tdright\">" . $link .
 			"c" . (int)$row['cid'] . "</a></td>\n";
-		echo "<td>" . $link . htmlspecialchars($row['shortname']) . "</a></td>\n";
+		echo "<td>" . $link . specialchars($row['shortname']) . "</a></td>\n";
 		foreach ($times as $time) {
-			echo "<td title=\"".printtime(@$row[$time. 'time'],'%Y-%m-%d %H:%M') . "\">" .
+			echo "<td title=\"".printtime(@$row[$time. 'time'],'%Y-%m-%d %H:%M:%S (%Z)') . "\">" .
 			      $link . ( isset($row[$time.'time']) ?
 			      printtime($row[$time.'time']) : '-' ) . "</a></td>\n";
 		}
@@ -214,12 +214,12 @@ if( count($res) == 0 ) {
 		echo "<td>" . $link . ($row['shuffle'] ? 'yes' : 'no') . "</a></td>\n";
 		echo "<td>" . $link . ($row['public'] ? '<em>all</em>' : $row['numteams']) . "</a></td>\n";
 		echo "<td>" . $link . $numprobs[$row['cid']] . "</a></td>\n";
-		echo "<td>" . $link . htmlspecialchars($row['name']) . "</a></td>\n";
+		echo "<td>" . $link . specialchars($row['name']) . "</a></td>\n";
 		$iseven = ! $iseven;
 
 		if ( IS_ADMIN ) {
 			echo "<td class=\"editdel\">" .
-				editLink('contest', $row['cid']) . " " .
+				editLink('contest', $row['cid']) . "&nbsp;" .
 				delLink('contest','cid',$row['cid']) . "</td>\n";
 		}
 

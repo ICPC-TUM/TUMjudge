@@ -14,11 +14,11 @@ require_once(LIBEXTDIR . '/spyc/spyc.php');
  */
 function addLink($table, $multi = false)
 {
-	return "<a href=\"" . htmlspecialchars($table) . ".php?cmd=add\">" .
+	return "<a href=\"" . specialchars($table) . ".php?cmd=add\">" .
 		"<img src=\"../images/add" . ($multi?"-multi":"") .
 		".png\" alt=\"add" . ($multi?" multiple":"") .
 		"\" title=\"add" .   ($multi?" multiple":"") .
-		" new " . htmlspecialchars($table) . "\" class=\"picto\" /></a>";
+		" new " . specialchars($table) . "\" class=\"picto\" /></a>";
 }
 
 /**
@@ -29,7 +29,7 @@ function addLink($table, $multi = false)
  */
 function editLink($table, $value, $multi = false)
 {
-	return "<a href=\"" . htmlspecialchars($table) . ".php?cmd=edit" .
+	return "<a href=\"" . specialchars($table) . ".php?cmd=edit" .
 		($multi ? "" : "&amp;id=" . urlencode($value) ) .
 		"&amp;referrer=" . urlencode(basename($_SERVER['SCRIPT_NAME']) .
 		(empty($_REQUEST['id']) ? '' : '?id=' . urlencode($_REQUEST['id']))) .
@@ -37,7 +37,7 @@ function editLink($table, $value, $multi = false)
 		"<img src=\"../images/edit" . ($multi?"-multi":"") .
 		".png\" alt=\"edit" . ($multi?" multiple":"") .
 		"\" title=\"edit " .   ($multi?"multiple ":"this ") .
-		htmlspecialchars($table) . "\" class=\"picto\" /></a>";
+		specialchars($table) . "\" class=\"picto\" /></a>";
 }
 
 /**
@@ -62,7 +62,7 @@ function delLinkMultiple($table, $fields, $values, $referrer = '')
 	return "<a href=\"delete.php?table=" . urlencode($table) . $arguments .
 	       "&amp;referrer=" . urlencode($referrer)
 	       ."\"><img src=\"../images/delete.png\" " .
-	       "alt=\"delete\" title=\"delete this " . htmlspecialchars($table) .
+	       "alt=\"delete\" title=\"delete this " . specialchars($table) .
 	       "\" class=\"picto\" /></a>";
 }
 
@@ -84,9 +84,10 @@ function exportLink($probid)
  */
 function rejudgeForm($table, $id)
 {
-	$ret = addForm('rejudge.php') .
-		addHidden('table', $table) .
-		addHidden('id', $id);
+	$ret = '<div id="rejudge" class="framed">' .
+	     addForm('rejudge.php') .
+	     addHidden('table', $table) .
+	     addHidden('id', $id);
 
 	$button = 'REJUDGE this submission';
 	$question = "Rejudge submission s$id?";
@@ -122,14 +123,14 @@ function rejudgeForm($table, $id)
 		if ( IS_ADMIN ) $allbutton = true;
 	}
 
-	$ret .= '<input type="submit" value="' . htmlspecialchars($button) . '" ' .
+	$ret .= '<input type="submit" value="' . specialchars($button) . '" ' .
 		($disabled ? 'disabled="disabled"' : 'onclick="return confirm(\'' .
-		htmlspecialchars($question) . '\');"') . " class=\"btn btn-default\" />\n" .
+		specialchars($question) . '\');"') . " class=\"btn btn-default\" />\n" .
 		($allbutton ? addCheckBox('include_all') .
-		              '<label for="include_all">include pending/correct submissions</label>' : '' ) .
+		              '<label for="include_all">include pending/correct submissions</label><br />' : '' ) .
 		addCheckBox('full_rejudge') . '<label for="full_rejudge">create rejudging with reason: </label>' .
 		addInput('reason', '', 0, 255) .
-		addEndForm();
+		addEndForm() . '</div>';
 
 	return $ret;
 }
@@ -304,7 +305,7 @@ function importZippedProblem($zip, $probid = NULL, $cid = -1)
 				error("Need 'probid' in '" . $prop_file . "' when adding a new problem.");
 			}
 			// Set sensible defaults for name and timelimit if not specified:
-			if ( !isset($ini_array_problem['name'])      ) $ini_array_problem['name'] = $ini_array_problem['probid'];
+			if ( !isset($ini_array_problem['name'])      ) $ini_array_problem['name'] = $ini_array_contest_problem['probid'];
 			if ( !isset($ini_array_problem['timelimit']) ) $ini_array_problem['timelimit'] = $def_timelimit;
 
 			// rename probid to shortname
@@ -390,7 +391,7 @@ function importZippedProblem($zip, $probid = NULL, $cid = -1)
 					echo "<p>Custom validator specified but not found.</p>\n";
 				} else {
 					// file(s) have to share common directory
-					$validator_dir = mb_substr($validator_files[0], 0, mb_strrpos($validator_files[0], "/"));
+					$validator_dir = mb_substr($validator_files[0], 0, mb_strrpos($validator_files[0], "/")) . "/";
 					$same_dir = TRUE;
 					foreach ( $validator_files as $validator_file ) {
 						if ( !starts_with($validator_file, $validator_dir) ) {
@@ -414,7 +415,7 @@ function importZippedProblem($zip, $probid = NULL, $cid = -1)
 							file_put_contents($newfilename, $content);
 							if ( $filebase === 'build' || $filebase === 'run' ) {
 								// mark special files as executable
-								chmod($newfilename, 0700);
+								chmod($newfilename, 0755);
 							}
 						}
 
@@ -517,8 +518,9 @@ function importZippedProblem($zip, $probid = NULL, $cid = -1)
 			// Skip testcases that already exist identically
 			$id = $DB->q('MAYBEVALUE SELECT testcaseid FROM testcase
 			              WHERE md5sum_input = %s AND md5sum_output = %s AND
-			              description = %s AND sample = %i',
-			             $md5in, $md5out, $description, $type == 'sample' ? 1 : 0);
+			              description = %s AND sample = %i AND probid = %i',
+			             $md5in, $md5out, $description,
+			             ($type == 'sample' ? 1 : 0), $probid);
 			if ( isset($id) ) {
 				echo "<li>Skipped $type testcase <tt>$datafile</tt>: already exists</li>\n";
 				continue;
@@ -582,15 +584,16 @@ function importZippedProblem($zip, $probid = NULL, $cid = -1)
 				$source = $zip->getFromIndex($j);
 				$results = getExpectedResults($source);
 				if ( $results === NULL ) {
-					// annotate source code with expected result
-					$source = "// added by import: " . $matchstrings[0] . $expectedResult . "\n" . $source;
+					$results[] = $expectedResult;
 				} else if ( !in_array($expectedResult, $results) ) {
 					warning("annotated result '" . implode(', ', $results) . "' does not match directory for $filename");
 				}
 				file_put_contents($tmpfname, $source);
 				if( filesize($tmpfname) <= dbconfig_get('sourcesize_limit')*1024 ) {
-					submit_solution($teamid, $probid, $cid, $langid,
+					$sid = submit_solution($teamid, $probid, $cid, $langid,
 							array($tmpfname), array(basename($filename)));
+					$DB->q('UPDATE submission SET expected_results=%s WHERE submitid=%i', json_encode($results), $sid);
+
 					echo "<li>Added jury solution from: <tt>$filename</tt></li>\n";
 					$njurysols++;
 				} else {
