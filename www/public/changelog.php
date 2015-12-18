@@ -20,6 +20,7 @@ D-85748 Garching
 <h3>v5.1.0.0</h3>
 <ul>
 <li>update to DOMjudge 5.1.0</li>
+<li>add a news page that pulls news from <a href="http://icpc.tum.de">http://icpc.tum.de</a></li>
 <li>add four more judge instances</li>
 <li>add Halloween and Christmas themes</li>
 </ul>

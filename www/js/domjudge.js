@@ -451,7 +451,7 @@ function updateClock()
 
 function setCookie(name, value) {
 	var expire = new Date();
-	expire.setDate(expire.getDate() + 3); // three days valid
+	expire.setDate(expire.getDate() + 1000); // valid for a long time :)
 	document.cookie = name + "=" + escape(value) + "; expires=" + expire.toUTCString();
 }
 
@@ -601,3 +601,23 @@ function initFavouriteTeams() {
 		tbody.insertBefore(copy, scoreboard[i + 1]);
 	}
 }
+
+/**
+ * Setup news-notification in menu. 
+ * 
+ **/
+function setupNewsNotification() {
+  var url = "/news/latest-timestamp";
+  
+  $.getJSON(url, function(data) {
+      var lastVisit = getCookie("lastNewsVisit");
+      if(data['timestamp'] > lastVisit) {
+	  var label = '<span class="label label-info">new</span>';
+	  $("#newsLinkMenu").append(" ").append(label);
+      }
+  });
+}
+
+$(function() {
+  setupNewsNotification();
+});
