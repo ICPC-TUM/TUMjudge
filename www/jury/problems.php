@@ -60,15 +60,15 @@ if( $res->count() == 0 ) {
 
 		echo "<tr class=\"" . implode(' ',$classes) .
 			"\"><td>" . $link . "p" .
-				htmlspecialchars($row['probid'])."</a>".
-			"</td><td>" . $link . htmlspecialchars($row['name'])."</a>".
+				specialchars($row['probid'])."</a>".
+			"</td><td>" . $link . specialchars($row['name'])."</a>".
 			//insert extra problem data
-			"</td><td>" . $link . htmlspecialchars($row['difficulty'])."</a>".
-			"</td><td>" . $link . htmlspecialchars($row['author'])."</a>".
-			"</td><td>" . $link . htmlspecialchars($row['source'])."</a>".
-			"</td><td>" . $link . htmlspecialchars($row['topic'])."</a>".
+			"</td><td>" . $link . specialchars($row['difficulty'])."</a>".
+			"</td><td>" . $link . specialchars($row['author'])."</a>".
+			"</td><td>" . $link . specialchars($row['source'])."</a>".
+			"</td><td>" . $link . specialchars($row['topic'])."</a>".
 			"</td><td>".
-			$link . htmlspecialchars(isset($activecontests[$row['probid']])?$activecontests[$row['probid']]:0) . "</a>" .
+			$link . specialchars(isset($activecontests[$row['probid']])?$activecontests[$row['probid']]:0) . "</a>" .
 			"</td><td>" . $link . (int)$row['timelimit'] . "</a>" .
 			"</td><td>" . $link . (isset($row['memlimit']) ? (int)$row['memlimit'] : 'default') . "</a>" .
 			"</td><td>" . $link . (isset($row['outputlimit']) ? (int)$row['outputlimit'] : 'default') . "</a>" .
@@ -86,7 +86,7 @@ if( $res->count() == 0 ) {
 			echo '<td title="export problem as zip-file">' .
 			     exportLink($row['probid']) . '</td>' .
 			     "<td class=\"editdel\">" .
-			     editLink('problem', $row['probid']) . " " .
+			     editLink('problem', $row['probid']) . "&nbsp;" .
 			     delLink('problem','probid',$row['probid']) . "</td>";
 		}
 		echo "</tr>\n";

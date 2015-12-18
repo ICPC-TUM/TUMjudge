@@ -8,6 +8,7 @@
 unset($_GET['tumjudge_instance']);
 
 require('init.php');
+require_once(LIBWWWDIR . '/common.jury.php');
 
 
 
@@ -449,6 +450,11 @@ function judgings_PUT($args)
 			               WHERE judgingid = %i',$judgingid);
 			calcScoreRow($row['cid'], $row['teamid'], $row['probid']);
 
+			// We call alert here for the failed submission. Note that
+			// this means that these alert messages should be treated
+			// as confidential information.
+			alert('reject', "submission $row[submitid], judging $judgingid: compiler-error");
+
 			// log to event table if no verification required
 			// (case of verification required is handled in www/jury/verify.php)
 			if ( ! dbconfig_get('verification_required', 0) ) {
@@ -540,13 +546,23 @@ function judging_runs_POST($args)
 			        WHERE judgingid = %i', $result, $args['judgingid']);
 		}
 
+		// Only update if the current result is different from what we
+		// had before. This should only happen when the old result was
+		// NULL.
 		if ( $before !== $result ) {
+			if ( $before!==NULL ) error('internal bug: the evaluated result changed during judging');
 
 			$row = $DB->q('TUPLE SELECT s.cid, s.teamid, s.probid, s.langid, s.submitid
 			               FROM judging
 			               LEFT JOIN submission s USING(submitid)
 			               WHERE judgingid = %i',$args['judgingid']);
 			calcScoreRow($row['cid'], $row['teamid'], $row['probid']);
+
+			// We call alert here before possible validation. Note
+			// that this means that these alert messages should be
+			// treated as confidential information.
+			alert(($result==='correct' ? 'accept' : 'reject'),
+			      "submission $row[submitid], judging $args[judgingid]: $result");
 
 			// log to event table if no verification required
 			// (case of verification required is handled in www/jury/verify.php)
@@ -728,6 +744,10 @@ function submissions_POST($args)
 	}
 
 	$sid = submit_solution($userdata['teamid'], $probid, $cid, $args['langid'], $FILEPATHS, $FILENAMES);
+	if ( checkrole('jury') ) {
+		$results = getExpectedResults(file_get_contents($FILEPATHS[0]));
+		$DB->q('UPDATE submission SET expected_results=%s WHERE submitid=%i', json_encode($results), $sid);
+	}
 
 	auditlog('submission', $sid, 'added', 'via api', null, $cid);
 
