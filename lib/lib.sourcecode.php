@@ -208,6 +208,7 @@ function presentSourceCode($id, $teamid=-1) {
 	if ( isset($_GET['fetch']) ) {
 
 		$row = $DB->q("TUPLE SELECT filename, sourcecode FROM submission_file
+					  LEFT JOIN submission USING(submitid)
 			      WHERE submitid = %i AND rank = %i $add", $id, $_GET['fetch']);
 		header("Content-Type: text/plain; name=\"" . $row['filename'] .
 		      "\"; charset=" . DJ_CHARACTER_SET);
