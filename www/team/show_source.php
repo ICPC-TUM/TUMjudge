@@ -1,7 +1,7 @@
 <?php
 
 require('init.php');
-require(LIBWWWDIR . '/lib.sourcecode.php');
+require(LIBDIR . '/lib.sourcecode.php');
 
 $id = getRequestID();
 echo "Test 1";
