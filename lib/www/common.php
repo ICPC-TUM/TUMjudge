@@ -284,7 +284,7 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 			}
 		}
 		
-		echo "<td><a href='show_source.php?id=$sid'>view</a></td>";
+		echo "<td><a href='show_source.php?id=$sid' title='show source code'><img src='../images/code.png'></a></td>";
 		echo "</tr>\n";
 
 		if ( $row['result'] == 'correct' ) $corcnt++;
