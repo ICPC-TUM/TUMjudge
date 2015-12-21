@@ -306,7 +306,6 @@ function editSourceCode($id, $teamid) {
 	
 	global $DB;
 
-	require('init.php');
 	if ( empty($teamid) || !checkrole('team') ) {
 		error("You cannot re-submit code without being a team.");
 	}
@@ -341,8 +340,13 @@ function editSourceCode($id, $teamid) {
 		{
 			unlink($file);
 		}
+		
+		if(checkrole('jury')) {
+			header('Location: submission.php?id=' . $newid);
+		} else {
+			header('Location: submission_details.php?id=' . $newid);
+		}
 
-		header('Location: submission.php?id=' . $newid);
 		exit;
 	}
 
