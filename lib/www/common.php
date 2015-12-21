@@ -166,6 +166,7 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		"<th scope=\"col\">problem</th>" .
 		"<th scope=\"col\">lang</th>" .
 		"<th scope=\"col\">result</th>" .
+		"<th scope=\"col\"></th>" .
 		(IS_JURY ? "<th scope=\"col\">verified</th><th scope=\"col\">by</th>" : '') .
 		(IS_JURY && isset($restrictions['rejudgingid']) ?
 		 "<th scope=\"col\">old result</th>" : '') .
@@ -242,6 +243,7 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 			echo printresult($row['result']);
 		}
 		echo "</a></td>";
+		echo "<td><a href='submission_download.php?id=$sid'>Download</a></td>";
 
 		if ( IS_JURY ) {
 			// only display verification if we're done with judging
