@@ -1,11 +1,13 @@
 <?php
 
+error_reporting(-1);
+
 require('init.php');
 require(LIBDIR . '/lib.sourcecode.php');
 
-$id = getRequestID();
+error_reporting(-1);
 
-echo "Team ".$teamid;
+$id = getRequestID();
 
 presentSourcecode($id, $teamid);
 	
