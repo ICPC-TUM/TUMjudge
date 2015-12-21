@@ -342,9 +342,9 @@ function editSourceCode($id, $teamid) {
 		}
 		
 		if(checkrole('jury')) {
-			header('Location: submission.php?id=' . $newid);
+			header('Location: ../jury/submission.php?id=' . $newid);
 		} else {
-			header('Location: submission_details.php?id=' . $newid);
+			header('Location: ../team/submission_details.php?id=' . $newid);
 		}
 
 		exit;

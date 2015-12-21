@@ -14,10 +14,8 @@ define('IS_JURY', false);
 define('IS_PUBLIC', false);
 
 require_once(LIBDIR . '/init.php');
-echo "Test!";
-setup_database_connection();
-echo "Test!! " . var_dump($db);
 
+setup_database_connection();
 
 require_once(LIBWWWDIR . '/common.php');
 require_once(LIBWWWDIR . '/print.php');
