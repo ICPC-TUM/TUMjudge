@@ -195,12 +195,12 @@ function presentSourceCode($id, $teamid=-1) {
 	
 	$add = "";
 	if($teamid != -1)
-		$add = " AND teamid = ".$teamid;
+		$add = "AND teamid = ".$teamid;
 		
-	echo "MAYBETUPLE SELECT * FROM submission s WHERE submitid = %i$add";
+	echo "MAYBETUPLE SELECT * FROM submission s WHERE submitid = %i $add";
 	
 	$submission = $DB->q("MAYBETUPLE SELECT * FROM submission s
-			      WHERE submitid = %i$add",$id);
+			      WHERE submitid = %i $add",$id);
 	
 	echo "Test 3";
 	
@@ -210,7 +210,7 @@ function presentSourceCode($id, $teamid=-1) {
 	if ( isset($_GET['fetch']) ) {
 
 		$row = $DB->q("TUPLE SELECT filename, sourcecode FROM submission_file
-			      WHERE submitid = %i AND rank = %i$add", $id, $_GET['fetch']);
+			      WHERE submitid = %i AND rank = %i $add", $id, $_GET['fetch']);
 		header("Content-Type: text/plain; name=\"" . $row['filename'] .
 		      "\"; charset=" . DJ_CHARACTER_SET);
 		header("Content-Disposition: attachment; filename=\"" . $row['filename'] . "\"");
@@ -226,7 +226,7 @@ function presentSourceCode($id, $teamid=-1) {
 	// display highlighted content of the source files
 	$sources = $DB->q("TABLE SELECT *
 			  FROM submission_file LEFT JOIN submission USING(submitid)
-			  WHERE submitid = %i$add ORDER BY rank", $id);
+			  WHERE submitid = %i $add ORDER BY rank", $id);
 
 	$html = '<script type="text/javascript">' .
 		// Resize ACE editor after the corresponding tab is clicked
