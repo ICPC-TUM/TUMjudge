@@ -155,8 +155,6 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		echo addForm('submission.php');
 	}
 
-	echo "THIS IS A TEST";
-	
 	// print the table with the submissions.
 	// table header
 	echo "<table class=\"list sortable\">\n<thead>\n<tr>" .
