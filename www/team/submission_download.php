@@ -7,7 +7,7 @@ $id = getRequestID();
 $row = $DB->q('SELECT s.valid,sf.sourcecode,sf.filename 
 	       FROM submission s
                LEFT JOIN submission_file sf ON (sf.submitid = s.submitid)
-               WHERE s.submitid = %i AND s.teamid = %i',$id,$teamid);
+               WHERE s.submitid = %i AND s.teamid = %i',$id,$teamid)->next();
 
 print_r($row);
                
@@ -17,6 +17,6 @@ header("Content-Type: text/plain; name=\"$filename\"");
 header("Content-Disposition: inline; filename=\"$filename\"");
 header("Content-Length: " . strlen($row['sourcecode']));               
 echo $row['sourcecode'];
-exit(0);               
+exit(0);
 
 ?>
