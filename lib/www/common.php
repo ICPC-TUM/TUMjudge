@@ -155,6 +155,8 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		echo addForm('submission.php');
 	}
 
+	echo "THIS IS A TEST";
+	
 	// print the table with the submissions.
 	// table header
 	echo "<table class=\"list sortable\">\n<thead>\n<tr>" .
@@ -194,7 +196,7 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		} else {
 			$link = '';
 		}
-
+		
 		echo "<tr class=\"" .
 			( $iseven ? 'roweven': 'rowodd' );
 		$iseven = !$iseven;
