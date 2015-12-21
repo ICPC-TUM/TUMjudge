@@ -9,6 +9,8 @@ $row = $DB->q('SELECT s.valid,sf.sourcecode,sf.filename
                LEFT JOIN submission_file sf ON (sf.submitid = s.submitid)
                WHERE s.submitid = %i AND s.teamid = %i',$id,$teamid);
 
+print_r($row);
+               
 $filename = $row['filename'];
                
 header("Content-Type: text/plain; name=\"$filename\"");
