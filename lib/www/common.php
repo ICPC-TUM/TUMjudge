@@ -169,7 +169,7 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		(IS_JURY ? "<th scope=\"col\">verified</th><th scope=\"col\">by</th>" : '') .
 		(IS_JURY && isset($restrictions['rejudgingid']) ?
 		 "<th scope=\"col\">old result</th>" : '') .
-
+		 "<th scope=\"col\"></th>".
 		"</tr>\n</thead>\n<tbody>\n";
 
 	// print each row with links to detailed information
@@ -283,6 +283,8 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 				    printresult($row['oldresult']) . "</a></td>";
 			}
 		}
+		
+		echo "<td><a href='show_source.php?id=$sid'>view</a></td>";
 		echo "</tr>\n";
 
 		if ( $row['result'] == 'correct' ) $corcnt++;
