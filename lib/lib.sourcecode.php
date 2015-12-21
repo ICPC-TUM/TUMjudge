@@ -198,9 +198,11 @@ function presentSourceCode($id, $teamid='') {
 	if($teamid != "")
 		$add = " AND teamid = ".mysql_real_escape_string($teamid);
 	
-	
+	echo "Test 2";
 	$submission = $DB->q("MAYBETUPLE SELECT * FROM submission s
 			      WHERE submitid = %i$add",$id);
+	
+	echo "Test 3";
 	
 	if ( empty($submission) ) error ("Submission $id not found");
 
