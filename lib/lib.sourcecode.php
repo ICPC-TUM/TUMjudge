@@ -191,11 +191,11 @@ function multifilediff ($sources, $oldsources, $olddata)
 	return $html;
 }
 
-function presentSourceCode($id, $teamid=0) {
+function presentSourceCode($id, $teamid=-1) {
 	
 	$add = "";
-	if(!empty($teamid))
-		$add = " AND teamid = ".mysql_real_escape_string($teamid);
+	if($teamid != -1)
+		$add = " AND teamid = ".$teamid;
 		
 	echo "MAYBETUPLE SELECT * FROM submission s WHERE submitid = %i$add";
 	
