@@ -94,6 +94,10 @@ p {
   padding-left: 1em;
 }
 
+blockquote {
+  font-size: 100%;
+}
+
 /* Conpra, Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
 	font-family:"Frostbitten";
