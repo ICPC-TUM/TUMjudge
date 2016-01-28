@@ -5,6 +5,6 @@ require(LIBDIR . '/lib.sourcecode.php');
 
 $id = getRequestID();
 
-presentSourceCode($id, $teamid);
+presentSourceCode($id);
 
 ?>
