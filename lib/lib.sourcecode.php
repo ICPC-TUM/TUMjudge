@@ -303,6 +303,7 @@ function presentSourceCode($id, $teamid=-1) {
 
 }
 
+
 function editSourceCode($id, $teamid) {
 	
 	global $DB;
@@ -347,8 +348,10 @@ function editSourceCode($id, $teamid) {
 		} else {
 			$time = $DB->q('VALUE SELECT endtime FROM contest
 			      WHERE cid = %i', $cid);
-			      
-			if(timestamp() > $time) {
+			
+			echo $time ." !! ";
+			
+			if(time() > $time) {
 				header('Location: ../team/index.php');
 			} else {
 				header('Location: ../team/submission_details.php?id=' . $newid);
