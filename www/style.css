@@ -504,3 +504,8 @@ table.rejudgetable td.identical {
 table.rejudgetable td.zero {
 	background-color: #F0F8FF;
 }
+
+/* diff colors for source contents and filenames */
+.diff-add     { color: green; }
+.diff-del     { color: red; }
+.diff-changed { color: darkorange; }

@@ -19,6 +19,7 @@ D-85748 Garching
 
 <h3>v5.1.0.1</h3>
 <ul>
+<li>add interface to download and edit submissions for teams</li>
 <li>add more trophies for 7 to 12 wins: <img src="../images/countries/BAG.png" alt="7 wins"/> <img src="../images/countries/BAH.png" alt="8 wins"/> <img src="../images/countries/BAI.png" alt="9 wins"/> <img src="../images/countries/BAJ.png" alt="10 wins"/> <img src="../images/countries/BAK.png" alt="11 wins"/> <img src="../images/countries/BAL.png" alt="12 wins"/></li>
 </ul>
 
