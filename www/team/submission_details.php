@@ -33,6 +33,7 @@ if( !$row ||
 if($row['submittime'] >= $cdata['endtime']) {
 	header("HTTP/1.1 302 Found"); 
 	header("location: ./index.php");
+	exit();
 }
 
 // update seen status when viewing submission
