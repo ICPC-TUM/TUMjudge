@@ -345,7 +345,15 @@ function editSourceCode($id, $teamid) {
 		if(checkrole('jury')) {
 			header('Location: ../jury/submission.php?id=' . $newid);
 		} else {
-			header('Location: ../team/submission_details.php?id=' . $newid);
+			$time = $DB->q('VALUE SELECT endtime FROM contest
+			      WHERE cid = %i', $cid);
+			      
+			if(timestamp() > $time) {
+				header('Location: ../team/index.php');
+			} else {
+				header('Location: ../team/submission_details.php?id=' . $newid);
+			}
+			
 		}
 
 		exit;
