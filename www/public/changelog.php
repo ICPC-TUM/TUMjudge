@@ -21,6 +21,7 @@ D-85748 Garching
 <ul>
 <li>add interface to download and edit submissions for teams</li>
 <li>add more trophies for 7 to 12 wins: <img src="../images/countries/BAG.png" alt="7 wins"/> <img src="../images/countries/BAH.png" alt="8 wins"/> <img src="../images/countries/BAI.png" alt="9 wins"/> <img src="../images/countries/BAJ.png" alt="10 wins"/> <img src="../images/countries/BAK.png" alt="11 wins"/> <img src="../images/countries/BAL.png" alt="12 wins"/></li>
+<li>add Facebook SDK to news page</li>
 </ul>
 
 <h3>v5.1.0.0</h3>

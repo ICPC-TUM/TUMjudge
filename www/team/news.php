@@ -6,6 +6,26 @@ setcookie("lastNewsVisit", time(), time()+1000*24*60*60);
 require('init.php');
 require(LIBWWWDIR . '/header.php');
 
+?>
+
+<script>
+window.fbAsyncInit = function() {
+	FB.init({
+		xfbml: true,
+		version: 'v2.5'
+		});
+	};
+	(function(d, s, id){
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) {return;}
+		js = d.createElement(s);
+		js.id = id;
+		js.src = "//connect.facebook.net/en_US/sdk.js";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+</script>                                        
+
+<?php
 
 foreach(json_decode(file_get_contents('https://judge.in.tum.de/news/latest')) AS $news) {
 ?>
