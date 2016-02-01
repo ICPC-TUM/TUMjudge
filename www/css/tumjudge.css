@@ -98,6 +98,46 @@ blockquote {
   font-size: 100%;
 }
 
+/*Kattis Scoreboards*/
+.kattis-table-contest-standings table#tablelegend {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+.kattis-table-contest-standings table#tablelegend td {
+	font-size: 14px;
+	text-transform: uppercase;
+	padding: 10px 16px;
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding-box;
+	-o-background-clip: padding-box;
+	background-clip: padding-box;
+}
+.kattis-table-contest-standings table tr td.solved {
+	background-color:#99FF99 !important;
+}
+.kattis-table-contest-standings table tr td.solvedfirst {
+	color: white !important;
+	background-color:#008800 !important;
+	font-weight: 600 !important;
+}
+.kattis-table-contest-standings table tr td.attempted {
+	background-color:#FF9999 !important;
+}
+.kattis-table-contest-standings table tr td.pending{
+	background-color:#9999FF !important;
+}
+.kattis-table-contest-standings table tr td.group_leader { 
+	background-color: #FFFFAA !important;
+}
+.kattis-table-contest-standings table tr tr.highlight {
+	background-color: #EEEEFF !important;
+	font-weight: bold !important;
+}
+.kattis-table-contest-standings th.problemcolheader a, .kattis-table-contest-standings th.problemcolheader a:hover, .kattis-table-contest-standings th.problemcolheader a:focus, .kattis-table-contest-standings th.problemcolheader a:link, .kattis-table-contest-standings th.problemcolheader a:visited {
+	color: #ffffff;
+}
+
+
 /* Conpra, Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
 	font-family:"Frostbitten";
