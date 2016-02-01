@@ -169,7 +169,7 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		(IS_JURY ? "<th scope=\"col\">verified</th><th scope=\"col\">by</th>" : '') .
 		(IS_JURY && isset($restrictions['rejudgingid']) ?
 		 "<th scope=\"col\">old result</th>" : '') .
-		 "<th scope=\"col\"></th>".
+		(!IS_JURY ? "<th scope=\"col\"></th>" : '') .
 		"</tr>\n</thead>\n<tbody>\n";
 
 	// print each row with links to detailed information
@@ -287,8 +287,6 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 		//Don't show sourcecode link for jury
 		if ( !IS_JURY ) {
 			 echo "<td><a href='show_source.php?id=$sid' title='show source code'><img src='../images/code.png'></a></td>";
-		} else {
-			echo "<td></td>";
 		}
 		
 		echo "</tr>\n";
