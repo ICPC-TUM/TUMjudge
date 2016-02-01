@@ -98,6 +98,78 @@ blockquote {
   font-size: 100%;
 }
 
+/*Kattis Scoreboards*/
+table.kattis-table-contest-standings#tablelegend {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+table.kattis-table-contest-standings#tablelegend td {
+	font-size: 14px;
+	text-transform: uppercase;
+	padding: 10px 16px;
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding-box;
+	-o-background-clip: padding-box;
+	background-clip: padding-box;
+}
+table.kattis-table-contest-standings tr td.solved {
+	background-color:#99FF99 !important;
+}
+table.kattis-table-contest-standings tr td.solvedfirst {
+	color: white !important;
+	background-color:#008800 !important;
+	font-weight: 600 !important;
+}
+table.kattis-table-contest-standings tr td.attempted {
+	background-color:#FF9999 !important;
+}
+table.kattis-table-contest-standings tr td.pending{
+	background-color:#9999FF !important;
+}
+table.kattis-table-contest-standings tr td.group_leader { 
+	background-color: #FFFFAA !important;
+}
+table.kattis-table-contest-standings tr tr.highlight {
+	background-color: #EEEEFF !important;
+	font-weight: bold !important;
+}
+table.kattis-table-contest-standings th.problemcolheader a, table.kattis-table-contest-standings th.problemcolheader a:hover, table.kattis-table-contest-standings th.problemcolheader a:focus, table.kattis-table-contest-standings th.problemcolheader a:link, table.kattis-table-contest-standings th.problemcolheader a:visited {
+	color: #ffffff;
+}
+table.kattis-table-contest-standings .country-flag img {
+	max-width: 20px;
+	max-height: 20px;
+	border-radius: 50%;
+	border: 1px rgb(137, 137, 146) solid;
+}
+table.kattis-table-contest-standings .university-logo img {
+	max-width: 20px;
+	max-height: 20px;
+	border-radius: 0;
+	border: none;
+}
+table.kattis-table-contest-standings .country-flag img, table.kattis-table-contest-standings .subdivision-flag img, table.kattis-table-contest-standings .university-logo img {
+	max-width: 28px;
+	max-height: 28px;
+}
+table.kattis-table-contest-standings .country-flag span.logo {
+	width: 23px;
+	height: 23px;
+	border: 1px solid black;
+	border-radius: 15px;
+	display: inline-block;
+	font-size: 8px;
+	padding-top: 5px;
+	padding-left: 3px;
+}
+table.kattis-table-contest-standings .country-flag {
+	overflow: hidden;
+}
+table.kattis-table-contest-standings .country-flag span.text, table.kattis-table-contest-standings .university-logo span.text {
+	margin-top: 4px;
+	margin-left: 5px;
+}
+
 /* Conpra, Contest 24: Christmas Week of Conpra WS14/15 */
 @font-face {
 	font-family:"Frostbitten";
