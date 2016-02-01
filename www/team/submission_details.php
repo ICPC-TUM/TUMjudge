@@ -23,16 +23,15 @@ $row = $DB->q('MAYBETUPLE SELECT p.probid, cp.shortname, p.name AS probname, sub
                LEFT JOIN contestproblem cp ON (cp.probid = p.probid AND cp.cid = s.cid)
                WHERE j.submitid = %i AND teamid = %i AND j.valid = 1',$id,$teamid);
 
-if( !$row ||
-    (dbconfig_get('verification_required',0) && !$row['verified']) ) {
-	echo "<p>Submission not found for this team or not judged yet.</p>\n";
-	require(LIBWWWDIR . '/footer.php');
+if(!$row || $row['submittime'] >= $cdata['endtime']) {
+	header("HTTP/1.1 302 Found"); 
+	header("location: index.php");
 	exit;
 }
-
-if($row['submittime'] >= $cdata['endtime']) {
-	header("HTTP/1.1 302 Found"); 
-	header("location: ./index.php");
+               
+if( (dbconfig_get('verification_required',0) && !$row['verified']) ) {
+	echo "<p>Submission not found for this team or not judged yet.</p>\n";
+	require(LIBWWWDIR . '/footer.php');
 	exit;
 }
 
