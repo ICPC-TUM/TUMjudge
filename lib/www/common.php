@@ -284,7 +284,13 @@ function putSubmissions($cdatas, $restrictions, $limit = 0, $highlight = null)
 			}
 		}
 		
-		echo "<td><a href='show_source.php?id=$sid' title='show source code'><img src='../images/code.png'></a></td>";
+		//Don't show sourcecode link for jury
+		if ( IS_JURY ) {
+			 echo "<td><a href='show_source.php?id=$sid' title='show source code'><img src='../images/code.png'></a></td>";
+		} else {
+			echo "<td></td>";
+		}
+		
 		echo "</tr>\n";
 
 		if ( $row['result'] == 'correct' ) $corcnt++;
