@@ -33,11 +33,14 @@ if ( count($cids)!=0 ) {
 }
 
 echo "<script type='text/javascript'>
+var topics_regex = new Array();
+topics_regex['BFS/DFS'] = /[A-Za-z0-9,\s]*(((Depth|Breadth)(\s|-)First(\s|-)Search)|((B|D)FS))[A-Za-z0-9,\s]*/gi;
+
 var topics = [
-	{name: \"BFS/DFS\",regex:\"\"},
-	{name: \"Shortest Path\",regex:\"\"},
-	{name: \"Minimum Spanning Tree\",regex:\"\"},
-	{name: \"Number Theory\",regex:\"\"}
+	{name: \"BFS/DFS\"},
+	{name: \"Shortest Path\"},
+	{name: \"Minimum Spanning Tree\"},
+	{name: \"Number Theory\"}
 	];
 $(function() {
 	$(\"#topics_filter\").tokenInput(topics, {
@@ -49,12 +52,35 @@ $(function() {
 	});
 });
 
-function filter_problems() {
+function resetFilter() {
+	//Reset table visibility
+	$(\".list:first tbody tr\").each(function(){$(this).css(\"display\",\"table-row\")});
+}
+
+function resetAll() {
+	$(\"#topics_filter\").tokenInput(\"clear\");
+}
+
+function filterProblems() {
+	resetFilter()
+	filterTopics();
+}
+
+function filterDifficulty() {
+	
+}
+
+function filterTopics() {
 	var selected_topics = $(\"#topics_filter\").tokenInput(\"get\");
+	if(selected_topics.length == 0) {
+		return;
+	}
+	
 	$(\".list:first tbody tr\").each(function() {
 	   var found = false;
-	   for each (var item in selected_topics) {
-		if($(this).find(\"td:nth-child(5)\").html().indexOf(item) > -1) {
+	   for (var item in selected_topics) {
+		console.log($(this).find(\"td:nth-child(5)\").html().match(topics_regex[item]));
+		if($(this).find(\"td:nth-child(5)\").html().match(topics_regex[item]).length > 0) {
 			found = true;
 			break;
 		}
@@ -67,7 +93,8 @@ function filter_problems() {
 </script>";
 
 echo "<input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>";
-echo "<button onClick='javascript:filter_problems();'>Filter</button>";
+echo "<button onClick='javascript:filterProblems();'>Filter</button>";
+echo "<button onClick='javascript:resetAll();'>Reset Filter</button>";
 /*echo "<datalist id='topics'>
 <option value='DFS/BFS'>
 <option value='Shortest Path'>
