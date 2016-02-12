@@ -52,12 +52,12 @@ var topics = [
 	{name: \"Shortest Path\"},
 	{name: \"Minimum Spanning Tree\"},
 	{name: \"Number Theory\"},
-	{name: \"Geometry\"}
-	{name: \"Projective Geometry\"}
-	{name: \"Dynamic Programming\"}
-	{name: \"Union Find\"}
-	{name: \"Flow\"}
-	{name: \"Brute Force\"}
+	{name: \"Geometry\"},
+	{name: \"Projective Geometry\"},
+	{name: \"Dynamic Programming\"},
+	{name: \"Union Find\"},
+	{name: \"Flow\"},
+	{name: \"Brute Force\"},
 	{name: \"Greedy\"}
 	];
 $(function() {
