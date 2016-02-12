@@ -35,12 +35,30 @@ if ( count($cids)!=0 ) {
 echo "<script type='text/javascript'>
 var topics_regex = new Array();
 topics_regex['BFS/DFS'] = /[A-Za-z0-9,\s]*(((Depth|Breadth)(\s|-)First(\s|-)Search)|((B|D)FS))[A-Za-z0-9,\s]*/gi;
+topics_regex['Shortest Path'] = /[A-Za-z0-9,\s]*((Shortest(\s|-)Path)|Dijkstra|Bellman(\s|-)Ford)[A-Za-z0-9,\s]*/gi;
+topics_regex['Minimum Spanning Tree'] = /[A-Za-z0-9,\s]*((Minimum(\s|-)Spanning(\s|-)Tree)|Prim|Kruskal)[A-Za-z0-9,\s]*/gi;
+topics_regex['Number Theory'] = /[A-Za-z0-9,\s]*((Chinese(\s|-)Remainder(\s|-)Theorem)|Number(\s|-)Theory|gcd|lcm|Euclidean)[A-Za-z0-9,\s]*/gi;
+topics_regex['Geometry'] = /[A-Za-z0-9,\s]*((Geometry)\b(?<!projective(\s|-)Geometry)|Convex(\s|-)hull|Point(\s|-)in(\s|-)polygon)[A-Za-z0-9,\s]*/gi;
+topics_regex['Projective Geometry'] = /[A-Za-z0-9,\s]*(projective(\s|-)geometry)[A-Za-z0-9,\s]*/gi;
+topics_regex['Dynamic Programming'] = /[A-Za-z0-9,\s]*(dynamic(\s|-)programming)[A-Za-z0-9,\s]*/gi;
+topics_regex['Union Find'] = /[A-Za-z0-9,\s]*(union(\s|-)find)[A-Za-z0-9,\s]*/gi;
+topics_regex['Flow'] = /max(imum)?(\s|-)flow|min(imum)?(\s|-)cut|push(\s|-)relabel|goldberg(\s|-)tarjan|dinic/gi;
+topics_regex['Brute Force'] = /[A-Za-z0-9,\s]*(brute(\s|-)force|backtracking)[A-Za-z0-9,\s]*/gi;
+topics_regex['Greedy'] = /[A-Za-z0-9,\s]*(greedy)[A-Za-z0-9,\s]*/gi;
+
 
 var topics = [
 	{name: \"BFS/DFS\"},
 	{name: \"Shortest Path\"},
 	{name: \"Minimum Spanning Tree\"},
-	{name: \"Number Theory\"}
+	{name: \"Number Theory\"},
+	{name: \"Geometry\"}
+	{name: \"Projective Geometry\"}
+	{name: \"Dynamic Programming\"}
+	{name: \"Union Find\"}
+	{name: \"Flow\"}
+	{name: \"Brute Force\"}
+	{name: \"Greedy\"}
 	];
 $(function() {
 	$(\"#topics_filter\").tokenInput(topics, {
@@ -72,15 +90,14 @@ function filterDifficulty() {
 
 function filterTopics() {
 	var selected_topics = $(\"#topics_filter\").tokenInput(\"get\");
-	if(selected_topics.length == 0) {
+	if(selected_topics.length === 0) {
 		return;
 	}
 	
 	$(\".list tbody tr\").each(function() {
 	   var found = false;
-	   for (var item in selected_topics) {
-		console.log($(this).find(\"td:nth-child(6)\").text().match(topics_regex[item]));
-		if($(this).find(\"td:nth-child(6)\").test().match(topics_regex[item]).length > 0) {
+	   for (var i=0;i<selected_topics.length;i++) {
+		if(topics_regex[selected_topics[i].name].exec($(this).find(\"td:nth-child(6)\").text()) !== null) {
 			found = true;
 			break;
 		}
@@ -102,13 +119,10 @@ echo "<button onClick='javascript:resetAll();'>Reset Filter</button>";
 <option value='Number Theory'>
 <option value='Geometry'>
 <option value='Projective Geometry'>
-<option value='Segment Tree'>
 <option value='Dynamic Programming'>
 <option value='Flow'>
 <option value='Brute Force'>
-<option value='Backtracking'>
 <option value='Binary Search'>
-<option value='Suffix Array'>
 <option value='Trie'>
 <option value='Big Integer'>
 <option value='Union Find'>
