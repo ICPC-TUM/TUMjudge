@@ -607,7 +607,7 @@ function initFavouriteTeams() {
  * 
  **/
 function setupNewsNotification() {
-  var url = "https://icpc.in.tum.de/news/latest-timestamp";
+  var url = "https://icpc.tum.de/news/latest-timestamp";
   
   $.getJSON(url, function(data) {
       var lastVisit = getCookie("lastNewsVisit");
