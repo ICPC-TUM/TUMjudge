@@ -54,7 +54,7 @@ $(function() {
 
 function resetFilter() {
 	//Reset table visibility
-	$(\".list:first tbody tr\").each(function(){$(this).css(\"display\",\"table-row\")});
+	$(\".list tbody tr\").each(function(){\$(this).css(\"display\",\"table-row\")});
 }
 
 function resetAll() {
@@ -76,11 +76,11 @@ function filterTopics() {
 		return;
 	}
 	
-	$(\".list:first tbody tr\").each(function() {
+	$(\".list tbody tr\").each(function() {
 	   var found = false;
 	   for (var item in selected_topics) {
-		console.log($(this).find(\"td:nth-child(5)\").html().match(topics_regex[item]));
-		if($(this).find(\"td:nth-child(5)\").html().match(topics_regex[item]).length > 0) {
+		console.log($(this).find(\"td:nth-child(6)\").text().match(topics_regex[item]));
+		if($(this).find(\"td:nth-child(6)\").test().match(topics_regex[item]).length > 0) {
 			found = true;
 			break;
 		}
