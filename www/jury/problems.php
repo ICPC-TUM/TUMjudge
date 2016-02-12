@@ -31,6 +31,46 @@ if ( count($cids)!=0 ) {
 	$activecontests = array();
 }
 
+echo "<script language='javascript'>
+var topics = [
+{value:'BFS/DFS', label:'DFS/BFS'}
+];
+$('#topics_filter').tokenfield('setTokens', topics);
+</script>";
+
+echo "<form id='problem_filter' name='problem_filter'>";
+echo "<input list='topics' name='topics_filter' placeholder='Enter Topics here'>";
+/*echo "<datalist id='topics'>
+<option value='DFS/BFS'>
+<option value='Shortest Path'>
+<option value='Minimum Spanning Tree'>
+<option value='Number Theory'>
+<option value='Geometry'>
+<option value='Projective Geometry'>
+<option value='Segment Tree'>
+<option value='Dynamic Programming'>
+<option value='Flow'>
+<option value='Brute Force'>
+<option value='Backtracking'>
+<option value='Binary Search'>
+<option value='Suffix Array'>
+<option value='Trie'>
+<option value='Big Integer'>
+<option value='Union Find'>
+<option value='Greedy'>
+</datalist>";
+*/
+
+echo "<select multiple name='difficulty_filter'>";
+echo "<option value='no brainer'>No-Brainer</option>
+<option value='easy'>Easy</option>
+<option value='medium'>Medium</option>
+<option value='hard'>Hard</option>
+</datalist>";
+
+echo "<button type='button' name='filter_submit' id='filter_submit'   onClick('javascript:filter_problems()')>Filter</button";
+echo "</form>";
+
 if( $res->count() == 0 ) {
 	echo "<p class=\"nodata\">No problems defined</p>\n\n";
 } else {
