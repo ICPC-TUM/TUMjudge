@@ -33,25 +33,41 @@ if ( count($cids)!=0 ) {
 }
 
 echo "<script type='text/javascript'>
+var topics = [
+	{name: \"BFS/DFS\",regex:\"\"},
+	{name: \"Shortest Path\",regex:\"\"},
+	{name: \"Minimum Spanning Tree\",regex:\"\"},
+	{name: \"Number Theory\",regex:\"\"}
+	];
 $(function() {
-	$(\"#topics_filter\").tokenInput([
-                {id: 7, name: \"Ruby\"},
-                {id: 11, name: \"Python\"},
-                {id: 13, name: \"JavaScript\"},
-                {id: 17, name: \"ActionScript\"},
-                {id: 19, name: \"Scheme\"},
-                {id: 23, name: \"Lisp\"},
-                {id: 29, name: \"C#\"},
-                {id: 31, name: \"Fortran\"},
-                {id: 37, name: \"Visual Basic\"},
-                {id: 41, name: \"C\"},
-                {id: 43, name: \"C++\"},
-                {id: 47, name: \"Java\"}
-            ]);
+	$(\"#topics_filter\").tokenInput(topics, {
+	  allowFreeTagging:true, 
+	  tokenValue: 'name',
+	  preventDuplicates: true,
+          hintText: 'Add topic to search for',
+          searchingText: 'searching topics...',
+	});
 });
+
+function filter_problems() {
+	var selected_topics = $(\"#topics_filter\").tokenInput(\"get\");
+	$(\".list:first tbody tr\").each(function() {
+	   var found = false;
+	   for each (var item in selected_topics) {
+		if($(this).find(\"td:nth-child(5)\").html().indexOf(item) > -1) {
+			found = true;
+			break;
+		}
+	   }
+	   if(!found) {
+		 $(this).css(\"display\",\"none\");
+	   }
+	});
+}
 </script>";
 
 echo "<input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>";
+echo "<button onClick='javascript:filter_problems();'>Filter</button>";
 /*echo "<datalist id='topics'>
 <option value='DFS/BFS'>
 <option value='Shortest Path'>
