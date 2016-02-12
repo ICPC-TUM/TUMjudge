@@ -9,6 +9,7 @@
 require('init.php');
 $title = 'Problems';
 
+$problem_filter = true;
 require(LIBWWWDIR . '/header.php');
 
 echo "<h1>Problems</h1>\n\n";
@@ -31,15 +32,16 @@ if ( count($cids)!=0 ) {
 	$activecontests = array();
 }
 
-echo "<script language='javascript'>
-var topics = [
-{value:'BFS/DFS', label:'DFS/BFS'}
-];
-$('#topics_filter').tokenfield('setTokens', topics);
+echo "<script type='text/javascript'>
+$(function() {
+	var topics = [
+	  {value:'BFS/DFS', label:'DFS/BFS'}
+	  ];
+	$('#topics_filter').tokenfield('setTokens', topics);
+});
 </script>";
 
-echo "<form id='problem_filter' name='problem_filter'>";
-echo "<input list='topics' name='topics_filter' placeholder='Enter Topics here'>";
+echo "<input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>";
 /*echo "<datalist id='topics'>
 <option value='DFS/BFS'>
 <option value='Shortest Path'>
@@ -61,15 +63,6 @@ echo "<input list='topics' name='topics_filter' placeholder='Enter Topics here'>
 </datalist>";
 */
 
-echo "<select multiple name='difficulty_filter'>";
-echo "<option value='no brainer'>No-Brainer</option>
-<option value='easy'>Easy</option>
-<option value='medium'>Medium</option>
-<option value='hard'>Hard</option>
-</datalist>";
-
-echo "<button type='button' name='filter_submit' id='filter_submit'   onClick('javascript:filter_problems()')>Filter</button";
-echo "</form>";
 
 if( $res->count() == 0 ) {
 	echo "<p class=\"nodata\">No problems defined</p>\n\n";

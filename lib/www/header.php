@@ -57,6 +57,11 @@ if ( IS_JURY ) {
 		echo "<link rel=\"stylesheet\" href=\"../token-input.css\" type=\"text/css\" />";
 		echo "<script type=\"text/javascript\" src=\"../js/jquery.tokeninput.min.js\"></script>\n";
 	}
+	
+	if (isset($problem_filter)) {
+		echo "<link rel=\"stylesheet\" href=\"../bootstrap.tokenfield.css\" type=\"text/css\" />";
+		echo "<script type=\"text/javascript\" src=\"../js/bootstrap.tokenfield.js\"></script>\n";
+	}
 	echo "<script type=\"text/javascript\" src=\"" .
 		"../js/sorttable.js\"></script>\n";
 }
