@@ -69,6 +69,7 @@ $(function() {
           onAdd: filterProblems,
           onDelete: filterProblems
 	});
+	$(\"#problem_filter_container\").css(\"display\",\"none\");
 });
 
 function resetFilter() {
@@ -155,7 +156,7 @@ function filterTopics() {
 }
 
 function getFilterMode() {
-	return $(\"#filterMode option:selected\" ).value();
+	return $(\"#filterMode option:selected\" ).val();
 }
 
 function toggleFilter() {
@@ -172,9 +173,9 @@ echo "<a href='javascript:toggleFilter();'>Filter</a><br />";
 echo <<<END
 <div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:block;'>
   <label for="filterMode">Filter mode:</label>
-  <select id="filterMode">
-    <option value='all' onClick='javascript:filterProblems()'>Match All</option>
-    <option value='one' onClick='javascript:filterProblems()'>Match One</option>
+  <select id="filterMode" onChange='javascript:filterProblems()'>
+    <option value='all'>Match All</option>
+    <option value='one' selected>Match One</option>
   </select>  
   <br />
   <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
