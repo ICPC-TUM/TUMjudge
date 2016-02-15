@@ -183,11 +183,6 @@ echo <<<END
   <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy" onClick='javascript:filterProblems()' checked>Easy</label>
   <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium" onClick='javascript:filterProblems()' checked>Medium</label>
   <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard" onClick='javascript:filterProblems()' checked>Hard</label>
-  
-  <br />
-  <br />
-  <button onClick='javascript:filterProblems();'>Filter</button>
-  <button onClick='javascript:resetAll();'>Reset Filter</button>
 </div>
 END;
 /*echo "<datalist id='topics'>
