@@ -77,6 +77,7 @@ function resetFilter() {
 
 function resetAll() {
 	$(\"#topics_filter\").tokenInput(\"clear\");
+	resetFilter();
 }
 
 function filterProblems() {
@@ -85,7 +86,34 @@ function filterProblems() {
 }
 
 function filterDifficulty() {
+	var difficultyRegex = new Array();
+	var sum = 0;
+	if($('#filter_easy').selected()) {
+	      difficultyRegex[sum++] =  /(very(\s|-))?easy|no(\s|-)brainer/gi;
+	}
 	
+	if($('#filter_medium').selected()) {
+	      difficultyRegex[sum++] =  /medium/gi;
+	}
+	
+	if($('#filter_hard').selected()) {
+	      difficultyRegex[sum++] =  /(very(\s|-))?hard/gi;
+	}
+	
+	if(sum == 0) return;
+	
+	$(\".list tbody tr\").each(function() {
+		var found = false;
+		for (var i=0;i<difficultyRegex.length;i++) {
+		      if(difficultyRegex[i].exec($(this).find(\"td:nth-child(5)\").text()) !== null) {
+			      found = true;
+			      break;
+		      }
+		}
+		if(!found) {
+		      $(this).css(\"display\",\"none\");
+		}	
+	});
 }
 
 function filterTopics() {
@@ -107,11 +135,31 @@ function filterTopics() {
 	   }
 	});
 }
+
+function toggleFilter() {
+      if($('#problem_filter_container').css('display') != 'none') {
+	  $('#problem_filter_container').css('display','none');
+      } else {
+	  $('#problem_filter_container').css('display','initial');
+      }
+}
+
 </script>";
 
-echo "<input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>";
-echo "<button onClick='javascript:filterProblems();'>Filter</button>";
-echo "<button onClick='javascript:resetAll();'>Reset Filter</button>";
+echo "<a href='javascript:toggleFilter();'>Filter</a>"
+echo <<<END
+<div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:hidden;'>
+  <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
+  
+  <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy">Easy</label>
+  <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium">Medium</label>
+  <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard">Hard</label>
+  
+  <br />
+  <button onClick='javascript:filterProblems();'>Filter</button>
+  <button onClick='javascript:resetAll();'>Reset Filter</button>
+</div>
+END;
 /*echo "<datalist id='topics'>
 <option value='DFS/BFS'>
 <option value='Shortest Path'>
