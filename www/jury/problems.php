@@ -146,7 +146,7 @@ function toggleFilter() {
 
 </script>";
 
-echo "<a href='javascript:toggleFilter();'>Filter</a>"
+echo "<a href='javascript:toggleFilter();'>Filter</a>";
 echo <<<END
 <div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:hidden;'>
   <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
