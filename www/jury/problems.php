@@ -129,11 +129,9 @@ function filterTopics() {
 	$(\".list tbody tr\").each(function() {
 	   var found = (getFilterMode() == \"all\");
 	   for (var i=0;i<selected_topics.length;i++) {
-		var regex = null;
-		if(topics_regex[selected_topics[i].name] !== null) {
-		    regex = topics_regex[selected_topics[i].name];
-		} else {
-		    regex = new Regex(selected_topics[i].name);
+		var regex = topics_regex[selected_topics[i].name];;
+		if(regex === undefined) {
+		    regex = new RegExp(selected_topics[i].name);
 		}
 		
 		if(regex.exec($(this).find(\"td:nth-child(6)\").text()) !== null || regex.exec($(this).find(\"td:nth-child(2)\").text()) !== null) {
