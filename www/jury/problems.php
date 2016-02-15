@@ -155,34 +155,35 @@ function filterTopics() {
 }
 
 function getFilterMode() {
-	return $(\"#filterMode option:selected\" ).text();
+	return $(\"#filterMode option:selected\" ).value();
 }
 
 function toggleFilter() {
       if($('#problem_filter_container').css('display') != 'none') {
 	  $('#problem_filter_container').css('display','none');
       } else {
-	  $('#problem_filter_container').css('display','initial');
+	  $('#problem_filter_container').css('display','block');
       }
 }
 
 </script>";
 
-echo "<a href='javascript:toggleFilter();'>Filter</a>";
+echo "<a href='javascript:toggleFilter();'>Filter</a><br />";
 echo <<<END
-<div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:hidden;'>
+<div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:block;'>
+  <label for="filterMode">Filter mode:</label>
+  <select id="filterMode">
+    <option value='all' onClick='javascript:filterProblems()'>Match All</option>
+    <option value='one' onClick='javascript:filterProblems()'>Match One</option>
+  </select>  
+  <br />
   <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
   
-  <label for="filterMode">Filter mode:</label>
-  <select class="form-control" id="filterMode">
-    <option value='all'>Match All</option>
-    <option value='one'>Match One</option>
-  </select>  
+  <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy" onClick='javascript:filterProblems()' checked>Easy</label>
+  <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium" onClick='javascript:filterProblems()' checked>Medium</label>
+  <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard" onClick='javascript:filterProblems()' checked>Hard</label>
   
-  <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy" checked>Easy</label>
-  <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium" checked>Medium</label>
-  <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard" checked>Hard</label>
-  
+  <br />
   <br />
   <button onClick='javascript:filterProblems();'>Filter</button>
   <button onClick='javascript:resetAll();'>Reset Filter</button>
