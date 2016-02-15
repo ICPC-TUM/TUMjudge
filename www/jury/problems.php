@@ -66,6 +66,8 @@ $(function() {
 	  preventDuplicates: true,
           hintText: 'Add topic to search for',
           searchingText: 'searching topics...',
+          onAdd: filterProblems,
+          onDelete: filterProblems
 	});
 });
 
@@ -82,6 +84,7 @@ function resetAll() {
 function filterProblems() {
 	resetFilter()
 	filterTopics();
+	filterDifficulty();
 }
 
 function filterDifficulty() {
@@ -123,21 +126,36 @@ function filterTopics() {
 	}
 	
 	$(\".list tbody tr\").each(function() {
-	   var found = false;
+	   var found = (getFilterMode() == \"all\");
 	   for (var i=0;i<selected_topics.length;i++) {
+		var regex = null;
 		if(topics_regex[selected_topics[i].name] !== null) {
-		    if(topics_regex[selected_topics[i].name].exec($(this).find(\"td:nth-child(6)\").text()) !== null || topics_regex[selected_topics[i].name].exec($(this).find(\"td:nth-child(2)\").text()) !== null) {
-			found = true;
-			break;
+		    regex = topics_regex[selected_topics[i].name];
+		} else {
+		    regex = new Regex(selected_topics[i].name);
+		}
+		
+		if(regex.exec($(this).find(\"td:nth-child(6)\").text()) !== null || regex.exec($(this).find(\"td:nth-child(2)\").text()) !== null) {
+		    if(getFilterMode() == \"one\") {
+			  found = true;
+			  break;
 		    }
 		} else {
-		    var regex = new Regex(\"/\" + selected_topics[i].name + \"/i\");
+		    if(getFilterMode() == \"all\") {
+			  found = false;
+			  break;
+		    }
 		}
 	   }
+	   
 	   if(!found) {
 		 $(this).css(\"display\",\"none\");
 	   }
 	});
+}
+
+function getFilterMode() {
+	return $(\"#filterMode option:selected\" ).text();
 }
 
 function toggleFilter() {
@@ -154,6 +172,12 @@ echo "<a href='javascript:toggleFilter();'>Filter</a>";
 echo <<<END
 <div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:hidden;'>
   <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
+  
+  <label for="filterMode">Filter mode:</label>
+  <select class="form-control" id="filterMode">
+    <option value='all'>Match All</option>
+    <option value='one'>Match One</option>
+  </select>  
   
   <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy" checked>Easy</label>
   <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium" checked>Medium</label>
