@@ -34,18 +34,17 @@ if ( count($cids)!=0 ) {
 
 echo "<script type='text/javascript'>
 var topics_regex = new Array();
-topics_regex['BFS/DFS'] = /[A-Za-z0-9,\s]*(((Depth|Breadth)(\s|-)First(\s|-)Search)|((B|D)FS))[A-Za-z0-9,\s]*/gi;
-topics_regex['Shortest Path'] = /[A-Za-z0-9,\s]*((Shortest(\s|-)Path)|Dijkstra|Bellman(\s|-)Ford)[A-Za-z0-9,\s]*/gi;
-topics_regex['Minimum Spanning Tree'] = /[A-Za-z0-9,\s]*((Minimum(\s|-)Spanning(\s|-)Tree)|Prim|Kruskal)[A-Za-z0-9,\s]*/gi;
-topics_regex['Number Theory'] = /[A-Za-z0-9,\s]*((Chinese(\s|-)Remainder(\s|-)Theorem)|Number(\s|-)Theory|gcd|lcm|Euclidean)[A-Za-z0-9,\s]*/gi;
-topics_regex['Geometry'] = /^((?!.*projective(\s|-)).*(geometry|convex(\s|-)hull).*)*$/gi;
-topics_regex['Projective Geometry'] = /[A-Za-z0-9,\s]*(projective(\s|-)geometry)[A-Za-z0-9,\s]*/gi;
-topics_regex['Dynamic Programming'] = /[A-Za-z0-9,\s]*(dynamic(\s|-)programming)[A-Za-z0-9,\s]*/gi;
-topics_regex['Union Find'] = /[A-Za-z0-9,\s]*(union(\s|-)find)[A-Za-z0-9,\s]*/gi;
-topics_regex['Flow'] = /max(imum)?(\s|-)flow|min(imum)?(\s|-)cut|push(\s|-)relabel|goldberg(\s|-)tarjan|dinic/gi;
-topics_regex['Brute Force'] = /[A-Za-z0-9,\s]*(brute(\s|-)force|backtracking)[A-Za-z0-9,\s]*/gi;
-topics_regex['Greedy'] = /[A-Za-z0-9,\s]*(greedy)[A-Za-z0-9,\s]*/gi;
-
+topics_regex['BFS/DFS'] = /[A-Za-z0-9,\s]*(((Depth|Breadth)(\s|-)First(\s|-)Search)|((B|D)FS))[A-Za-z0-9,\s]*/i;
+topics_regex['Shortest Path'] = /[A-Za-z0-9,\s]*((Shortest(\s|-)Path)|Dijkstra|Bellman(\s|-)Ford)[A-Za-z0-9,\s]*/i;
+topics_regex['Minimum Spanning Tree'] = /[A-Za-z0-9,\s]*((Minimum(\s|-)Spanning(\s|-)Tree)|Prim|Kruskal)[A-Za-z0-9,\s]*/i;
+topics_regex['Number Theory'] = /[A-Za-z0-9,\s]*((Chinese(\s|-)Remainder(\s|-)Theorem)|Number(\s|-)Theory|gcd|lcm|Euclidean)[A-Za-z0-9,\s]*/i;
+topics_regex['Geometry'] = /^((?!.*projective(\s|-)).*(geometry|convex(\s|-)hull).*)*$/i;
+topics_regex['Projective Geometry'] = /[A-Za-z0-9,\s]*(projective(\s|-)geometry)[A-Za-z0-9,\s]*/i;
+topics_regex['Dynamic Programming'] = /[A-Za-z0-9,\s]*(dynamic(\s|-)programming)[A-Za-z0-9,\s]*/i;
+topics_regex['Union Find'] = /[A-Za-z0-9,\s]*(union(\s|-)find)[A-Za-z0-9,\s]*/i;
+topics_regex['Flow'] = /max(imum)?(\s|-)flow|min(imum)?(\s|-)cut|push(\s|-)relabel|goldberg(\s|-)tarjan|dinic/i;
+topics_regex['Brute Force'] = /[A-Za-z0-9,\s]*(brute(\s|-)force|backtracking)[A-Za-z0-9,\s]*/i;
+topics_regex['Greedy'] = /[A-Za-z0-9,\s]*(greedy)[A-Za-z0-9,\s]*/i;
 
 var topics = [
 	{name: \"BFS/DFS\"},
@@ -88,24 +87,25 @@ function filterProblems() {
 function filterDifficulty() {
 	var difficultyRegex = new Array();
 	var sum = 0;
-	if($('#filter_easy').selected()) {
-	      difficultyRegex[sum++] =  /(very(\s|-))?easy|no(\s|-)brainer/gi;
+	if($('#filter_easy').prop(\"checked\")) {
+	      difficultyRegex[sum++] =  /(very(\s|-))?easy|no(\s|-)brainer/i;
 	}
 	
-	if($('#filter_medium').selected()) {
-	      difficultyRegex[sum++] =  /medium/gi;
+	if($('#filter_medium').prop(\"checked\")) {
+	      difficultyRegex[sum++] =  /medium/i;
 	}
 	
-	if($('#filter_hard').selected()) {
-	      difficultyRegex[sum++] =  /(very(\s|-))?hard/gi;
+	if($('#filter_hard').prop(\"checked\")) {
+	      difficultyRegex[sum++] =  /(very(\s|-))?hard/i;
 	}
 	
-	if(sum == 0) return;
+	if(sum == 3) return;
 	
 	$(\".list tbody tr\").each(function() {
 		var found = false;
 		for (var i=0;i<difficultyRegex.length;i++) {
-		      if(difficultyRegex[i].exec($(this).find(\"td:nth-child(5)\").text()) !== null) {
+		      var test = difficultyRegex[i].exec(\$(this).find(\"td:nth-child(3)\").text());
+		      if(test !== null) {
 			      found = true;
 			      break;
 		      }
@@ -151,9 +151,9 @@ echo <<<END
 <div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:hidden;'>
   <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
   
-  <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy">Easy</label>
-  <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium">Medium</label>
-  <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard">Hard</label>
+  <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy" checked>Easy</label>
+  <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium" checked>Medium</label>
+  <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard" checked>Hard</label>
   
   <br />
   <button onClick='javascript:filterProblems();'>Filter</button>
