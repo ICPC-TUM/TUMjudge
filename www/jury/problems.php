@@ -125,9 +125,13 @@ function filterTopics() {
 	$(\".list tbody tr\").each(function() {
 	   var found = false;
 	   for (var i=0;i<selected_topics.length;i++) {
-		if(topics_regex[selected_topics[i].name].exec($(this).find(\"td:nth-child(6)\").text()) !== null) {
+		if(topics_regex[selected_topics[i].name] !== null) {
+		    if(topics_regex[selected_topics[i].name].exec($(this).find(\"td:nth-child(6)\").text()) !== null || topics_regex[selected_topics[i].name].exec($(this).find(\"td:nth-child(2)\").text()) !== null) {
 			found = true;
 			break;
+		    }
+		} else {
+		    var regex = new Regex(\"/\" + selected_topics[i].name + \"/i\");
 		}
 	   }
 	   if(!found) {
