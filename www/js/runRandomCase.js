@@ -2,7 +2,8 @@ var uuid = null;
 var fuzzingserver = "http://judge:12477";
 
 function sendSubmission() {
-	console.log("Trying to send submission to fuzzing server");
+	$("#rrcStartButton").prop("disabled", true);
+	$("#rrcStartButton").text("Searching...");
 	
 	var main = "";
 	var source = {};
@@ -55,6 +56,8 @@ function sendSubmission() {
 		},
 		error: function(response) {
 			warn("Error in fuzzing request.");
+			$("#rrcStartButton").prop("disabled", false);
+			$("#rrcStartButton").text("Search for a failing testcase");
 		}
 	});
 }
@@ -74,6 +77,13 @@ $.ajax({
 		setTimeout(update, 2000);
           } else {
 		reportResult(response);
+		//Hide log when done
+		if($("#rrcLogContainer").css("display") != "none") {
+			toggleLog();
+		}
+		$("#rrcStartButton").prop("disabled", false);
+		$("#rrcStartButton").text("Search for a failing testcase");
+		
           }
         } else {
           console.log("Unsuccessful update poll " + JSON.stringify(response, null, 2));
@@ -81,6 +91,8 @@ $.ajax({
       },
       error: function(response) {
         warn("Error in update request.");
+	$("#rrcStartButton").prop("disabled", false);
+	$("#rrcStartButton").text("Search for a failing testcase");
       }
     });
 }
@@ -91,7 +103,6 @@ function warm (message) {
 }
 
 function reportResult(response) {
-	
 	if(Object.keys(response.state.cases.rte).length + Object.keys(response.state.cases.wa).length > 0) {
 		resulthtml = "<table class='table-hover rrcResults'>";
 		resulthtml += "<thead><tr><th>Input</th><th>Expected Output</th><th>Program Output</th><th>Error Type</th></tr></thead>";
@@ -132,18 +143,10 @@ function nl2br(text) {
 
 function toggleLog() {
 	if($("#rrcLogButton").text() == "Hide Log") {
-		$("#rrcLog").css("display","none");
+		$("rrcLogContainer").css("display","none");
 		$("#rrcLogButton").text("Show Log");
 	} else {
-		$("#rrcLog").css("display","block");
+		$("rrcLogContainer").css("display","block");
 		$("#rrcLogButton").text("Hide Log");
 	}
-}
-
-function updateSubmission(id) {
-	
-}
-
-function cancelSubmission(id) {
-	
 }
