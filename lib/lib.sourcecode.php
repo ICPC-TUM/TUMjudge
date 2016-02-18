@@ -202,6 +202,11 @@ function presentSourceCode($id, $teamid=-1) {
 	$submission = $DB->q("MAYBETUPLE SELECT * FROM submission s
 			      WHERE submitid = %i $add",$id);
 	
+	$problem = $DB->q("MAYBETUPLE SELECT name FROM problems p
+			      WHERE probid = %i",$submission['probid']);
+	
+	$problemName =  str_replace(' ', '', str2lower($problem['name']));
+	
 	if ( empty($submission) ) error ("Submission $id not found");
 
 	// Download was requested
@@ -220,6 +225,9 @@ function presentSourceCode($id, $teamid=-1) {
 	}
 
 	$title = "Source: s$id";
+	if(IS_JURY) {
+		$runRandomCase = true;
+	}
 	require(LIBWWWDIR . '/header.php');
 
 	// display highlighted content of the source files
@@ -241,8 +249,17 @@ function presentSourceCode($id, $teamid=-1) {
 	{
 		$html .= presentSource($sourcedata, $submission['langid']);
 	}
+	
+	$html .= '<div class="tabbertab">' .
+		'<h2 class="filename">Run Random Case</h2>' . 
+		'<div id="runrandomcaseContainer"><button onClick="javascript:sendSubmission()">Search for a failing testcase</button>'
+		'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
+		'</div>' . 
+		'</div>' .
 	$html .= "</div>";
 
+	
+	
 	// display diff between previous and/or original submission
 
 	if ($submission['origsubmitid']) {
@@ -295,8 +312,8 @@ function presentSourceCode($id, $teamid=-1) {
 	}
 	if ( $submission['origsubmitid'] ) {
 		echo "<p><a href=\"#origdiff\">Go to diff to original submission</a></p>\n\n";
-	}
-
+	}	
+	
 	echo $html;
 
 	require(LIBWWWDIR . '/footer.php');

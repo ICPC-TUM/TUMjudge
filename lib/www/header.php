@@ -57,6 +57,12 @@ if ( IS_JURY ) {
 		echo "<link rel=\"stylesheet\" href=\"../token-input.css\" type=\"text/css\" />";
 		echo "<script type=\"text/javascript\" src=\"../js/jquery.tokeninput.min.js\"></script>\n";
 	}
+	
+	if(isset($runRandomCase)) {
+		echo "<link rel=\"stylesheet\" href=\"runRandomCase.css\" type=\"text/css\" />\n";
+		echo "<script type=\"text/javascript\" src=\"../js/runRandomCase.js\"></script>\n";
+	}
+	
 	echo "<script type=\"text/javascript\" src=\"" .
 		"../js/sorttable.js\"></script>\n";
 }
