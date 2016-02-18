@@ -256,7 +256,7 @@ function presentSourceCode($id, $teamid=-1) {
 		'<button onClick="javascript:toggleLog();" id="rrcLogButton">Hide Log</button><br /><br />'.
 		'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
 		'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcSubmissionLanguage">' .
-		'<div id="rrcLogContainer">'
+		'<div id="rrcLogContainer">' .
 		'<b>Server-Log:</b><br />' . 
 		'<div id="rrcLog"></div>'.
 		'</div>'.
