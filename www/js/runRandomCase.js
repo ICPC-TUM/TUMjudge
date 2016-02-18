@@ -122,7 +122,7 @@ function reportResult(response) {
 		
 		$("#rrcResult").append(resulthtml);
 	} else {
-		$("#rrcResult").append("<p>Sorry, no errors found!</p>");
+		$("#rrcResult").html("<p>Sorry, no errors found!</p>");
 	}
 }
 
