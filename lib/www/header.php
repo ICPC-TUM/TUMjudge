@@ -59,7 +59,7 @@ if ( IS_JURY ) {
 	}
 	
 	if(isset($runRandomCase)) {
-		echo "<link rel=\"stylesheet\" href=\"runRandomCase.css\" type=\"text/css\" />\n";
+		echo "<link rel=\"stylesheet\" href=\"../css/runRandomCase.css\" type=\"text/css\" />\n";
 		echo "<script type=\"text/javascript\" src=\"../js/runRandomCase.js\"></script>\n";
 	}
 	

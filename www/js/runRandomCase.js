@@ -73,7 +73,7 @@ $.ajax({
       success: function(response) {
         if (response.success) {
           if (!response.state.finished) {
-		$("#rrcLog").append(response.state.log + "\n");  
+		$("#rrcLog").append(nl2br(response.state.log) + "<br />");  
 		  
             setTimeout(update, 2000);
           } else {
