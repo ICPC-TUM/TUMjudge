@@ -35,7 +35,7 @@ function sendSubmission() {
 	if(lang == "cpp") lang = "C++";
 	
 	var request = {
-	"problem": $("#rccProblemName").val(),
+	"problem": problemName,
 	"lang":lang,
 	"main": main,
 	"sources": source
@@ -92,13 +92,13 @@ $.ajax({
 function reportResult(response) {
 	
 	if(Object.keys(response.state.cases.rte).length + Object.keys(response.state.cases.wa).length > 0) {
-		resulthtml = "<table>";
+		resulthtml = "<table class='table-hover rrcResults'>";
 		resulthtml += "<thead><tr><th>Input</th><th>Expected Output</th><th>Program Output</th><th>Error Type</th></tr></thead>";
 		
 		for(var key in response.state.cases.rte) {
 			resulthtml += "<tr>";
 			
-			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.rte[key][key+".in"]) + "</td>>";
+			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.rte[key][key+".in"]) + "</td>";
 			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.rte[key][key+".ans"]) + "</td>";
 			resulthtml += "<td class='rrcProgOutput'>" + nl2br(response.state.cases.rte[key][key+".out"]) + "</td>";
 			resulthtml += "<td class='rrcErrorType'>Run-Error</td>";

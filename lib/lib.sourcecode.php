@@ -254,7 +254,7 @@ function presentSourceCode($id, $teamid=-1) {
 		'<h2 class="filename">Run Random Case</h2>' . 
 		'<div id="runrandomcaseContainer"><button onClick="javascript:sendSubmission()">Search for a failing testcase</button>' .
 		'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
-		'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcProblemName">' .
+		'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcSubmissionLanguage">' .
 		'<div id="rrcLog"></div>'.
 		'<div id="rrcResult"></div>'.
 		'</div>' . 
