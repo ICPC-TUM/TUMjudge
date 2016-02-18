@@ -249,22 +249,22 @@ function presentSourceCode($id, $teamid=-1) {
 	{
 		$html .= presentSource($sourcedata, $submission['langid']);
 	}
-	
-	$html .= '<div class="tabbertab">' .
-		'<div id="rrcContainer">' .
-		'<h2 class="filename">Run Random Case</h2>' . 
-		'<button onClick="javascript:sendSubmission()" id="rrcStartButton">Search for a failing testcase</button>' .
-		'<button onClick="javascript:toggleLog();" id="rrcLogButton">Hide Log</button>'.
-		'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
-		'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcSubmissionLanguage">' .
-		'<div id="rrcLogContainer">' .
-		'<b>Server-Log:</b><br />' . 
-		'<div id="rrcLog"></div>'.
-		'</div>'.
-		'<div id="rrcResult"></div>'.
-		'</div>' .
-		'</div>';
-
+	if (IS_JURY) {
+		$html .= '<div class="tabbertab">' .
+			'<div id="rrcContainer">' .
+			'<h2 class="filename">Run Random Case</h2>' . 
+			'<button onClick="javascript:sendSubmission()" id="rrcStartButton">Search for a failing testcase</button>' .
+			'<button onClick="javascript:toggleLog();" id="rrcLogButton">Hide Log</button>'.
+			'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
+			'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcSubmissionLanguage">' .
+			'<div id="rrcLogContainer">' .
+			'<b>Server-Log:</b><br />' . 
+			'<div id="rrcLog"></div>'.
+			'</div>'.
+			'<div id="rrcResult"></div>'.
+			'</div>' .
+			'</div>';
+	}
 	// display diff between previous and/or original submission
 
 	if ($submission['origsubmitid']) {
@@ -377,6 +377,11 @@ function editSourceCode($id, $teamid) {
 	$submission = $DB->q('MAYBETUPLE SELECT * FROM submission s
 			      WHERE submitid = %i', $id);
 
+	$problem = $DB->q("MAYBETUPLE SELECT name FROM problem p
+			      WHERE probid = %i",$submission['probid']);
+	
+	$problemName =  str_replace(' ', '', strtolower($problem['name']));
+			      
 	if ( empty($submission) ) error ("Submission $id not found");
 
 	$title = 'Edit Source: s' . $id;
@@ -421,8 +426,24 @@ function editSourceCode($id, $teamid) {
 			'</script>';
 		echo "</div>\n";
 	}
+	if (IS_JURY) {
+		echo '<div class="tabbertab">' .
+			'<div id="rrcContainer">' .
+			'<h2 class="filename">Run Random Case</h2>' . 
+			'<button onClick="javascript:sendSubmission()" id="rrcStartButton">Search for a failing testcase</button>' .
+			'<button onClick="javascript:toggleLog();" id="rrcLogButton">Hide Log</button>'.
+			'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
+			'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcSubmissionLanguage">' .
+			'<div id="rrcLogContainer">' .
+			'<b>Server-Log:</b><br />' . 
+			'<div id="rrcLog"></div>'.
+			'</div>'.
+			'<div id="rrcResult"></div>'.
+			'</div>' .
+			'</div>';
+	}
 	echo "</div>\n";
-
+	
 	$probs = $DB->q('KEYVALUETABLE SELECT probid, name FROM problem
 			INNER JOIN contestproblem USING (probid)
 			WHERE allow_submit = 1 AND cid = %i ORDER BY name', $submission['cid']);
