@@ -33,7 +33,11 @@
 	background: black;
 	color: white;
 	font-family: Monospace;
-	padding: 20px 20px;
+	padding: 10px 20px;
 	line-height: 13pt;
 	font-size: 9pt;
+}
+
+#rrcContainer {
+	margin:20px 0 0 0;
 }

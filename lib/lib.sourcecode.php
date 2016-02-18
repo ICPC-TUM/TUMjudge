@@ -251,6 +251,7 @@ function presentSourceCode($id, $teamid=-1) {
 	}
 	
 	$html .= '<div class="tabbertab">' .
+		'<div id="rrcContainer">' .
 		'<h2 class="filename">Run Random Case</h2>' . 
 		'<div id="runrandomcaseContainer"><button onClick="javascript:sendSubmission()">Search for a failing testcase</button>' .
 		'<button onClick="javascript:toggleLog();" id="rrcLogButton">Hide Log</button><br /><br />'.
@@ -261,11 +262,10 @@ function presentSourceCode($id, $teamid=-1) {
 		'<div id="rrcLog"></div>'.
 		'</div>'.
 		'<div id="rrcResult"></div>'.
-		'</div>' . 
+		'</div>' .
+		'</div>' .
 		'</div>';
 
-	
-	
 	// display diff between previous and/or original submission
 
 	if ($submission['origsubmitid']) {
