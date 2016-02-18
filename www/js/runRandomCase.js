@@ -101,8 +101,8 @@ function warn (message) {
 function reportResult(response) {
 	
 	if(response.state.cases == undefined) {
-		var html = "<p>There was an error (see log file)</p>";
-		$("#rrcResult").append(html);
+		var html = "<p>An unknown error occurred (most likely a compile-error, see log file for details).</p>";
+		$("#rrcResult").html(html);
 		return;
 	}
 	
