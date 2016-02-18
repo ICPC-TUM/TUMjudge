@@ -9,13 +9,8 @@ function sendSubmission() {
 	var source = {};
 	//Get sourcecode from tabs
 	$(".tabberlive:eq(0)>.tabbertab").each(
-		function() {
-			
+		function() {			
 			var filename = $(this).find(".filename").text();
-			
-			//TODO: Figure out a better way to do this
-			if(main == "") 
-				main = filename;
 			
 			if(filename != "Run Random Case") {
 				var code = ace.edit($(this).find(".ace_editor")[0].id).getValue();
@@ -26,18 +21,12 @@ function sendSubmission() {
 	var problemName = $("#rrcProblemName").val();
 	var lang = $("#rrcSubmissionLanguage").val();
 	
-	//TODO: Move to backend
-	if(lang == "java") lang = "Java";
-	if(lang == "cpp") lang = "C++";
-	
 	var request = {
 	"problem": problemName,
 	"lang":lang,
 	"main": main,
 	"sources": source
 	};
-	
-	console.log(request);
 	
 	$.ajax({
 		type: 'POST',
@@ -98,7 +87,7 @@ $.ajax({
 }
 
 //TODO: Better warnings
-function warm (message) {
+function warn (message) {
 	alert(message);
 }
 
