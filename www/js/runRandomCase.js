@@ -111,17 +111,17 @@ function reportResult(response) {
 		for(var key in response.state.cases.wa) {
 			resulthtml += "<tr>";
 			
-			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.wa[key][key+".in"]) + "</td>>";
+			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.wa[key][key+".in"]) + "</td>";
 			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.wa[key][key+".ans"]) + "</td>";
 			
-			if(response.state.cases.wa[key][key+".ans"] != undefined) {
-				var split = response.state.cases.wa[key][key+".ans"].split(" ");
+			if(response.state.cases.wa[key][key+".diffposition"] != undefined) {
+				var split = response.state.cases.wa[key][key+".diffposition"].split(" ");
 				var pos1 = split[0];
 				var pos2 = split[1];
 				
 				var output = response.state.cases.wa[key][key+".out"];
 				
-				resulthtml += "<td class='rrcProgOutput'>" + nl2br(output.substring(0,pos1) + "<b>" + output.substring(pos1, pos2) + "</b>" + output.substring(pos2,output.length)) + "</td>";
+				resulthtml += "<td class='rrcProgOutput'>" + nl2br(output.substring(0,pos1) + "<b>" + output.substring(pos1, pos2+1) + "</b>" + output.substring(pos2+1,output.length)) + "</td>";
 				
 			} else {
 				resulthtml += "<td class='rrcProgOutput'>" + nl2br(response.state.cases.wa[key][key+".out"]) + "</td>";
