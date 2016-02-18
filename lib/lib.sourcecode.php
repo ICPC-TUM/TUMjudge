@@ -253,7 +253,7 @@ function presentSourceCode($id, $teamid=-1) {
 	$html .= '<div class="tabbertab">' .
 		'<h2 class="filename">Run Random Case</h2>' . 
 		'<div id="runrandomcaseContainer"><button onClick="javascript:sendSubmission()">Search for a failing testcase</button>' .
-		'<button onClick="javascript:toggleLog();">Hide Log</button><br />'.
+		'<button onClick="javascript:toggleLog();" id="rrcLogButton">Hide Log</button><br />'.
 		'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
 		'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcSubmissionLanguage">' .
 		'Server-Log:<br />' . 
