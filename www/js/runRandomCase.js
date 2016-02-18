@@ -12,7 +12,7 @@ function sendSubmission() {
 	var main = "";
 	var source = {};
 	//Get sourcecode from tabs
-	$(".tabberlive:eq(0) .tabbertab").each(
+	$(".tabberlive:eq(0)>.tabbertab").each(
 		function() {
 			console.log($(this).find(".ace_editor"));
 			
@@ -23,17 +23,27 @@ function sendSubmission() {
 			if(main == "") 
 				main = filename;
 			
-			var code = ace.edit($(this).find(".ace_editor")[0].id).getValue();
-			source[filename] =  code;
+			if(filename != "Run Random Case") {
+				var code = ace.edit($(this).find(".ace_editor")[0].id).getValue();
+				source[filename] =  code;
+			}
 		});
 	
 	var problemName = $("#rrcProblemName").val();
+	var lang = $("rrcSubmissionLanguage").val();
+	
+	//TODO: Move to backend
+	if(lang == "java") lang = "Java";
+	if(lang == "cpp") lang = "C++";
 	
 	var request = {
-	"problem": problemname,
-	"main": sourcename,
+	"problem": $("#rccProblemName").val(),
+	"lang":lang,
+	"main": main,
 	"sources": source
 	};
+	
+	console.log(request);
 	
 	$.ajax({
 		type: 'POST',
@@ -65,6 +75,8 @@ $.ajax({
       success: function(response) {
         if (response.success) {
           if (!response.state.finished) {
+		$("#rrcLog").append(response.state.log + "\n");  
+		  
             setTimeout(update, 2000);
           } else {
 		reportResult(response);
@@ -80,7 +92,45 @@ $.ajax({
 }
 
 function reportResult(response) {
+	
+	if(Object.keys(response.state.cases.rte).length + Object.keys(response.state.cases.wa).length > 0) {
+		resulthtml = "<table>";
+		resulthtml += "<thead><tr><th>Input</th><th>Expected Output</th><th>Program Output</th><th>Error Type</th></tr></thead>";
+		
+		for(var key in response.state.cases.rte) {
+			resulthtml += "<tr>";
+			
+			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.rte[key][key+".in"]) + "</td>>";
+			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.rte[key][key+".ans"]) + "</td>";
+			resulthtml += "<td class='rrcProgOutput'>" + nl2br(response.state.cases.rte[key][key+".out"]) + "</td>";
+			resulthtml += "<td class='rrcErrorType'>Run-Error</td>";
+			
+			resulthtml += "</tr>";
+		}
+		
+		for(var key in response.state.cases.wa) {
+			resulthtml += "<tr>";
+			
+			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.rte[key][key+".in"]) + "</td>>";
+			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.rte[key][key+".ans"]) + "</td>";
+			resulthtml += "<td class='rrcProgOutput'>" + nl2br(response.state.cases.rte[key][key+".out"]) + "</td>";
+			resulthtml += "<td class='rrcErrorType'>Wrong Answer</td>";
+			
+			resulthtml += "</tr>";
+		}
+		
+		resulthtml += "</table>";
+		
+		$("#rrcResult").append(resulthtml);
+	} else {
+		$("#rrcResult").append("<p>Sorry, no errors found!</p>");
+	}
+	
 	console.log(response);
+}
+
+function nl2br(text) {
+	return text.replace(/\n/g,"<br />");
 }
 
 function updateSubmission(id) {

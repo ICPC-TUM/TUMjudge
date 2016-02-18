@@ -202,10 +202,10 @@ function presentSourceCode($id, $teamid=-1) {
 	$submission = $DB->q("MAYBETUPLE SELECT * FROM submission s
 			      WHERE submitid = %i $add",$id);
 	
-	$problem = $DB->q("MAYBETUPLE SELECT name FROM problems p
+	$problem = $DB->q("MAYBETUPLE SELECT name FROM problem p
 			      WHERE probid = %i",$submission['probid']);
 	
-	$problemName =  str_replace(' ', '', str2lower($problem['name']));
+	$problemName =  str_replace(' ', '', strtolower($problem['name']));
 	
 	if ( empty($submission) ) error ("Submission $id not found");
 
@@ -254,9 +254,11 @@ function presentSourceCode($id, $teamid=-1) {
 		'<h2 class="filename">Run Random Case</h2>' . 
 		'<div id="runrandomcaseContainer"><button onClick="javascript:sendSubmission()">Search for a failing testcase</button>' .
 		'<input type="hidden" value="' . $problemName . '" name="problemName" id="rrcProblemName">' .
+		'<input type="hidden" value="' . $submission['langid'] . '" name="submissionLanguage" id="rrcProblemName">' .
+		'<div id="rrcLog"></div>'.
+		'<div id="rrcResult"></div>'.
 		'</div>' . 
-		'</div>' .
-	$html .= "</div>";
+		'</div>';
 
 	
 	
