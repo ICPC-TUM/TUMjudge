@@ -1,0 +1,16 @@
+
+.rrcResults {
+	width:100%;
+}
+
+.rrcResults tbody td {
+	margin:0 0 20px 0;
+}
+
+.rrcErrorType {
+	width:100px;
+}
+
+.rrcExpOutput {
+	width:100px;
+}

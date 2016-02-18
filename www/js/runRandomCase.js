@@ -14,9 +14,7 @@ function sendSubmission() {
 	//Get sourcecode from tabs
 	$(".tabberlive:eq(0)>.tabbertab").each(
 		function() {
-			console.log($(this).find(".ace_editor"));
 			
-			console.log($(this).find(".filename").text());
 			var filename = $(this).find(".filename").text();
 			
 			//TODO: Figure out a better way to do this
@@ -30,7 +28,7 @@ function sendSubmission() {
 		});
 	
 	var problemName = $("#rrcProblemName").val();
-	var lang = $("rrcSubmissionLanguage").val();
+	var lang = $("#rrcSubmissionLanguage").val();
 	
 	//TODO: Move to backend
 	if(lang == "java") lang = "Java";
