@@ -73,7 +73,7 @@ $.ajax({
       success: function(response) {
         if (response.success) {
           if (!response.state.finished) {
-		$("#rrcLog").append(nl2br(response.state.log) + "<br />");  
+		$("#rrcLog").append(nl2br(response.state.log));  
 		  
             setTimeout(update, 2000);
           } else {
@@ -129,6 +129,16 @@ function reportResult(response) {
 
 function nl2br(text) {
 	return text.replace(/\n/g,"<br />");
+}
+
+function toggleLog() {
+	if($("#rrcLogButton").text() == "Hide Log") {
+		$("#rrcLog").css("display","none");
+		$("#rrcLog").text("Show Log");
+	} else {
+		$("#rrcLog").css("display","block");
+		$("#rrcLog").text("Hide Log");
+	}
 }
 
 function updateSubmission(id) {
