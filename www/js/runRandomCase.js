@@ -1,8 +1,3 @@
-$(function() {
-	
-	
-});
-
 var uuid = null;
 var fuzzingserver = "http://judge:12477";
 
@@ -65,8 +60,6 @@ function sendSubmission() {
 }
 
 function update() {
-console.log("Trying to update...");
-	
 $.ajax({
       type: 'GET',
       url: fuzzingserver + "/submission/" + uuid, 
@@ -74,8 +67,11 @@ $.ajax({
         if (response.success) {
           if (!response.state.finished) {
 		$("#rrcLog").append(nl2br(response.state.log));  
-		  
-            setTimeout(update, 2000);
+		$("#rrcLog").animate({ 
+			scrollTop: $("#rrcLog").prop("scrollHeight")
+		});  
+		
+		setTimeout(update, 2000);
           } else {
 		reportResult(response);
           }
@@ -87,6 +83,11 @@ $.ajax({
         warn("Error in update request.");
       }
     });
+}
+
+//TODO: Better warnings
+function warm (message) {
+	alert(message);
 }
 
 function reportResult(response) {
@@ -123,8 +124,6 @@ function reportResult(response) {
 	} else {
 		$("#rrcResult").append("<p>Sorry, no errors found!</p>");
 	}
-	
-	console.log(response);
 }
 
 function nl2br(text) {
