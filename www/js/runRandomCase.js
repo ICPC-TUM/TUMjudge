@@ -143,10 +143,10 @@ function nl2br(text) {
 
 function toggleLog() {
 	if($("#rrcLogButton").text() == "Hide Log") {
-		$("rrcLogContainer").css("display","none");
+		$("#rrcLogContainer").css("display","none");
 		$("#rrcLogButton").text("Show Log");
 	} else {
-		$("rrcLogContainer").css("display","block");
+		$("#rrcLogContainer").css("display","block");
 		$("#rrcLogButton").text("Hide Log");
 	}
 }
