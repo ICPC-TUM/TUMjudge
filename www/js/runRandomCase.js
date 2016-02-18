@@ -150,7 +150,7 @@ function reportResult(response) {
 		
 		resulthtml += "</table>";
 		
-		$("#rrcResult").append(resulthtml);
+		$("#rrcResult").html(resulthtml);
 	} else {
 		$("#rrcResult").html("<p>Sorry, no errors found!</p>");
 	}
