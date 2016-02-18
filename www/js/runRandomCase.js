@@ -70,11 +70,13 @@ $.ajax({
 		
 		setTimeout(update, 2000);
           } else {
+		$("#rrcLog").html(nl2br(response.state.log));  
+		$("#rrcLog").animate({ 
+			scrollTop: $("#rrcLog").prop("scrollHeight")
+		});  
+		  
 		reportResult(response);
-		//Hide log when done
-		if($("#rrcLogContainer").css("display") != "none") {
-			toggleLog();
-		}
+		
 		$("#rrcStartButton").prop("disabled", false);
 		$("#rrcStartButton").text("Search for a failing testcase");
 		
@@ -97,6 +99,12 @@ function warn (message) {
 }
 
 function reportResult(response) {
+	
+	if(response.state.cases === undefined) {
+		var html = "<p>There was an error (see log file)</p>";
+		$("#rrcResult").append(html);
+	}
+	
 	if(Object.keys(response.state.cases.rte).length + Object.keys(response.state.cases.wa).length > 0) {
 		resulthtml = "<table class='table-hover rrcResults'>";
 		resulthtml += "<thead><tr><th>Input</th><th>Expected Output</th><th>Program Output</th><th>Message</th><th>Error Type</th></tr></thead>";
@@ -144,6 +152,11 @@ function reportResult(response) {
 		$("#rrcResult").append(resulthtml);
 	} else {
 		$("#rrcResult").html("<p>Sorry, no errors found!</p>");
+	}
+	
+	//Hide log when done
+	if($("#rrcLogContainer").css("display") != "none") {
+		toggleLog();
 	}
 }
 
