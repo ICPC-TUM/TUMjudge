@@ -5,6 +5,10 @@ function sendSubmission() {
 	$("#rrcStartButton").prop("disabled", true);
 	$("#rrcStartButton").text("Searching...");
 	
+	if($("#rrcLogContainer").css("display") == "none")  {
+		toggleLog();
+	}
+	
 	var main = "";
 	var source = {};
 	//Get sourcecode from tabs
@@ -37,6 +41,7 @@ function sendSubmission() {
 			if (response.success) {
 				$("#uuid").val(response.id);
 				uuid = response.id;
+				$("#rrcLog").append("Waiting for server response... (this might take some seconds)<br />");
 				update();
 			} else {
 				warn("Could not start fuzzing " + response.errors);
