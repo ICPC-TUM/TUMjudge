@@ -100,9 +100,10 @@ function warn (message) {
 
 function reportResult(response) {
 	
-	if(response.state.cases === undefined) {
+	if(response.state.cases == undefined) {
 		var html = "<p>There was an error (see log file)</p>";
 		$("#rrcResult").append(html);
+		return;
 	}
 	
 	if(Object.keys(response.state.cases.rte).length + Object.keys(response.state.cases.wa).length > 0) {
