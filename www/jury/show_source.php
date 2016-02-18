@@ -1,6 +1,6 @@
 <?php
-$runRandomCase = true;
 
+$runRandomCase = true;
 require('init.php');
 require(LIBDIR . '/lib.sourcecode.php');
 
