@@ -63,7 +63,7 @@ $.ajax({
       success: function(response) {
         if (response.success) {
           if (!response.state.finished) {
-		$("#rrcLog").append(nl2br(response.state.log));  
+		$("#rrcLog").html(nl2br(response.state.log));  
 		$("#rrcLog").animate({ 
 			scrollTop: $("#rrcLog").prop("scrollHeight")
 		});  
