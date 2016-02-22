@@ -261,7 +261,10 @@
                   return false;
               } else
               if ($(input).data("settings").tokenLimit === null || $(input).data("settings").tokenLimit !== token_count) {
-                  show_dropdown_hint();
+		if (settings.minChars == 0)
+			setTimeout(function(){do_search();}, 5);
+		else
+			show_dropdown_hint();
               }
               token_list.addClass($(input).data("settings").classes.focused);
           })
@@ -339,7 +342,10 @@
 
                         return false;
                       } else if($(this).val().length === 1) {
-                          hide_dropdown();
+			if (settings.minChars == 0)
+				setTimeout(function(){do_search();}, 5);
+                        else
+				hide_dropdown();
                       } else {
                           // set a timeout just long enough to let this function finish.
                           setTimeout(function(){ do_search(); }, 5);
@@ -953,7 +959,7 @@
       function do_search() {
           var query = input_box.val();
 
-          if(query && query.length) {
+          if(typeof(query) == "string" && query.length >= settings.minChars) {
               if(selected_token) {
                   deselect_token($(selected_token), POSITION.AFTER);
               }

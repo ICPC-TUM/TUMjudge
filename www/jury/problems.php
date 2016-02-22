@@ -64,8 +64,9 @@ $(function() {
 	  allowFreeTagging:true, 
 	  tokenValue: 'name',
 	  preventDuplicates: true,
+	  minChars: 0,
           hintText: 'Add topic to search for',
-          searchingText: 'searching topics...',
+          searchingText: 'Searching topics...',
           onAdd: filterProblems,
           onDelete: filterProblems
 	});
@@ -183,23 +184,6 @@ echo <<<END
   <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard" onClick='javascript:filterProblems()' checked>Hard</label>
 </div>
 END;
-/*echo "<datalist id='topics'>
-<option value='DFS/BFS'>
-<option value='Shortest Path'>
-<option value='Minimum Spanning Tree'>
-<option value='Number Theory'>
-<option value='Geometry'>
-<option value='Projective Geometry'>
-<option value='Dynamic Programming'>
-<option value='Flow'>
-<option value='Brute Force'>
-<option value='Binary Search'>
-<option value='Trie'>
-<option value='Big Integer'>
-<option value='Union Find'>
-<option value='Greedy'>
-</datalist>";
-*/
 
 
 if( $res->count() == 0 ) {
