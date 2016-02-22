@@ -9,7 +9,6 @@ function sendSubmission() {
 		toggleLog();
 	}
 	
-	var main = "";
 	var source = {};
 	//Get sourcecode from tabs
 	$(".tabberlive:eq(0)>.tabbertab").each(
@@ -28,7 +27,6 @@ function sendSubmission() {
 	var request = {
 	"problem": problemName,
 	"lang":lang,
-	"main": main,
 	"sources": source
 	};
 	
