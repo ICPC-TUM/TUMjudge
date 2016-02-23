@@ -1,5 +1,6 @@
 var uuid = null;
 var fuzzingserver = "http://judge:12477";
+var maxTextcaseLength = 100;
 
 function sendSubmission() {
 	$("#rrcStartButton").prop("disabled", true);
@@ -111,7 +112,8 @@ function reportResult(response) {
 		for(var key in response.state.cases.rte) {
 			resulthtml += "<tr>";
 			
-			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.rte[key][key+".in"]) + "</td>";
+			resulthtml += "<td class='rrcInput'>" + nl2br(shorten(response.state.cases.rte[key][key+".in"])) + "<br/>"+
+			"<a href='javascript:copyToClipboard(" + response.state.cases.rte[key][key+".in"] + ")'>Copy to Clipboard</a></td>";
 			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.rte[key][key+".ans"]) + "</td>";
 			resulthtml += "<td class='rrcProgOutput'>" + nl2br(response.state.cases.rte[key][key+".out"]) + "</td>";
 			resulthtml += "<td class='rrcErrorMessage'></td>";
@@ -163,6 +165,11 @@ function nl2br(text) {
 	return text.replace(/\n/g,"<br />");
 }
 
+function shorten(text) {
+	if(text.length > maxTextcaseLength) return text.substring(0,maxTextcaseLength) + " [...]";
+	else return text;
+}
+
 function toggleLog() {
 	if($("#rrcLogButton").text() == "Hide Log") {
 		$("#rrcLogContainer").css("display","none");
@@ -171,4 +178,62 @@ function toggleLog() {
 		$("#rrcLogContainer").css("display","block");
 		$("#rrcLogButton").text("Hide Log");
 	}
+}
+
+//https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+function copyTextToClipboard(text) {
+  var textArea = document.createElement("textarea");
+
+  //
+  // *** This styling is an extra step which is likely not required. ***
+  //
+  // Why is it here? To ensure:
+  // 1. the element is able to have focus and selection.
+  // 2. if element was to flash render it has minimal visual impact.
+  // 3. less flakyness with selection and copying which **might** occur if
+  //    the textarea element is not visible.
+  //
+  // The likelihood is the element won't even render, not even a flash,
+  // so some of these are just precautions. However in IE the element
+  // is visible whilst the popup box asking the user for permission for
+  // the web page to copy to the clipboard.
+  //
+
+  // Place in top-left corner of screen regardless of scroll position.
+  textArea.style.position = 'fixed';
+  textArea.style.top = 0;
+  textArea.style.left = 0;
+
+  // Ensure it has a small width and height. Setting to 1px / 1em
+  // doesn't work as this gives a negative w/h on some browsers.
+  textArea.style.width = '2em';
+  textArea.style.height = '2em';
+
+  // We don't need padding, reducing the size if it does flash render.
+  textArea.style.padding = 0;
+
+  // Clean up any borders.
+  textArea.style.border = 'none';
+  textArea.style.outline = 'none';
+  textArea.style.boxShadow = 'none';
+
+  // Avoid flash of white box if rendered for any reason.
+  textArea.style.background = 'transparent';
+
+
+  textArea.value = text;
+
+  document.body.appendChild(textArea);
+
+  textArea.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Copying text command was ' + msg);
+  } catch (err) {
+    console.log('Oops, unable to copy');
+  }
+
+  document.body.removeChild(textArea);
 }
