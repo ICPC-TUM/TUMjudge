@@ -125,7 +125,8 @@ function reportResult(response) {
 		for(var key in response.state.cases.wa) {
 			resulthtml += "<tr>";
 			
-			resulthtml += "<td class='rrcInput'>" + nl2br(response.state.cases.wa[key][key+".in"]) + "</td>";
+			resulthtml += "<td class='rrcInput'>" + nl2br(shorten(response.state.cases.rte[key][key+".in"])) + "<br/>"+
+			"<a href='javascript:copyToClipboard(" + response.state.cases.rte[key][key+".in"] + ")'>Copy to Clipboard</a></td>";
 			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.wa[key][key+".ans"]) + "</td>";
 			
 			if(response.state.cases.wa[key][key+".diffposition"] != undefined) {
