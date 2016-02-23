@@ -148,7 +148,7 @@ function reportResult(response) {
 			resulthtml += "<td class='rrcErrorMessage'>" + nl2br(response.state.cases.wa[key][key+".judgemessage"]) + "</td>";
 			resulthtml += "<td class='rrcErrorType'>Wrong Answer</td>";
 			resulthtml += "<td class='rrcSeedLink'><a href='javascript:copyTextToClipboard(" + 
-			JSON.stringify(response.state.cases.rte[key][key+".seed"])+ ")'>Copy seed</a></td>";
+			JSON.stringify(response.state.cases.wa[key][key+".seed"])+ ")'>Copy seed</a></td>";
 			
 			resulthtml += "</tr>";
 		}
