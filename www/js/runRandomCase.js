@@ -107,7 +107,7 @@ function reportResult(response) {
 	
 	if(Object.keys(response.state.cases.rte).length + Object.keys(response.state.cases.wa).length > 0) {
 		resulthtml = "<table class='table-hover rrcResults'>";
-		resulthtml += "<thead><tr><th>Input</th><th>Expected Output</th><th>Program Output</th><th>Message</th><th>Error Type</th></tr></thead>";
+		resulthtml += "<thead><tr><th>Input</th><th>Expected Output</th><th>Program Output</th><th>Message</th><th>Error Type</th><th>Seed</th></tr></thead>";
 		
 		for(var key in response.state.cases.rte) {
 			resulthtml += "<tr>";
@@ -118,6 +118,8 @@ function reportResult(response) {
 			resulthtml += "<td class='rrcProgOutput'>" + nl2br(response.state.cases.rte[key][key+".out"]) + "</td>";
 			resulthtml += "<td class='rrcErrorMessage'></td>";
 			resulthtml += "<td class='rrcErrorType'>Run-Error</td>";
+			resulthtml += "<td class='rrcSeedLink'><a href='javascript:copyTextToClipboard(" + 
+			JSON.stringify(response.state.cases.rte[key][key+".seed"])+ ")'>Copy seed</a></td>";
 			
 			resulthtml += "</tr>";
 		}
@@ -145,6 +147,8 @@ function reportResult(response) {
 			
 			resulthtml += "<td class='rrcErrorMessage'>" + nl2br(response.state.cases.wa[key][key+".judgemessage"]) + "</td>";
 			resulthtml += "<td class='rrcErrorType'>Wrong Answer</td>";
+			resulthtml += "<td class='rrcSeedLink'><a href='javascript:copyTextToClipboard(" + 
+			JSON.stringify(response.state.cases.rte[key][key+".seed"])+ ")'>Copy seed</a></td>";
 			
 			resulthtml += "</tr>";
 		}
