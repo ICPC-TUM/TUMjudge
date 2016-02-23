@@ -113,7 +113,7 @@ function reportResult(response) {
 			resulthtml += "<tr>";
 			
 			resulthtml += "<td class='rrcInput'>" + nl2br(shorten(response.state.cases.rte[key][key+".in"])) + "<br/>"+
-			"<a href='javascript:copyToClipboard(" + response.state.cases.rte[key][key+".in"] + ")'>Copy to Clipboard</a></td>";
+			"<a href='javascript:copyTextToClipboard(" + JSON.stringify(response.state.cases.rte[key][key+".in"]) + ")'>Copy to Clipboard</a></td>";
 			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.rte[key][key+".ans"]) + "</td>";
 			resulthtml += "<td class='rrcProgOutput'>" + nl2br(response.state.cases.rte[key][key+".out"]) + "</td>";
 			resulthtml += "<td class='rrcErrorMessage'></td>";
@@ -126,7 +126,7 @@ function reportResult(response) {
 			resulthtml += "<tr>";
 			
 			resulthtml += "<td class='rrcInput'>" + nl2br(shorten(response.state.cases.wa[key][key+".in"])) + "<br/>"+
-			"<a href='javascript:copyToClipboard(" + response.state.cases.wa[key][key+".in"] + ")'>Copy to Clipboard</a></td>";
+			"<a href='javascript:copyTextToClipboard(" + JSON.stringify(response.state.cases.wa[key][key+".in"]) + ")'>Copy to Clipboard</a></td>";
 			resulthtml += "<td class='rrcExpOutput'>" + nl2br(response.state.cases.wa[key][key+".ans"]) + "</td>";
 			
 			if(response.state.cases.wa[key][key+".diffposition"] != undefined) {
@@ -230,8 +230,6 @@ function copyTextToClipboard(text) {
 
   try {
     var successful = document.execCommand('copy');
-    var msg = successful ? 'successful' : 'unsuccessful';
-    console.log('Copying text command was ' + msg);
   } catch (err) {
     console.log('Oops, unable to copy');
   }
