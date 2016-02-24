@@ -32,6 +32,7 @@ if ( count($cids)!=0 ) {
 	$activecontests = array();
 }
 
+//TODO: Put Javascript into .js file!
 echo "<script type='text/javascript'>
 var topics_regex = new Array();
 topics_regex['BFS/DFS'] = /[A-Za-z0-9,\s]*(((Depth|Breadth)(\s|-)First(\s|-)Search)|((B|D)FS))[A-Za-z0-9,\s]*/i;
@@ -63,6 +64,24 @@ var topics = [
 var difficulties = new Set();
 
 $(function() {
+	$(\".list tbody tr td:nth-child(6)\").each(function(){
+		var items = $(this).text().split(\",\");
+		var found = false;
+		for (var i = 0; i < items.length; i++) {
+			var topic = items[i].trim();
+			for(var t in topics) {
+				if(topics_regex[topic] != undefined) {
+					if(topics_regex[topic].exec(topic) !== null) {
+						found = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		if(!found) topics[topics.length] = {name:topic};
+	});
+	
 	$(\"#topics_filter\").tokenInput(topics, {
 	  allowFreeTagging:true, 
 	  tokenValue: 'name',
