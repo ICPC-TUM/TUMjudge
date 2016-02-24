@@ -70,15 +70,19 @@ $(function() {
 		for (var i = 0; i < items.length; i++) {
 			var topic = items[i].trim();
 			for(var t in topics) {
-				if(topics_regex[topic] != undefined) {
-					if(topics_regex[topic].exec(topic) !== null) {
+				if(topics_regex[topics[t].name] != undefined) {
+					if(topics_regex[topics[t].name].exec(topic) !== null) {
+						found = true;
+						break;
+					}
+				} else {
+					if(topics[t].name == topic) {
 						found = true;
 						break;
 					}
 				}
 			}
 		}
-		
 		if(!found) topics[topics.length] = {name:topic};
 	});
 	
