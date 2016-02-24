@@ -69,7 +69,10 @@ $(function() {
 		var found = false;
 		for (var i = 0; i < items.length; i++) {
 			var topic = items[i].trim();
-			for(var t in topics) {
+			if(topic == \"\" || topic == \".\") {
+				continue;
+			}
+			for(var t in topics) { 
 				if(topics_regex[topics[t].name] != undefined) {
 					if(topics_regex[topics[t].name].exec(topic) !== null) {
 						found = true;
@@ -102,7 +105,7 @@ $(function() {
 		var difficulty = $(this).text();
 		var found = false;
 		for(var d of difficulties.values()) {
-			if(d.name == difficulty || difficulty == \"\") {
+			if(d.name == difficulty || difficulty == \"\" || difficulty == \".\") {
 				found = true;
 				break;
 			}
