@@ -93,7 +93,7 @@ $(function() {
 
 function resetFilter() {
 	//Reset table visibility
-	$(".list tbody tr").each(function(){\$(this).css("display","table-row")});
+	$(".list tbody tr").each(function(){$(this).css("display","table-row")});
 }
 
 function resetAll() {
