@@ -59,6 +59,9 @@ var topics = [
 	{name: \"Brute Force\"},
 	{name: \"Greedy\"}
 	];
+	
+var difficulties = new Set();
+
 $(function() {
 	$(\"#topics_filter\").tokenInput(topics, {
 	  allowFreeTagging:true, 
@@ -71,6 +74,23 @@ $(function() {
           onDelete: filterProblems
 	});
 	$(\"#problem_filter_container\").css(\"display\",\"none\");
+	
+	$(\".list tbody tr td:nth-child(3)\").each(function(){
+		var difficulty = $(this).text();
+		if(!difficulties.has(difficulty))
+			difficulties.add(difficulty);
+	});
+	
+	$(\"#difficulty_filter\").tokenInput(difficulties, {
+	  allowFreeTagging:false, 
+	  tokenValue: 'name',
+	  preventDuplicates: true,
+	  minChars: 0,
+          hintText: '',
+          searchingText: 'Searching difficulties...',
+          onAdd: filterDifficulty,
+          onDelete: filterDifficulty
+	});
 });
 
 function resetFilter() {
@@ -90,34 +110,23 @@ function filterProblems() {
 }
 
 function filterDifficulty() {
-	var difficultyRegex = new Array();
-	var sum = 0;
-	if($('#filter_easy').prop(\"checked\")) {
-	      difficultyRegex[sum++] =  /(very(\s|-))?easy|no(\s|-)brainer/i;
+	var selected_difficulties = $(\"#difficulty_filter\").tokenInput(\"get\");
+	if(selected_difficulties.length === 0) {
+		return;
 	}
-	
-	if($('#filter_medium').prop(\"checked\")) {
-	      difficultyRegex[sum++] =  /medium/i;
-	}
-	
-	if($('#filter_hard').prop(\"checked\")) {
-	      difficultyRegex[sum++] =  /(very(\s|-))?hard/i;
-	}
-	
-	if(sum == 3) return;
 	
 	$(\".list tbody tr\").each(function() {
-		var found = false;
-		for (var i=0;i<difficultyRegex.length;i++) {
-		      var test = difficultyRegex[i].exec(\$(this).find(\"td:nth-child(3)\").text());
-		      if(test !== null) {
-			      found = true;
-			      break;
-		      }
-		}
-		if(!found) {
-		      $(this).css(\"display\",\"none\");
-		}	
+	   var found = (getFilterMode() == \"all\");
+	   for (var i=0;i<selected_difficulties.length;i++) {
+		if($(this).find(\"td:nth-child(6)\").text() == selected_difficulties[i]) {
+			found = true;
+			break;
+		} 
+	   }
+	   
+	   if(!found) {
+		 $(this).css(\"display\",\"none\");
+	   }
 	});
 }
 
@@ -177,11 +186,8 @@ echo <<<END
     <option value='one' selected>Match One</option>
   </select>  
   <br />
-  <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
-  
-  <label class="checkbox-inline"><input type="checkbox" id='filter_easy' value="easy" onClick='javascript:filterProblems()' checked>Easy</label>
-  <label class="checkbox-inline"><input type="checkbox" id='filter_medium' value="medium" onClick='javascript:filterProblems()' checked>Medium</label>
-  <label class="checkbox-inline"><input type="checkbox" id='filter_hard' value="hard" onClick='javascript:filterProblems()' checked>Hard</label>
+  Name/Topic: <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
+  Difficulty: <input id='difficulty_filter' name='topics_filter' placeholder='Enter Difficulty here'>
 </div>
 END;
 
