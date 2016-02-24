@@ -1,0 +1,12 @@
+#problem_filter_container {
+	display:block;
+	margin:10px 0px 30px 0px;
+}
+
+#problem_filter_container .token-input-list {
+	margin-bottom:5px;
+}
+
+#problem_filter_container #filterMode {
+	margin-left:10px;
+}

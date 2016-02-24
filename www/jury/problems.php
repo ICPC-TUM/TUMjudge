@@ -36,9 +36,9 @@ echo "<script src=\"../js/problemfilter.js\"></script>";
 
 echo "<a href='javascript:toggleFilter();'><img src=\"../images/filter.png\"></a><br />";
 echo <<<END
-<div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:block;'>
+<div id='problem_filter_container'>
   <label for="topics_filter">Name/Topic:</label>
-  <select id="filterMode" onChange='javascript:filterProblems()' style=\"margin-left:10px;\">
+  <select id="filterMode" onChange='javascript:filterProblems()'>
     <option value='all'>Match All</option>
     <option value='one' selected>Match One</option>
     <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'> 
