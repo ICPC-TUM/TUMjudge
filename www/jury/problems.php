@@ -66,8 +66,9 @@ var difficulties = new Set();
 $(function() {
 	$(\".list tbody tr td:nth-child(6)\").each(function(){
 		var items = $(this).text().split(\",\");
-		var found = false;
+		
 		for (var i = 0; i < items.length; i++) {
+			var found = false;
 			var topic = items[i].trim();
 			if(topic == \"\" || topic == \".\") {
 				continue;
@@ -85,8 +86,9 @@ $(function() {
 					}
 				}
 			}
+			if(!found) topics[topics.length] = {name:topic};
 		}
-		if(!found) topics[topics.length] = {name:topic};
+		
 	});
 	
 	$(\"#topics_filter\").tokenInput(topics, {
