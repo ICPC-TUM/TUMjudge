@@ -77,19 +77,25 @@ $(function() {
 	
 	$(\".list tbody tr td:nth-child(3)\").each(function(){
 		var difficulty = $(this).text();
-		if(!difficulties.has(difficulty))
-			difficulties.add(difficulty);
+		var found = false;
+		for(var d of difficulties.values()) {
+			if(d.name == difficulty || difficulty == \"\") {
+				found = true;
+				break;
+			}
+		}
+		if(!found) difficulties.add({name:difficulty});
 	});
 	
-	$(\"#difficulty_filter\").tokenInput(difficulties, {
+	$(\"#difficulty_filter\").tokenInput(Array.from(difficulties), {
 	  allowFreeTagging:false, 
 	  tokenValue: 'name',
 	  preventDuplicates: true,
 	  minChars: 0,
           hintText: '',
           searchingText: 'Searching difficulties...',
-          onAdd: filterDifficulty,
-          onDelete: filterDifficulty
+          onAdd: filterProblems,
+          onDelete: filterProblems
 	});
 });
 
@@ -116,9 +122,9 @@ function filterDifficulty() {
 	}
 	
 	$(\".list tbody tr\").each(function() {
-	   var found = (getFilterMode() == \"all\");
+	   var found = false;
 	   for (var i=0;i<selected_difficulties.length;i++) {
-		if($(this).find(\"td:nth-child(6)\").text() == selected_difficulties[i]) {
+		if($(this).find(\"td:nth-child(3)\").text() == selected_difficulties[i].name) {
 			found = true;
 			break;
 		} 
@@ -180,14 +186,13 @@ function toggleFilter() {
 echo "<a href='javascript:toggleFilter();'>Filter</a><br />";
 echo <<<END
 <div id='problem_filter_container' style='margin:10px 0px 10px 0px; display:block;'>
-  <label for="filterMode">Filter mode:</label>
-  <select id="filterMode" onChange='javascript:filterProblems()'>
+  <label for="topics_filter">Name/Topic:</label>
+  <select id="filterMode" onChange='javascript:filterProblems()' style=\"margin-left:10px;\">
     <option value='all'>Match All</option>
     <option value='one' selected>Match One</option>
-  </select>  
-  <br />
-  Name/Topic: <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'>
-  Difficulty: <input id='difficulty_filter' name='topics_filter' placeholder='Enter Difficulty here'>
+    <input id='topics_filter' name='topics_filter' placeholder='Enter Topics here'> 
+  <label for="difficulty_filter">Difficulty:</label>
+  <input id='difficulty_filter' name='difficulty_filter' placeholder='Enter Difficulty here'>
 </div>
 END;
 
