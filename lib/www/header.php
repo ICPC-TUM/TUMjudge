@@ -106,6 +106,7 @@ if ( IS_JURY ) {
             <span class="tumjudge-instance tumjudge-ioide"><span class="pagetitle">TUMjudge</span> IOI Germany</span>
             <span class="tumjudge-instance tumjudge-ioiat"><span class="pagetitle">TUMjudge</span> IOI Austria</span>
             <span class="tumjudge-instance tumjudge-challenge"><span class="pagetitle">TUMjudge</span> Challenge</span>
+            <span class="tumjudge-instance tumjudge-mlr"><span class="pagetitle">TUMjudge</span> MLR</span>
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" role="menu">
@@ -124,6 +125,7 @@ if ( IS_JURY ) {
             <li class="page tumjudge-ioide"><a href="/ioide/">IOI Germany <span class="description">Preparation for the IOI</span></a></li>
             <li class="page tumjudge-ioiat"><a href="/ioiat/">IOI Austria <span class="description">Preparation for the IOI</span></a></li>
             <li class="page tumjudge-challenge"><a href="/challenge/">Challenge <span class="description">Yet Another Programming Contest</span></a></li>
+            <li class="page tumjudge-mlr"><a href="/mlr/">MLR <span class="description">Lecture &ldquo;Machine Learning in Robotics&rdquo;</span></a></li>
           </ul>
         </li>
       <?php
