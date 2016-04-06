@@ -110,7 +110,11 @@ if ( IS_JURY ) {
           </a>
           <ul class="dropdown-menu" role="menu">
             <li><a class="pagetitle">ICPC@TUM</a></li>
+            <?php if(IS_JURY): ?>
+              <li class="page tumjudge-git"><a href="/main/">GIT <span class="description">Source Code Management</span></a></li>
+            <?php endif; ?>
             <li class="page tumjudge-info"><a href="/">Website <span class="description">Information about the ICPC</span></a></li>
+            <li class="page tumjudge-discuss"><a href="https://judge.tum.de/discuss/">Discuss <span class="description">Discuss all about TUMjudge and ICPC</span></a></li>
             <li><a class="pagetitle">TUMjudge</a></li>
             <?php if(IS_JURY): ?>
               <li class="page tumjudge-main"><a href="/main/">Main <span class="description">Account Management</span></a></li>
