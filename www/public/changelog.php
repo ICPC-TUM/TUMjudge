@@ -19,6 +19,8 @@ D-85748 Garching
 
 <h3>v5.1.0.2</h3>
 <ul>
+<li>adjust URLs of some pages</li>
+<li>add TUMjudge MLR and ICPC@TUM Discuss to menus</li>
 </ul>
 
 <h3>v5.1.0.1</h3>
