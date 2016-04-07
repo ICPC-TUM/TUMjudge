@@ -19,6 +19,7 @@ D-85748 Garching
 
 <h3>v5.1.0.2</h3>
 <ul>
+<li>add Octave as supported language</li>
 </ul>
 
 <h3>v5.1.0.1</h3>
