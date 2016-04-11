@@ -39,7 +39,8 @@ INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES
 ('allow_registration', '0', 'bool', 'Allow users to register themselves with the system?'),
 ('judgehost_warning', '30', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "warning".'),
 ('judgehost_critical', '120', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "critical".'),
-('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.');
+('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.'),
+('sso_secret', '"replacemeasap"', 'string', 'The secret to use for SSO login.');
 
 --
 -- Dumping data for table `executable`
@@ -61,6 +62,7 @@ INSERT INTO `executable` (`execid`, `description`, `type`) VALUES
 ('java_javac_detect', 'java_javac_detect', 'compile'),
 ('js', 'js', 'compile'),
 ('lua', 'lua', 'compile'),
+('octave', 'octave', 'compile'),
 ('pas', 'pas', 'compile'),
 ('pl', 'pl', 'compile'),
 ('plg', 'plg', 'compile'),
@@ -87,6 +89,7 @@ INSERT INTO `language` (`langid`, `name`, `extensions`, `allow_submit`, `allow_j
 ('java', 'Java', '["java"]', 1, 1, 1, 'java_javac_detect'),
 ('js', 'JavaScript', '["js"]', 0, 1, 1, 'js'),
 ('lua', 'Lua', '["lua"]', 0, 1, 1, 'lua'),
+('octave', 'Octave', '["m"]', 0, 1, 1, 'octave'),
 ('pas', 'Pascal', '["pas","p"]', 0, 1, 1, 'pas'),
 ('pl', 'Perl', '["pl"]', 0, 1, 1, 'pl'),
 ('plg', 'Prolog', '["plg"]', 0, 1, 1, 'plg'),
