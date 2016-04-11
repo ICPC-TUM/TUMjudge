@@ -32,7 +32,8 @@ ADD COLUMN `shuffle` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Is scoreboard shuf
 
 --configuration values
 INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES
-('links', '{}', 'array_keyval', 'Links to website that should be listed in the menu of participants. List the link names on the left and the URLs on the right.');
+('links', '{}', 'array_keyval', 'Links to website that should be listed in the menu of participants. List the link names on the left and the URLs on the right.'),
+('sso_secret', '"replacemeasap"', 'string', 'The secret to use for SSO login.');
 
 --octave
 INSERT INTO `executable` (`execid`, `md5sum`, `zipfile`, `description`, `type`) VALUES
