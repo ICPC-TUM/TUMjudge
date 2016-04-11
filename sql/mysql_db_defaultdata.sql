@@ -39,7 +39,8 @@ INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES
 ('allow_registration', '0', 'bool', 'Allow users to register themselves with the system?'),
 ('judgehost_warning', '30', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "warning".'),
 ('judgehost_critical', '120', 'int', 'Time in seconds after a judgehost last checked in before showing its status as "critical".'),
-('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.');
+('thumbnail_size', '128', 'int', 'Maximum width/height of a thumbnail for uploaded testcase images.'),
+('sso_secret', '"replacemeasap"', 'string', 'The secret to use for SSO login.');
 
 --
 -- Dumping data for table `executable`
