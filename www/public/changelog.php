@@ -20,6 +20,7 @@ D-85748 Garching
 <h3>v5.1.1.0</h3>
 <ul>
 <li>update to DOMjudge 5.1.1</li>
+<li>add Octave as supported language</li>
 <li>add SSO login for <a href="https://judge.in.tum.de/discuss/">ICPC@TUM Discuss</a>
 </ul>
 

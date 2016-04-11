@@ -60,9 +60,7 @@ $sample_code = array();
 // JAVA 
 $compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
 $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
-
 $version['Java'] = 'java version "1.8.0_60"<br />Java(TM) SE Runtime Environment (build 1.8.0_60-b27)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)';
-
 $sample_code['Java'] = 'import java.util.Scanner;
 
 public class HelloWorld {
@@ -86,12 +84,11 @@ $compile_command['C'] = 'gcc -x c -Wall -O2 -static -pipe -DONLINE_JUDGE -DDOMJU
   
 // C#
 $compile_command['C#'] = 'gmcs -o+ -d:ONLINE_JUDGE,DOMJUDGE -out:"$DESTCLI" "$@"
-mono "$DESTCLI';
+mono "$DESTCLI"';
   
 // C++
 $compile_command['C++'] = 'g++ -Wall -std=c++11 -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
 $version['C++'] = 'Target: x86_64-linux-gnu<br />gcc version 4.9.2 (Debian 4.9.2-10)';
-
 $sample_code['C++'] = '#include <iostream>
 #include <stdio.h>
 
@@ -115,6 +112,17 @@ int main() {
 // Lua
 $compile_command['Lua'] = 'lua "$MAINSOURCE"'; 
   
+// Octave
+$compile_command['Octave'] = 'octave --silent --no-gui --no-history --no-init-file --no-init-path --no-line-editing --no-site-file --no-window-system --norc "$MAINSOURCE"'; 
+$version['Octave'] = 'GNU Octave, version 3.8.2';
+$sample_code['Octave'] = '#read input with scanf or input
+i = scanf("%d", 1);
+j = input("");
+
+#print using printf or disp
+printf("Case #%d: %d\n", i, j+2);
+disp(i*j);';
+
 // Ada
 $compile_command['Ada'] = 'gnatmake -static -o "$DEST" "$@" -bargs -static'; 
   
