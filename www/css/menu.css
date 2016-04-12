@@ -50,20 +50,8 @@
 	left: 130px;
 }
 
+/* free color: #ffcd00 */
 /* Design for different judge instances */
-.tumjudge-info .navbar {
-	border-bottom-color: #ffcd00;
-}
-.tumjudge-info .brand {
-	background-color: #ffcd00;
-}
-.navbar .brand .dropdown-menu .tumjudge-info {
-	border-left-color: #ffcd00;
-}
-.tumjudge-info .tumjudge-instance.tumjudge-info {
-	display: inline;
-}
-
 .tumjudge-main .navbar {
 	border-bottom-color: #feff00;
 }
@@ -77,10 +65,10 @@
 	display: inline;
 }
 
-.tumjudge-test .navbar {
+.tumjudge-test .navbar, .tumjudge-git .navbar {
 	border-bottom-color: #bae806;
 }
-.tumjudge-test .brand {
+.tumjudge-test .brand, .tumjudge-git .brand {
 	background: repeating-linear-gradient(
 		45deg,
 		#bae806,
@@ -89,36 +77,36 @@
 		#cc5500 20px
 	);
 }
-.navbar .brand .dropdown-menu .tumjudge-test {
+.navbar .brand .dropdown-menu .tumjudge-test, .navbar .brand .dropdown-menu .tumjudge-git {
 	border-left-color: #bae806;
 }
-.tumjudge-test .tumjudge-instance.tumjudge-test {
+.tumjudge-test .tumjudge-instance.tumjudge-test, .tumjudge-git .tumjudge-instance.tumjudge-git {
 	display: inline;
 }
 
-.tumjudge-conpra .navbar {
+.tumjudge-conpra .navbar, .tumjudge-info .navbar {
 	border-bottom-color: #2ece0c;
 }
-.tumjudge-conpra .brand {
+.tumjudge-conpra .brand, .tumjudge-info .brand {
 	background-color: #2ece0c;
 }
-.navbar .brand .dropdown-menu .tumjudge-conpra {
+.navbar .brand .dropdown-menu .tumjudge-conpra, .navbar .brand .dropdown-menu .tumjudge-info {
 	border-left-color: #2ece0c;
 }
-.tumjudge-conpra .tumjudge-instance.tumjudge-conpra {
+.tumjudge-conpra .tumjudge-instance.tumjudge-conpra, .tumjudge-info .tumjudge-instance.tumjudge-info {
 	display: inline;
 }
 
-.tumjudge-contest .navbar {
+.tumjudge-contest .navbar, .tumjudge-discuss .navbar {
 	border-bottom-color: #0c99ce;
 }
-.tumjudge-contest .brand {
+.tumjudge-contest .brand, .tumjudge-discuss .brand {
 	background-color: #0c99ce;
 }
-.navbar .brand .dropdown-menu .tumjudge-contest {
+.navbar .brand .dropdown-menu .tumjudge-contest, .navbar .brand .dropdown-menu .tumjudge-discuss {
 	border-left-color: #0c99ce;
 }
-.tumjudge-contest .tumjudge-instance.tumjudge-contest {
+.tumjudge-contest .tumjudge-instance.tumjudge-contest, .tumjudge-discuss .tumjudge-instance.tumjudge-discuss {
 	display: inline;
 }
 
