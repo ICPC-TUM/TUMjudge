@@ -17,6 +17,10 @@ D-85748 Garching
 
 <h2>Changelog</h2>
 
+<h3>v5.1.1.1</h3>
+<ul>
+</ul>
+
 <h3>v5.1.1.0</h3>
 <ul>
 <li>update to DOMjudge 5.1.1</li>
