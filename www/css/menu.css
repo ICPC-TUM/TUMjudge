@@ -50,6 +50,24 @@
 	left: 130px;
 }
 
+.navbar .scrollable-menu {
+	height: auto;
+	max-height: 600px;
+	overflow-x: hidden;
+}
+
+.navbar .scrollable-menu::-webkit-scrollbar {
+	-webkit-appearance: none;
+	width: 4px;        
+}    
+
+.navbar .scrollable-menu::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+	background-color: #002143;
+	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.75);
+}   
+
+
 /* free color: #ffcd00 */
 /* Design for different judge instances */
 .tumjudge-main .navbar {
