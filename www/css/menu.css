@@ -200,4 +200,15 @@
 	display: inline;
 }
 
-/*more colors: #ff9a00*/
+.tumjudge-mlr .navbar {
+	border-bottom-color: #ff9a00;
+}
+.tumjudge-mlr .brand {
+	background-color: #ff9a00;
+}
+.navbar .brand .dropdown-menu .tumjudge-mlr {
+	border-left-color: #ff9a00;
+}
+.tumjudge-mlr .tumjudge-instance.tumjudge-mlr {
+	display: inline;
+}
