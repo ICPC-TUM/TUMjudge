@@ -350,9 +350,9 @@ function renderScoreBoardTable($shuffle, $sdata, $myteamid = null, $static = FAL
 		if ( !empty($limitteams) && !in_array($team,$limitteams) ) continue;
 
 		// exclude teams without submissions
-                $num_submissions = 0;
-                foreach($matrix[$team] AS $t) $num_submissions += $t['num_submissions'];
-                if ( empty($limitteams) && $num_submissions == 0) continue;
+                // $num_submissions = 0;
+                // foreach($matrix[$team] AS $t) $num_submissions += $t['num_submissions'];
+                // if ( empty($limitteams) && $num_submissions == 0) continue;
 
 		// rank, team name, total points, total time
 		echo '<tr';
