@@ -60,7 +60,7 @@ $sample_code = array();
 // JAVA 
 $compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
 $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
-$version['Java'] = 'java version "1.8.0_60"<br />Java(TM) SE Runtime Environment (build 1.8.0_60-b27)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)';
+$version['Java'] = 'java version "1.8.0_91"<br />Java(TM) SE Runtime Environment (build 1.8.0_91-b14)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.91-b14, mixed mode)';
 $sample_code['Java'] = 'import java.util.Scanner;
 
 public class HelloWorld {
@@ -148,8 +148,16 @@ $compile_command['Perl'] = 'perl "$MAINSOURCE"';
 $compile_command['Prolog'] = 'swipl --goal=main,halt --stand_alone=true -o "$DEST" -c "$MAINSOURCE"'; 
 
 //Python 2
-$compile_command['Python 2'] = 'python "$MAINSOURCE"'; 
-  
+$compile_command['Python 2'] = 'pypy "$MAINSOURCE"'; 
+$version['Python 2'] = 'Python 2.7.8 (2.4.0+dfsg-3, Dec 20 2014, 13:30:46)
+[PyPy 2.4.0 with GCC 4.9.2]';
+$sample_code['Python 2'] = '#read input
+i,j=map(int, raw_input().split())
+string1=raw_input()
+
+#output
+print "Case %d: %s"%(i,string1)';
+
 // Python 3
 $compile_command['Python 3'] = 'python3 "$MAINSOURCE"'; 
 
