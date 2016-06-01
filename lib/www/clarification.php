@@ -436,26 +436,26 @@ if ( $respid ) {
 	foreach($text as $line) $body .= "> $line\n";
 }
 global $teamdata;
-if (!IS_JURY) {
-$body = 'Dear jury,
+// if (!IS_JURY) {
+// $body = 'Dear jury,
 
-...
+// ...
 
-Best regards,
-'.$teamdata['name'].'
+// Best regards,
+// '.$teamdata['name'].'
 
-'.$body;
-}
-else {
-$body = 'Dear '.(empty($clar['toname']) ? 'participants' : $clar['toname']).',
+// '.$body;
+// }
+// else {
+// $body = 'Dear '.(empty($clar['toname']) ? 'participants' : $clar['toname']).',
 
-...
+// ...
 
-Best regards,
-'.$teamdata['name'].'
+// Best regards,
+// '.$teamdata['name'].'
 
-'.$body;
-}
+// '.$body;
+// }
 echo addTextArea('bodytext', $body, 80, 10, 'required');
 ?></td></tr>
 <?php if ( IS_JURY ): ?>
