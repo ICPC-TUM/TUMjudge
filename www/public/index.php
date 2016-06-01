@@ -177,13 +177,8 @@ $compile_command['POSIX shell'] = 'sh "$MAINSOURCE"';
 
 <p>This page contains basic information regarding this TUMjudge. If you never worked with the TUMjudge before we recommend you to read this manual first.</p>
 
-<h2>Login</h2>
-The TUMjudge requires you to login prior to submitting work. Your username and password is the same as in the <q>Rechnerhalle</q>, the login works via the LDAP protocol. 
-
-Reminder: The <q>Rechnerhalle</q> username is the part before the @ in your @in.tum.de email address.This also means that we are not responsible for your password. If you lose it, please contact the <a href="http://www.in.tum.de/rbg.html" target="_blank">RBG</a>, not us. If you have several @in.tum.de addresses any of them will work. However, make sure that you use the same address for registration and login.
-
 <h2>Judge</h2>
-We use a fork of the official DOMjudge system that is also used in contests like the ICPC. Some impressions of the systems are given in the following images.
+We use a fork of the official DOMjudge system. Some impressions of the systems are given in the following images.
 
 <div style="width=100%; text-align:center; padding-top:2em;">
   <a href='../images/team-overview-own.png'><img src="../images/team-overview-own.png" style=' width:40%; margin:0px 30px 0px 0px;'></a>
