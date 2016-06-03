@@ -892,6 +892,9 @@ for ($i = 0; $i < count($languageIdArray); $i++) {
 	$string2 = substr($languageIdArray[$i], 1, strlen($languageIdArray[$i]));
 	$string1 = strtoupper($string1);
 	$lang = $string1.$string2;
+	
+	$replace = array("2", "3");
+	$lang = str_replace($replace, "", $lang);
 
 	echo '\renewcommand{\statisticsTried'.$lang.'}{'.$dataArray[$i][0].'}<br>
 	\renewcommand{\statisticsSolved'.$lang.'}{'.$dataArray[$i][1].'}<br>
@@ -917,6 +920,8 @@ function latexSpecialChars( $string ) {
 			"\\"=>"\\textbackslash{}",
 			"{"=>"\\{",
 			"}"=>"\\}",
+			">"=>"\\textgreater{}",
+			"<"=>"\\textless{}",
 	);
 	return preg_replace( "/([\^\%~\\\\#\$%&_\{\}])/e", "\$map['$1']", $string );
 }
