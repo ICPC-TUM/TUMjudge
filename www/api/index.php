@@ -207,7 +207,7 @@ function problems($args)
 		);
 	}, $pdatas);
 }
-$doc = "Get a list of problems in a contest, with for each problem: id, shortname, name and color.";
+$doc = "Get a list of problems in a contest, with for each problem: id, shortname, name and colour.";
 $args = array('cid' => 'Contest ID.');
 $exArgs = array(array('cid' => 2));
 $api->provideFunction('GET', 'problems', $doc, $args, $exArgs);
@@ -764,7 +764,10 @@ function submissions_POST($args)
 	$sid = submit_solution($userdata['teamid'], $probid, $cid, $args['langid'], $FILEPATHS, $FILENAMES);
 	if ( checkrole('jury') ) {
 		$results = getExpectedResults(file_get_contents($FILEPATHS[0]));
-		$DB->q('UPDATE submission SET expected_results=%s WHERE submitid=%i', json_encode($results), $sid);
+		if ( !empty($results) ) {
+			$DB->q('UPDATE submission SET expected_results=%s
+			        WHERE submitid=%i', json_encode($results), $sid);
+		}
 	}
 
 	auditlog('submission', $sid, 'added', 'via api', null, $cid);
@@ -1196,6 +1199,9 @@ $exArgs = array();
 $roles = array('judgehost');
 $api->provideFunction('PUT', 'judgehosts', $doc, $args, $exArgs, $roles);
 
+// Helper function used below:
+function cmp_prob_label($a, $b) { return $a['label'] > $b['label']; }
+
 /**
  * Scoreboard
  */
@@ -1239,6 +1245,7 @@ function scoreboard($args)
 
 			$row['problems'][] = $prob;
 		}
+		usort($row['problems'], 'cmp_prob_label');
 		$res[] = $row;
 	}
 	return $res;
