@@ -19,6 +19,7 @@ D-85748 Garching
 
 <h3>v5.1.2.0</h3>
 <ul>
+<li>update to DOMjudge 5.1.2</li>
 </ul>
 
 <h3>v5.1.1.0</h3>
