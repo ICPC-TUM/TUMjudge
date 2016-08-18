@@ -6,7 +6,7 @@
 // @configure_input@
 
 define('DOMJUDGE_VERSION', '@DOMJUDGE_VERSION@');
-define('TUMJUDGE_VERSION', '5.1.2.0 DEV');
+define('TUMJUDGE_VERSION', '5.1.2.0');
 
 define('BINDIR',      '@domserver_bindir@');
 define('ETCDIR',      '@domserver_etcdir@');
