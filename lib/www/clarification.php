@@ -74,7 +74,7 @@ function putClar($clar)
 		echo '<a href="team.php?id=' . urlencode($clar['sender']) . '">' .
 			$from . '</a>';
 		if ( !is_null($clar['probid']) ) {
-			echo '<a href=/team.php?id=' . urlencode($clar['sender']) . '&restrict=probid:'. urlencode($clar['probid']) .'">(See submission)</a>'
+			echo '<a href=/team.php?id=' . urlencode($clar['sender']) . '&restrict=probid:'. urlencode($clar['probid']) .'">(See submission)</a>';
 		}
 	} else {
 		echo $from;
