@@ -10,6 +10,7 @@
 <li><a href="clarifications.php">clarifications</a></li>
 <li><a href="contests.php">contests</a></li>
 <li><a href="executables.php">executables</a></li>
+<li><a href="hof.php">hall of fame</a></li>
 <li><a href="judgehosts.php" id="menu_judgehosts">judgehosts
     <?php $ndown = count($updates['judgehosts']); if ( $ndown > 0 ) { ?><span class="label label-info"><?php echo $ndown ?> down</span><?php } ?>
 </a></li>

@@ -19,6 +19,9 @@ D-85748 Garching
 
 <h3>v5.1.1.1</h3>
 <ul>
+<li>add hall of fame for jury users</li>
+<li>add more links for jury users</li>
+<li>add more affiliation icons</li>
 </ul>
 
 <h3>v5.1.1.0</h3>
