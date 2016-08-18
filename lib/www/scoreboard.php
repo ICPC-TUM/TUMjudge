@@ -1170,16 +1170,16 @@ function putPointsOverview($teamid) {
 
                                 //generate table with all problems in contest
                                 if (IS_JURY) {
-                                	$problemTable .= '<a href=/team.php?id=' . urlencode($teamid) . '&restrict=probid:'. urlencode($pr['probid']) .'">';
+                                	$problemTable .= '<a href="team.php?id=' . urlencode($teamid) . '&restrict=probid:'. urlencode($pr['probid']) .'">';
                                 }
                                 $problemTable .= '<span style="padding:5px" class = "'.$solved.' problem-entry" title="problem \'' . htmlspecialchars($pr['name']) . '\'" scope="col">';
                                 $str =  (!empty($pr['color']) ? ' <div class="circle" style="background: ' .
-                                            htmlspecialchars($pr['color']) . ';"></div>' : '' ) .
+                                            htmlspecialchars($pr['color']) . ';"></div> ' : '' ) .
                                                 htmlspecialchars($pr['shortname']) . ' ('.$problemPoints.'/'.$problemMaxPoints.')';
                                 if(!empty($bonus_points['points'])) {
                                         $str .= ', '.$bonus_points['reason'].' (+'.$bonus_points['points'].')';
                                 }
-                                $problemTable.= $str . '</span>';
+                                $problemTable .= $str . '</span>';
                         	if (IS_JURY) {
                         	        $problemTable .= '</a>';
                         	}
