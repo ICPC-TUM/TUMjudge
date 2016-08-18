@@ -73,6 +73,9 @@ function putClar($clar)
 	if ( IS_JURY && $clar['sender']) {
 		echo '<a href="team.php?id=' . urlencode($clar['sender']) . '">' .
 			$from . '</a>';
+		if ( !is_null($clar['probid']) ) {
+			echo '<a href=/team.php?id=' . urlencode($clar['sender']) . '&restrict=probid:'. urlencode($clar['probid']) .'">(See submission)</a>'
+		}
 	} else {
 		echo $from;
 	}
