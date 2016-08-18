@@ -60,12 +60,12 @@ if ( isset($_POST['import']) ) {
 		// First try new key then fallback to old 'scoreboard-freeze':
 		if ( ! empty($contest_yaml_data['scoreboard-freeze-length']) ) {
 			$contest['freezetime_string'] =
-			    '+' . $contest_yaml_data['scoreboard-freeze-length'];
+				'+' . timestring_diff($contest_yaml_data['duration'],
+			                          $contest_yaml_data['scoreboard-freeze-length']);
 		}
 		else if ( ! empty($contest_yaml_data['scoreboard-freeze']) ) {
 			$contest['freezetime_string'] =
-				'+' . timestring_diff($contest_yaml_data['duration'],
-			                          $contest_yaml_data['scoreboard-freeze']);
+			    '+' . $contest_yaml_data['scoreboard-freeze'];
 		}
 		// unfreezetime is not supported by the current standard
 		$contest['unfreezetime_string'] = null;
@@ -90,8 +90,8 @@ if ( isset($_POST['import']) ) {
 		dbconfig_init();
 
 		// TODO: event-feed-port
-		if (isset($contest_yaml_data)) {
-			$LIBDBCONFIG['penalty_time']['value'] = (int)$contest_yaml_data['penaltytime'];
+		if ( isset($contest_yaml_data['penalty-time']) ) {
+			$LIBDBCONFIG['penalty_time']['value'] = (int)$contest_yaml_data['penalty-time'];
 		}
 
 	/* clarification answers/categories currently not supported; ignore them.

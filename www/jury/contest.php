@@ -143,6 +143,7 @@ $current_problems = $DB->q("TABLE SELECT contestproblem.*, problem.name FROM con
 foreach ( $current_problems as &$current_problem ) {
 	$current_problem['allow_submit'] = (int)$current_problem['allow_submit'];
 	$current_problem['allow_judge'] = (int)$current_problem['allow_judge'];
+	$current_problem['color'] = (string)$current_problem['color'];
 }
 unset($current_problem);
 
@@ -298,7 +299,7 @@ $(function() {
 	        <th>points</th>
 		<th>allow submit</th>
 		<th>allow judge</th>
-		<th>color
+		<th>colour
 		<a target="_blank" href="http://www.w3schools.com/cssref/css_colornames.asp">
 		<img src="../images/b_help.png" class="smallpicto" alt="?"></a></th>
 		<th>lazy eval</th>
