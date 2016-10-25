@@ -282,11 +282,6 @@ function judgings_POST($args)
 	$active = $DB->q('MAYBEVALUE SELECT active FROM judgehost WHERE hostname = %s', $host);
 	if ( !$active ) return '';
 
-	$cdatas = getCurContests(TRUE);
-	$cids = array_keys($cdatas);
-
-	if ( empty($cids) ) return '';
-
 	// Get judgehost restrictions
 	$contests = array();
 	$problems = array();
@@ -337,12 +332,12 @@ function judgings_POST($args)
 	                    LEFT JOIN language l USING (langid)
 	                    LEFT JOIN contestproblem cp USING (probid, cid) ' .
 	                   $extra_join .
-	                   'WHERE s.judgehost IS NULL AND s.cid IN (%Ai)
+	                   'WHERE s.judgehost IS NULL
 	                    AND l.allow_judge = 1 AND cp.allow_judge = 1 AND s.valid = 1 ' .
 	                   $extra_where .
 	                   'ORDER BY judging_last_started ASC, submittime ASC, s.submitid ASC
 	                    LIMIT 1',
-	                   $host, $cids, $contests, $problems, $languages);
+	                   $host, $contests, $problems, $languages);
 
 	if ( $submitid ) {
 		// update exactly one submission with our judgehost name
