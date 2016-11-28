@@ -51,7 +51,7 @@ global $DB;
 if ( IS_ADMIN && ($table == 'submission') ) $include_all = true;
 
 $res = null;
-$cids = getCurContests(FALSE);
+$cids = getCurContests(FALSE, null, TRUE);
 if ( !empty($cids) ) {
 	$restrictions = 'result != \'correct\' AND result IS NOT NULL AND ';
 	if ( $include_all ) {
