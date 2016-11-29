@@ -51,24 +51,21 @@ global $DB;
 if ( IS_ADMIN && ($table == 'submission') ) $include_all = true;
 
 $res = null;
-$cids = getCurContests(FALSE, null, TRUE);
-if ( !empty($cids) ) {
-	$restrictions = 'result != \'correct\' AND result IS NOT NULL AND ';
-	if ( $include_all ) {
-		if ( $full_rejudge ) {
-			// do not include pending/queued submissions in rejudge
-			$restrictions = 'result IS NOT NULL AND ';
-		} else {
-			$restrictions = '';
-		}
+$restrictions = 'result != \'correct\' AND result IS NOT NULL AND ';
+if ( $include_all ) {
+	if ( $full_rejudge ) {
+		// do not include pending/queued submissions in rejudge
+		$restrictions = 'result IS NOT NULL AND ';
+	} else {
+		$restrictions = '';
 	}
-	$res = $DB->q('SELECT j.judgingid, s.submitid, s.teamid, s.probid, j.cid, s.rejudgingid
-	               FROM judging j
-	               LEFT JOIN submission s USING (submitid)
-	               WHERE j.cid IN (%Ai) AND j.valid = 1 AND ' .
-		      $restrictions .
-	              $tablemap[$table] . ' = %s', $cids, $id);
 }
+$res = $DB->q('SELECT j.judgingid, s.submitid, s.teamid, s.probid, j.cid, s.rejudgingid
+			   FROM judging j
+			   LEFT JOIN submission s USING (submitid)
+			   WHERE j.valid = 1 AND ' .
+		  $restrictions .
+			  $tablemap[$table] . ' = %s', $id);
 
 if ( !$res || $res->count() == 0 ) {
 	error("No judgings matched.");
