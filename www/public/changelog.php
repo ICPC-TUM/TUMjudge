@@ -21,6 +21,7 @@ D-85748 Garching
 <ul>
 <li>add Christmas layout for ConPra contests</li>
 <li>add affiliation icon for IOI DE: <img src="../images/countries/IOI.png" alt="IOI"/>
+<li>internal change of submissions that qualify for judging</li>
 <li>fix: html entitites in sample codes
 </ul>
 

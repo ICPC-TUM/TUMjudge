@@ -282,11 +282,6 @@ function judgings_POST($args)
 	$active = $DB->q('MAYBEVALUE SELECT active FROM judgehost WHERE hostname = %s', $host);
 	if ( !$active ) return '';
 
-	$cdatas = getCurContests(TRUE);
-	$cids = array_keys($cdatas);
-
-	if ( empty($cids) ) return '';
-
 	// Get judgehost restrictions
 	$contests = array();
 	$problems = array();
@@ -337,12 +332,12 @@ function judgings_POST($args)
 	                    LEFT JOIN language l USING (langid)
 	                    LEFT JOIN contestproblem cp USING (probid, cid) ' .
 	                   $extra_join .
-	                   'WHERE s.judgehost IS NULL AND s.cid IN (%Ai)
+	                   'WHERE s.judgehost IS NULL
 	                    AND l.allow_judge = 1 AND cp.allow_judge = 1 AND s.valid = 1 ' .
 	                   $extra_where .
 	                   'ORDER BY judging_last_started ASC, submittime ASC, s.submitid ASC
 	                    LIMIT 1',
-	                   $host, $cids, $contests, $problems, $languages);
+	                   $host, $contests, $problems, $languages);
 
 	if ( $submitid ) {
 		// update exactly one submission with our judgehost name
@@ -914,14 +909,6 @@ function queue($args)
 {
 	global $DB;
 
-	// TODO: make this configurable
-	$cdatas = getCurContests(TRUE);
-	$cids = array_keys($cdatas);
-
-	if ( empty($cids) ) {
-		return array();
-	}
-
 	$hasLimit = array_key_exists('limit', $args);
 	// TODO: validate limit
 
@@ -931,11 +918,11 @@ function queue($args)
 	                  LEFT JOIN problem p USING (probid)
 	                  LEFT JOIN language l USING (langid)
 	                  LEFT JOIN contestproblem cp USING (probid, cid)
-	                  WHERE judgehost IS NULL AND s.cid IN (%Ai)
+	                  WHERE judgehost IS NULL
 	                  AND l.allow_judge = 1 AND cp.allow_judge = 1 AND valid = 1
 	                  ORDER BY judging_last_started ASC, submittime ASC, submitid ASC' .
 	                 ($hasLimit ? ' LIMIT %i' : ' %_'),
-	                 $cids, ($hasLimit ? $args['limit'] : -1));
+	                 ($hasLimit ? $args['limit'] : -1));
 
 	return array_map(function($sdata) {
 		return array('submitid' => safe_int($sdata['submitid']));
