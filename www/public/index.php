@@ -290,7 +290,7 @@ Using a different compiler or operating system than the judging system should no
 <ul>
 <?php 
   foreach($data_lang as $lang) {
-    printf('<li>%s<br /> <pre>%s: </pre></li>', $lang['name'], $compile_command[$lang['name']]);
+    printf('<li>%s<br /> <pre>%s: </pre></li>', $lang['name'], htmlentities($compile_command[$lang['name']]));
   } 
 ?>
 </ul>
@@ -299,7 +299,7 @@ Using a different compiler or operating system than the judging system should no
 <ul>
 <?php
   foreach($data_lang as $lang) {
-    printf('<li>%s: <pre>%s</pre></li>', $lang['name'], $version[$lang['name']]);
+    printf('<li>%s: <pre>%s</pre></li>', $lang['name'], htmlentities($version[$lang['name']]));
   }
 ?>
 </ul>
@@ -309,7 +309,7 @@ Using a different compiler or operating system than the judging system should no
 <ul>
 <?php
 foreach($data_lang as $lang) {
-  printf('<li>%s: <pre>%s</pre></li>', $lang['name'], $sample_code[$lang['name']]);
+  printf('<li>%s: <pre>%s</pre></li>', $lang['name'], htmlentities($sample_code[$lang['name']]));
 }
 ?>
 </ul>
