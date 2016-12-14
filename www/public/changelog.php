@@ -19,6 +19,7 @@ D-85748 Garching
 
 <h3>v5.1.2.1</h3>
 <ul>
+<li>internal change of submissions that qualify for judging</li>
 </ul>
 
 <h3>v5.1.2.0</h3>
