@@ -60,7 +60,7 @@ $sample_code = array();
 // JAVA 
 $compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
 $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
-$version['Java'] = 'java version "1.8.0_91"<br />Java(TM) SE Runtime Environment (build 1.8.0_91-b14)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.91-b14, mixed mode)';
+$version['Java'] = 'java version "1.8.0_121""<br />Java(TM) SE Runtime Environment (build 1.8.0_91-b14)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.121-b13, mixed mode)';
 $sample_code['Java'] = 'import java.util.Scanner;
 
 public class HelloWorld {
@@ -149,8 +149,7 @@ $compile_command['Prolog'] = 'swipl --goal=main,halt --stand_alone=true -o "$DES
 
 //Python 2
 $compile_command['Python 2'] = 'pypy "$MAINSOURCE"'; 
-$version['Python 2'] = 'Python 2.7.8 (2.4.0+dfsg-3, Dec 20 2014, 13:30:46)
-[PyPy 2.4.0 with GCC 4.9.2]';
+$version['Python 2'] = 'Python 2.7.8 (2.4.0+dfsg-3, Dec 20 2014, 13:30:46)<br />[PyPy 2.4.0 with GCC 4.9.2]'
 $sample_code['Python 2'] = '#read input
 i,j=map(int, raw_input().split())
 string1=raw_input()
