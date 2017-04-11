@@ -149,7 +149,7 @@ $compile_command['Prolog'] = 'swipl --goal=main,halt --stand_alone=true -o "$DES
 
 //Python 2
 $compile_command['Python 2'] = 'pypy "$MAINSOURCE"'; 
-$version['Python 2'] = 'Python 2.7.8 (2.4.0+dfsg-3, Dec 20 2014, 13:30:46)<br/ >[PyPy 2.4.0 with GCC 4.9.2]'
+$version['Python 2'] = 'Python 2.7.8 (2.4.0+dfsg-3, Dec 20 2014, 13:30:46)<br />[PyPy 2.4.0 with GCC 4.9.2]'
 $sample_code['Python 2'] = '#read input
 i,j=map(int, raw_input().split())
 string1=raw_input()
