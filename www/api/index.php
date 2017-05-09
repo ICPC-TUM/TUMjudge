@@ -794,7 +794,6 @@ function submissions_POST($args)
 	}
 
 	$sid = submit_solution($userdata['teamid'], $probid, $cid, $args['langid'], $FILEPATHS, $FILENAMES);
-<<<<<<< HEAD
 	if ( checkrole('jury') ) {
 		$results = getExpectedResults(file_get_contents($FILEPATHS[0]));
 		if ( !empty($results) ) {
@@ -802,8 +801,6 @@ function submissions_POST($args)
 			        WHERE submitid=%i', json_encode($results), $sid);
 		}
 	}
-=======
->>>>>>> domjudge/master
 
 	auditlog('submission', $sid, 'added', 'via api', null, $cid);
 
@@ -1283,9 +1280,6 @@ function scoreboard($args)
 			              'num_pending' => safe_int($pdata['num_pending']),
 			              'solved'      => safe_bool($pdata['is_correct']));
 
-<<<<<<< HEAD
-			if ( $prob['solved'] ) $prob['time'] = safe_int($pdata['time']);
-=======
 			if ( $prob['solved'] ) {
 				$prob['time'] = scoretime($pdata['time']);
 				$first = first_solved($pdata['time'],
@@ -1293,7 +1287,6 @@ function scoreboard($args)
 				                      ['best_time_sort'][$data['sortorder']]);
 				$prob['first_to_solve'] = safe_bool($first);
 			}
->>>>>>> domjudge/master
 
 			$row['problems'][] = $prob;
 		}
