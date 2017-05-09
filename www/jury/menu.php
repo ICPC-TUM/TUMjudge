@@ -92,7 +92,7 @@ if ( isset($refresh) ) {
     <li><a href="#" onclick="document.getElementById('toggles').submit();"><span class="glyphicon glyphicon-refresh"></span> refresh on</a></li>
 <?php } else { ?>
     <li><a href="#" onclick="document.getElementById('toggles').submit();"><span class="glyphicon glyphicon-lock"></span> refresh off</a></li>
-<?php }}*/ ?>
+<?php }} ?>
 <?php
 
 putClock();
