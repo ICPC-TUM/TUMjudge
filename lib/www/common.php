@@ -451,12 +451,10 @@ function putClock() {
 
 
 	if ( logged_in() ) {
-<<<<<<< HEAD
 		$team = $DB->q('MAYBETUPLE SELECT a.country FROM team t
 	                LEFT JOIN team_affiliation a ON (t.affilid = a.affilid)
 	                WHERE teamid = %i', $userdata['teamid']);
 		$usericon = "../images/countries/" . urlencode($team['country']) . ".png";
-=======
 		// Show pretty name if possible
 		$displayname = $username;
 		if ($userdata['name']) {
@@ -466,7 +464,6 @@ function putClock() {
 			. ( have_logout() ? " <a href=\"../auth/logout.php\">×</a>" : "" )
 			. "</div>";
 	}
->>>>>>> domjudge/master
 
 		echo "<li class=\"dropdown\">";
 		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px; height: 17px;\" src=\"".$usericon."\" />".$username."<span class=\"caret\"></span></a>";

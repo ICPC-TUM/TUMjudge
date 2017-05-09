@@ -102,15 +102,10 @@ if ( isset($_POST['import']) ) {
 		dbconfig_init();
 
 		// TODO: event-feed-port
-<<<<<<< HEAD
-		if ( isset($contest_yaml_data['penalty-time']) ) {
-			$LIBDBCONFIG['penalty_time']['value'] = (int)$contest_yaml_data['penalty-time'];
-=======
 		$penalty = first_defined($contest_yaml_data['penalty-time'],
 		                         $contest_yaml_data['penalty']);
 		if ( isset($penalty) ) {
 			$LIBDBCONFIG['penalty_time']['value'] = (int)$penalty;
->>>>>>> domjudge/master
 		}
 
 	/* clarification answers/categories currently not supported; ignore them.

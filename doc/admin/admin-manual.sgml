@@ -540,21 +540,12 @@ dump files in the sql subdirectory. The default database name is
 <tt>etc/dbpasswords.secret</tt> file: the database name as specified
 in this file will be used when installing.
 
-<<<<<<< HEAD
-Installation of the database is done with <tt>bin/dj-setup-database</tt>.
-For this, you need an installed and configured MySQL server and
-administrator access to it. Run
-<code>
-dj-setup-database genpass
-dj-setup-database [-u <admin_user>] [-p <password>|-r] install
-=======
 Installation of the database is done with <tt>bin/dj_setup_database</tt>.
 For this, you need an installed and configured MySQL server and
 administrator access to it. Run
 <code>
 dj_setup_database genpass
 dj_setup_database [-u <admin_user>] [-p <password>|-r] install
->>>>>>> domjudge/master
 </code>
 This first creates the DOMjudge database credentials file
 <tt>etc/dbpasswords.secret</tt> (optionally change the random
@@ -564,11 +555,7 @@ default/example data into the domjudge database. The option
 <tt>-r</tt> will prompt for a password for mysql; when no user is
 specified, the mysql client will try to read
 credentials from <tt>$HOME/.my.cnf</tt> as usual. The command
-<<<<<<< HEAD
-<tt>uninstall</tt> can be passed to <tt>dj-setup-database</tt> to
-=======
 <tt>uninstall</tt> can be passed to <tt>dj_setup_database</tt> to
->>>>>>> domjudge/master
 remove the DOMjudge database and users; <em>this deletes all data!</em>
 
 The domjudge database contains a number of tables, some of which need
@@ -588,11 +575,7 @@ and can take over immediately in the event of failure. The MySQL manual
 has more information about setting this up.
 
 Alternatively, you can make regular backups of your data to another host,
-<<<<<<< HEAD
-for example with <tt>mysqldump</tt>, or use a RAID based system.
-=======
 for example with <tt>mysqldump</tt>, or using a RAID based system.
->>>>>>> domjudge/master
 
 Replication can also be used to improve performance, by directing all
 select-queries to one or more replicated slave servers, while updates
@@ -661,11 +644,7 @@ maximum testcase size.
 by default. It's very desirable to set one.
 <item>When maximising performance is required, you can
 consider to use the <em>Memory</em> table storage engine
-<<<<<<< HEAD
-for the scorecache_public and scorecache_jury tables. They will be
-=======
 for the scorecache and rankcache tables. They will be
->>>>>>> domjudge/master
 lost in case of a full crash, but can be recalculated from the jury
 interface.
 </itemize>
@@ -676,18 +655,6 @@ interface.
 A few extra steps might need to be taken to completely install and
 configure a judgehost.
 
-<<<<<<< HEAD
-For running solution programs under a non-privileged user, a user has
-to be added to the system(s) that act as judgehost. This user does not
-need a home-directory or password, so the following command would
-suffice to add a user `domjudge-run' with minimal privileges.
-
-<!-- NOTE: update this, then also update the copy of this under chapter 2.1 -->
-On RedHat:
-<verb>useradd -d /nonexistent -g nobody -M -n -s /bin/false domjudge-run</verb>
-On Debian:
-<verb>useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run</verb>
-=======
 For running solution programs under a non-privileged user, a user and group have
 to be added to the system(s) that act as judgehost. This user does not
 need a home-directory or password, so the following command would
@@ -699,17 +666,12 @@ On Debian and Redhat based Linux distributions use:
 useradd -d /nonexistent -U -M -s /bin/false domjudge-run
 groupadd domjudge-run
 </verb>
->>>>>>> domjudge/master
 
 For other systems check the specifics of your useradd command.
 This user must also be configured as the user under which programs run
 via <tt>configure --enable-runuser=USER</tt>; the default is
-<<<<<<< HEAD
-<tt>domjudge-run</tt>.
-=======
 <tt>domjudge-run</tt>. By default the group is set to the same, this
 can be modified with the option <tt>--enable-rungroup=GROUP</tt>
->>>>>>> domjudge/master
 
 <tt>Runguard</tt> needs to be able to become root for certain operations
 like changing to the runuser and performing a chroot. Also, the default
@@ -734,8 +696,6 @@ environment must be built and configured. See the appendix on
 <ref id="problems:chroot" name="setting up a chroot"> for more
 details.
 
-<<<<<<< HEAD
-=======
 <p>
 DOMjudge uses Linux Control Groups or cgroups for process isolation in
 the judgedaemon. Linux cgroups give more accurate measurement of
@@ -762,7 +722,6 @@ match your situation first.
 This script needs to be re-run after each boot (e.g., add it to
 the judgedaemon init script).
 
->>>>>>> domjudge/master
 The judgehost connects to the domserver via a REST API. You need to
 create an account for the judgedaemons to use (this may be a
 shared account between all judgedaemons) with a difficult,
@@ -932,12 +891,7 @@ Interpreted languages and non-statically linked binaries (for example,
 Oracle Java) can in principle also be used, but require that all
 dependencies are added to the chroot environment.
 DOMjudge comes with helper scripts to build a chroot environment:
-<<<<<<< HEAD
-run either <tt>sudo dj_make_chroot</tt> or <tt>sudo dj_make_ubuntu_chroot</tt>
-as root (for a Debian or Ubuntu-based chroot, respectively).
-=======
 run <tt>sudo bin/dj_make_chroot</tt>.
->>>>>>> domjudge/master
 Options can be given change the target directory where to build the
 chroot environment (normally the default from configure is used) and
 to select the target machine architecture.
@@ -1136,11 +1090,7 @@ The following should do it on a Debian-like system:
 <code>
 sudo apt-get install make texlive-latex-extra texlive-latex-recommended texlive-lang-european
 cd &lt;INSTALL_PATH&gt;/docs/team
-<<<<<<< HEAD
-./genteammanual [-w http(s)://yourhost.example.edu/domjudge/] [targetdir]
-=======
 ./genteammanual [targetdir]
->>>>>>> domjudge/master
 </code>
 
 <p>
@@ -2459,14 +2409,9 @@ they replace the steps described in the section
 <ref id="install_config:installsystem" name="Installation system">;
 also no <tt>--prefix</tt> flag or other directories have to be
 specified to <tt>configure</tt>. In this case the binaries
-<<<<<<< HEAD
-(e.g. <tt>judgedaemon</tt> and <tt>dj-setup-database</tt>) can be
-found in their respective source directories, not in <tt>bin</tt>.
-=======
 (e.g. <tt>judgedaemon</tt> and <tt>dj_setup_database</tt>) can be
 found in their respective source directories, and are also symlinked
 in <tt>bin</tt>.
->>>>>>> domjudge/master
 
 <sect>Makefile structure
 <p>
