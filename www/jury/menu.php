@@ -15,8 +15,9 @@ global $updates;
 <a class="new" href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="octicon octicon-law"></span> judgehosts (<?php echo $ndown ?> down)</a>
 <?php	} else { ?>
 <a href="judgehosts.php" accesskey="j" id="menu_judgehosts"><span class="octicon octicon-law"></span> judgehosts</a>
-<?php	}
+<?php	} ?>
 <a href="judgehosts_restrictions.php"><span class="octicon octicon-key"></span> judgehosts restrictions</a>
+<?php
 	$nerr = count($updates['internal_error']);
 	if ( $nerr > 0 ) { ?>
 <a class="new" href="internal_errors.php" accesskey="e" id="menu_internal_error"><span class="octicon octicon-zap"></span> internal error (<?php echo $nerr ?> new)</a>
