@@ -405,104 +405,103 @@ function putClock() {
 	echo addHidden('cid', $cid);
 	echo addEndForm();
 	echo "<script type=\"text/javascript\">
-	      function chooseContest(cid) {
-	        document.getElementById('selectcontestform').cid.value = cid;
-	        document.getElementById('selectcontestform').submit();
-              };
-              </script>";
+          function chooseContest(cid) {
+            document.getElementById('selectcontestform').cid.value = cid;
+            document.getElementById('selectcontestform').submit();
+          };
+          </script>";
 	echo "<li class=\"dropdown\">";
 	echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-flag\"></span> contests <span class=\"caret\"></span></a>";
 	echo "<ul class=\"dropdown-menu scrollable-menu\" role=\"menu\">";
 
-        $current_contests = array();
-        $future_contests = array();
-        $past_contests = array();
-        foreach(array_reverse($cdatas, true) AS $tcid => $contest) {
-                if($contest['starttime'] < time() && $contest['endtime'] > time()) {
-                        $current_contests[$tcid] = $contest;
-                }
-                else if($contest['starttime'] > time()) {
-                        $future_contests[$tcid] = $contest;
-                }
-                else {
-                        $past_contests[$tcid] = $contest;
-                }
-        }
-        if(count($current_contests) > 0) {
-                echo "<li class='header'>Current Contests</li>";
-                foreach($current_contests AS $tcid => $contest) {
-                        echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
-                }
-        }
-        if(count($future_contests) > 0) {
-                echo "<li class='header'>Future Contests</li>";
-                foreach($future_contests AS $tcid => $contest) {
-                        echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
-                }
-        }
-        if(count($past_contests) > 0) {
-                echo "<li class='header'>Past Contests</li>";
-                foreach($past_contests AS $tcid => $contest) {
-                        echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
-                }
-        }
+    $current_contests = array();
+    $future_contests = array();
+    $past_contests = array();
+    foreach(array_reverse($cdatas, true) AS $tcid => $contest) {
+            if($contest['starttime'] < time() && $contest['endtime'] > time()) {
+                    $current_contests[$tcid] = $contest;
+            }
+            else if($contest['starttime'] > time()) {
+                    $future_contests[$tcid] = $contest;
+            }
+            else {
+                    $past_contests[$tcid] = $contest;
+            }
+    }
+    if(count($current_contests) > 0) {
+            echo "<li class='header'>Current Contests</li>";
+            foreach($current_contests AS $tcid => $contest) {
+                    echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
+            }
+    }
+    if(count($future_contests) > 0) {
+            echo "<li class='header'>Future Contests</li>";
+            foreach($future_contests AS $tcid => $contest) {
+                    echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
+            }
+    }
+    if(count($past_contests) > 0) {
+            echo "<li class='header'>Past Contests</li>";
+            foreach($past_contests AS $tcid => $contest) {
+                    echo "<li".($tcid == $cid ? ' class="active"' : '')."><a href=\"#\" onclick=\"javascript: chooseContest(".$tcid.");\">".$contest['name']."</a></li>";
+            }
+    }
 
 	echo "</ul></li>";
 
 
 	if ( logged_in() ) {
-		$team = $DB->q('MAYBETUPLE SELECT a.country FROM team t
-	                LEFT JOIN team_affiliation a ON (t.affilid = a.affilid)
-	                WHERE teamid = %i', $userdata['teamid']);
-		$usericon = "../images/countries/" . urlencode($team['country']) . ".png";
-		// Show pretty name if possible
-		$displayname = $username;
-		if ($userdata['name']) {
-			$displayname = "<abbr title=\"$username\">" . $userdata['name'] . "</abbr>";
-		}
-		echo "<div id=\"username\">logged in as " . $displayname
-			. ( have_logout() ? " <a href=\"../auth/logout.php\">×</a>" : "" )
-			. "</div>";
-	}
+        $team = $DB->q('MAYBETUPLE SELECT a.country FROM team t
+                   LEFT JOIN team_affiliation a ON (t.affilid = a.affilid)
+                   WHERE teamid = %i', $userdata['teamid']);
+        $usericon = "../images/countries/" . urlencode($team['country']) . ".png";
+        // Show pretty name if possible
+        $displayname = $username;
+        if ($userdata['name']) {
+            $displayname = "<abbr title=\"$username\">" . $userdata['name'] . "</abbr>";
+        }
+        echo "<div id=\"username\">logged in as " . $displayname
+            . ( have_logout() ? " <a href=\"../auth/logout.php\">×</a>" : "" )
+            . "</div>";
 
-		echo "<li class=\"dropdown\">";
-		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px; height: 17px;\" src=\"".$usericon."\" />".$username."<span class=\"caret\"></span></a>";
-		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
+        echo "<li class=\"dropdown\">";
+        echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px; height: 17px;\" src=\"".$usericon."\" />".$username."<span class=\"caret\"></span></a>";
+        echo "<ul class=\"dropdown-menu\" role=\"menu\">";
 
-		if(checkrole('jury') || checkrole('balloon')) {
-			echo "<li><a href=\"../public/\">public area</a></li>";
-			if(checkrole('team')) {
-				echo "<li><a href=\"../team/\">team area</a></li>";
-			}
-			echo "<li><a href=\"../jury/\">jury area</a></li>";
-		}
-		if(IS_JURY) {
-			$notify_flag  =  isset($_COOKIE["domjudge_notify"])  && (bool)$_COOKIE["domjudge_notify"];
-			$refresh_flag = !isset($_COOKIE["domjudge_refresh"]) || (bool)$_COOKIE["domjudge_refresh"];
-			echo addForm('toggle_notify.php', 'get', 'notify').addHidden('enable', ($notify_flag ? 0 : 1)).addEndForm();
-			if(isset($refresh)) {
-                        	echo addForm('toggle_refresh.php', 'get', 'toggles').addHidden('enable', ($refresh_flag ? 0 : 1)).addEndForm();
+        if(checkrole('jury') || checkrole('balloon')) {
+            echo "<li><a href=\"../public/\">public area</a></li>";
+            if(checkrole('team')) {
+                echo "<li><a href=\"../team/\">team area</a></li>";
+            }
+            echo "<li><a href=\"../jury/\">jury area</a></li>";
+        }
+        if(IS_JURY) {
+            $notify_flag  =  isset($_COOKIE["domjudge_notify"])  && (bool)$_COOKIE["domjudge_notify"];
+            $refresh_flag = !isset($_COOKIE["domjudge_refresh"]) || (bool)$_COOKIE["domjudge_refresh"];
+            echo addForm('toggle_notify.php', 'get', 'notify').addHidden('enable', ($notify_flag ? 0 : 1)).addEndForm();
+            if(isset($refresh)) {
+                            echo addForm('toggle_refresh.php', 'get', 'toggles').addHidden('enable', ($refresh_flag ? 0 : 1)).addEndForm();
                         }
-			echo "<li id=\"notify_li\" style=\"display: none\">";
+            echo "<li id=\"notify_li\" style=\"display: none\">";
                         if($notify_flag) {
-                        	echo "<a href=\"#\" onclick=\"toggleNotifications(false); document.getElementById('notify').submit();\">disable notifications</a>";
+                            echo "<a href=\"#\" onclick=\"toggleNotifications(false); document.getElementById('notify').submit();\">disable notifications</a>";
                         } else {
-                        	echo "<a href=\"#\" onclick=\"toggleNotifications(true); document.getElementById('notify').submit();\">enable notifications</a>";
-			}
+                            echo "<a href=\"#\" onclick=\"toggleNotifications(true); document.getElementById('notify').submit();\">enable notifications</a>";
+            }
                         echo "</li>";
                         if(isset($refresh)) {
-				if($refresh_flag) {
-					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">disable refresh</a></li>";
-				}
-				else {
-					echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">enable refresh</a></li>";
-				}
-			}
-		}
-		if(have_logout()) {
-			echo "<li><a href=\"../auth/logout.php\">logout</a></li>";
-		}
-               	echo "</ul></li>";
+                if($refresh_flag) {
+                    echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">disable refresh</a></li>";
+                }
+                else {
+                    echo "<li><a href=\"#\" onclick=\"document.getElementById('toggles').submit();\">enable refresh</a></li>";
+                }
+            }
+        }
+        if(have_logout()) {
+            echo "<li><a href=\"../auth/logout.php\">logout</a></li>";
+        }
+        echo "</ul></li>";
 	}
 }
 
