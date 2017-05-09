@@ -60,7 +60,7 @@ $sample_code = array();
 // JAVA 
 $compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
 $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
-$version['Java'] = 'java version "1.8.0_121""<br />Java(TM) SE Runtime Environment (build 1.8.0_91-b14)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.121-b13, mixed mode)';
+$version['Java'] = 'java version "1.8.0_121""<br />Java(TM) SE Runtime Environment (build 1.8.0_121-b13)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.121-b13, mixed mode)';
 $sample_code['Java'] = 'import java.util.Scanner;
 
 public class HelloWorld {
