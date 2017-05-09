@@ -90,20 +90,57 @@ function getRequestID($numeric = TRUE)
 
 /**
  * Returns whether the problem with probid is visible to teams and the
- * public. That is, it is in the active contest, which has started and
- * it is submittable.
+ * public. That is, it is in the selected (active) contest, which has
+ * started and it is submittable.
  */
 function problemVisible($probid)
 {
 	global $DB, $cdata;
 
 	if ( empty($probid) ) return FALSE;
-	if ( !$cdata || difftime(now(),$cdata['starttime']) < 0 ) return FALSE;
+
+	$fdata = calcFreezeData($cdata);
+	if ( !$fdata['cstarted'] ) return FALSE;
 
 	return $DB->q('MAYBETUPLE SELECT probid FROM problem
 	               INNER JOIN contestproblem USING (probid)
 	               WHERE cid = %i AND allow_submit = 1 AND probid = %i',
 	              $cdata['cid'], $probid) !== NULL;
+}
+
+/**
+ * Given an array of contest data, calculates whether the contest
+ * has already started ('cstarted'), and if scoreboard is currently
+ * frozen ('showfrozen') or final ('showfinal').
+ */
+function calcFreezeData($cdata)
+{
+	$fdata = array();
+
+	if ( empty($cdata) ) {
+		return array(
+			'showfinal' => false,
+			'showfrozen' => false,
+			'cstarted' => false
+		);
+	}
+
+	// Show final scores if contest is over and unfreezetime has been
+	// reached, or if contest is over and no freezetime had been set.
+	// We can compare $now and the dbfields stringwise.
+	$now = now();
+	$fdata['showfinal']  = ( !isset($cdata['freezetime']) &&
+	                difftime($cdata['endtime'],$now) <= 0 ) ||
+	              ( isset($cdata['unfreezetime']) &&
+	                difftime($cdata['unfreezetime'], $now) <= 0 );
+	// freeze scoreboard if freeze time has been reached and
+	// we're not showing the final score yet
+	$fdata['showfrozen'] = !$fdata['showfinal'] && isset($cdata['freezetime']) &&
+	              difftime($cdata['freezetime'],$now) <= 0;
+	// contest is active but has not yet started
+	$fdata['cstarted'] = difftime($cdata['starttime'],$now) <= 0;
+
+	return $fdata;
 }
 
 /**
@@ -168,8 +205,8 @@ function calcScoreRow($cid, $team, $prob) {
 	// for each submission
 	while( $row = $result->next() ) {
 
-		// Contest submit time in minutes for scoring.
-		$submittime = (int)floor(calcContestTime($row['submittime'],$cid) / 60);
+		// Contest submit time
+		$submittime = calcContestTime($row['submittime'],$cid);
 
 		// Check if this submission has a publicly visible judging result:
 		if ( (dbconfig_get('verification_required', 0) && ! $row['verified']) ||
@@ -205,27 +242,22 @@ function calcScoreRow($cid, $team, $prob) {
 	}
 
 	// insert or update the values in the public/team scores table
-	$DB->q('REPLACE INTO scorecache_public
-	        (cid, teamid, probid, submissions, pending, totaltime, is_correct)
-	        VALUES (%i,%i,%i,%i,%i,%i,%i)',
-	       $cid, $team, $prob, $submitted_p, $pending_p, $time_p, $correct_p);
-
-	// insert or update the values in the jury scores table
-	$DB->q('REPLACE INTO scorecache_jury
-	        (cid, teamid, probid, submissions, pending, totaltime, is_correct)
-	        VALUES (%i,%i,%i,%i,%i,%i,%i)',
-	       $cid, $team, $prob, $submitted_j, $pending_j, $time_j, $correct_j);
+	$DB->q('REPLACE INTO scorecache
+	        (cid, teamid, probid,
+	         submissions_restricted, pending_restricted, solvetime_restricted, is_correct_restricted,
+	         submissions_public, pending_public, solvetime_public, is_correct_public)
+	        VALUES (%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i)',
+	       $cid, $team, $prob,
+	       $submitted_j, $pending_j, $time_j, $correct_j,
+	       $submitted_p, $pending_p, $time_p, $correct_p);
 
 	if ( $DB->q("VALUE SELECT RELEASE_LOCK('$lockstr')") != 1 ) {
 		error("calcScoreRow failed to release lock '$lockstr'");
 	}
 
 	// If we found a new correct result, update the rank cache too
-	if ( $correct_j > 0 ) {
-		updateRankCache($cid, $team, true);
-	}
-	if ( $correct_p > 0 ) {
-		updateRankCache($cid, $team, false);
+	if ( $correct_j > 0 || $correct_p > 0 ) {
+		updateRankCache($cid, $team);
 	}
 
 	return;
@@ -235,51 +267,53 @@ function calcScoreRow($cid, $team, $prob) {
  * Update tables used for efficiently computing team ranks
  *
  * Given a contestid and teamid (re)calculate the time
- * and solved problems for a team. Third parameter indictates
- * if the cache for jury or public should be updated.
+ * and solved problems for a team.
  *
  * Due to current transactions usage, this function MUST NOT contain
  * any START TRANSACTION or COMMIT statements.
  */
-function updateRankCache($cid, $team, $jury) {
+function updateRankCache($cid, $team) {
 	global $DB;
 
-	logmsg(LOG_DEBUG, "updateRankCache '$cid' '$team' '$jury'");
+	logmsg(LOG_DEBUG, "updateRankCache '$cid' '$team'");
 
 	$team_penalty = $DB->q("VALUE SELECT penalty FROM team WHERE teamid = %i", $team);
 
-	// Find table name
-	$tblname = $jury ? 'jury' : 'public';
-
 	// First acquire an advisory lock to prevent other calls to
 	// calcScoreRow() from interfering with our update.
-	$lockstr = "domjudge.$cid.$team.$tblname";
+	$lockstr = "domjudge.$cid.$team";
 	if ( $DB->q("VALUE SELECT GET_LOCK('$lockstr',3)") != 1 ) {
 		error("updateRankCache failed to obtain lock '$lockstr'");
 	}
 
 	// Fetch values from scoreboard cache per problem
-	$scoredata = $DB->q("SELECT submissions, is_correct, cp.points, totaltime
-			     FROM scorecache_$tblname
-			     LEFT JOIN contestproblem cp USING(probid,cid)
-			     WHERE cid = %i and teamid = %i", $cid, $team);
-	$num_points = 0;
-	$total_time = $team_penalty;
+	$scoredata = $DB->q("SELECT *, cp.points
+	                     FROM scorecache
+	                     LEFT JOIN contestproblem cp USING(probid,cid)
+	                     WHERE cid = %i and teamid = %i", $cid, $team);
+
+	$num_points = array('public' => 0, 'restricted' => 0);
+	$total_time = array('public' => $team_penalty, 'restricted' => $team_penalty);
 	while ( $srow = $scoredata->next() ) {
 		// Only count solved problems
-		if ( $srow['is_correct'] ) {
-			$penalty = calcPenaltyTime( $srow['is_correct'],
-			                            $srow['submissions'] );
-			$num_points += $srow['points'];
-			$total_time += $srow['totaltime'] + $penalty;
+		foreach (array('public', 'restricted') as $variant) {
+			if ( $srow['is_correct_'.$variant] ) {
+				$penalty = calcPenaltyTime( $srow['is_correct_'.$variant],
+							    $srow['submissions_'.$variant] );
+				$num_points[$variant] += $srow['points'];
+				$total_time[$variant] += scoretime($srow['solvetime_'.$variant]) + $penalty;
+			}
 		}
 	}
 
 	// Update the rank cache table
-	$DB->q("REPLACE INTO rankcache_$tblname
-	        (cid, teamid, points, totaltime)
-	        VALUES (%i,%i,%i,%i)",
-	       $cid, $team, $num_points, $total_time);
+	$DB->q("REPLACE INTO rankcache (cid, teamid,
+	        points_restricted, totaltime_restricted,
+	        points_public, totaltime_public)
+	        VALUES (%i,%i,%i,%i,%i,%i)",
+	       $cid, $team,
+	       $num_points['restricted'], $total_time['restricted'],
+	       $num_points['public'], $total_time['public']);
 
 	// Release the lock
 	if ( $DB->q("VALUE SELECT RELEASE_LOCK('$lockstr')") != 1 ) {
@@ -287,6 +321,27 @@ function updateRankCache($cid, $team, $jury) {
 	}
 }
 
+
+/**
+ * Time as used on the scoreboard (i.e. truncated minutes).
+ */
+function scoretime($time)
+{
+	return (int)floor($time / 60);
+}
+
+/**
+ * Checks whether the team was the first to solve this problem by
+ * comparing times. Note that times are floats so a simple equality
+ * test is unreliable. Also, $probtime may be NULL when called through
+ * putTeamRow(), in which case we simply return FALSE.
+ */
+function first_solved($teamtime, $probtime)
+{
+	if ( !isset($probtime) ) return false;
+	$eps = 0.0000001;
+	return $teamtime-$eps <= $probtime;
+}
 
 /**
  * Calculate the penalty time.
@@ -313,6 +368,56 @@ function calcPenaltyTime($solved, $num_submissions)
 	if ( ! $solved ) return 0;
 
 	return ( $num_submissions - 1 ) * dbconfig_get('penalty_time', 20);
+}
+
+// From http://www.problemarchive.org/wiki/index.php/Problem_Format
+
+// Expected result tag in (jury) submissions:
+$problem_result_matchstrings = array('@EXPECTED_RESULTS@: ',
+                                     '@EXPECTED_SCORE@: ');
+
+// Remap from Kattis problem package format to DOMjudge internal strings:
+$problem_result_remap = array('ACCEPTED' => 'CORRECT',
+                              'WRONG_ANSWER' => 'WRONG-ANSWER',
+                              'TIME_LIMIT_EXCEEDED' => 'TIMELIMIT',
+                              'RUN_TIME_ERROR' => 'RUN-ERROR');
+
+function normalizeExpectedResult($result) {
+	global $problem_result_remap;
+
+	$result = trim(mb_strtoupper($result));
+	if ( in_array($result,array_keys($problem_result_remap)) ) {
+		return $problem_result_remap[$result];
+	}
+	return $result;
+}
+
+/**
+ * checks given source file for expected results string
+ * returns NULL if no such string exists
+ * returns array of expected results otherwise
+ */
+function getExpectedResults($source) {
+	global $problem_result_matchstrings;
+	$pos = FALSE;
+	foreach ( $problem_result_matchstrings as $matchstring ) {
+		if ( ($pos = mb_stripos($source,$matchstring)) !== FALSE ) break;
+	}
+
+	if ( $pos === FALSE) {
+		return NULL;
+	}
+
+	$beginpos = $pos + mb_strlen($matchstring);
+	$endpos = mb_strpos($source,"\n",$beginpos);
+	$str = mb_substr($source,$beginpos,$endpos-$beginpos);
+	$results = explode(',',trim(mb_strtoupper($str)));
+
+	foreach ( $results as $key => $val ) {
+		$results[$key] = normalizeExpectedResult($val);
+	}
+
+	return $results;
 }
 
 /**
@@ -437,27 +542,19 @@ function alert($msgtype, $description = '')
 }
 
 /**
- * Compares two IP addresses for equivalence
- */
-function compareipaddr($ip1, $ip2)
-{
-	$ip1n = inet_pton($ip1); $ip2n = inet_pton($ip2);
-	return $ip1n !== FALSE && $ip1n === $ip2n;
-}
-
-/**
  * Functions to support graceful shutdown of daemons upon receiving a signal
  */
 function sig_handler($signal)
 {
-	global $exitsignalled;
+	global $exitsignalled, $gracefulexitsignalled;
 
 	logmsg(LOG_DEBUG, "Signal $signal received");
 
 	switch ( $signal ) {
-	case SIGTERM:
 	case SIGHUP:
-	case SIGINT:
+		$gracefulexitsignalled = TRUE;
+	case SIGINT:   # Ctrl+C
+	case SIGTERM:
 		$exitsignalled = TRUE;
 	}
 }
@@ -562,11 +659,12 @@ function submit_solution($team, $prob, $contest, $lang, $files, $filenames, $ori
 	// If no contest has started yet, refuse submissions.
 	$now = now();
 
-	$contestdata = $DB->q('MAYBETUPLE SELECT starttime,endtime FROM contest WHERE cid = %i', $contest);
+	$contestdata = $DB->q('MAYBETUPLE SELECT * FROM contest WHERE cid = %i', $contest);
 	if ( ! isset($contestdata) ) {
 		error("Contest c$contest not found.");
 	}
-	if( difftime($contestdata['starttime'], $now) > 0 ) {
+	$fdata = calcFreezeData($contestdata);
+	if( !checkrole('jury') && !$fdata['cstarted'] ) {
 		error("The contest is closed, no submissions accepted. [c$contest]");
 	}
 
@@ -612,6 +710,12 @@ function submit_solution($team, $prob, $contest, $lang, $files, $filenames, $ori
 
 	logmsg (LOG_INFO, "input verified");
 
+	// First look up any expected results in file, so as to minimize
+	// the SQL transaction time below.
+	if ( checkrole('jury') ) {
+		$results = getExpectedResults(dj_file_get_contents($files[0]));
+	}
+
 	// Insert submission into the database
 	$DB->q('START TRANSACTION');
 	$id = $DB->q('RETURNID INSERT INTO submission
@@ -622,7 +726,15 @@ function submit_solution($team, $prob, $contest, $lang, $files, $filenames, $ori
 	for($rank=0; $rank<count($files); $rank++) {
 		$DB->q('INSERT INTO submission_file
 		        (submitid, filename, rank, sourcecode) VALUES (%i, %s, %i, %s)',
-		       $id, $filenames[$rank], $rank, dj_get_file_contents($files[$rank], false));
+		       $id, $filenames[$rank], $rank, dj_file_get_contents($files[$rank]));
+	}
+
+	// Add expected results from source. We only do this for jury
+	// submissions to prevent accidental auto-verification of team
+	// submissions.
+	if ( checkrole('jury') && !empty($results) ) {
+		$DB->q('UPDATE submission SET expected_results=%s
+		        WHERE submitid=%i', json_encode($results), $id);
 	}
 	$DB->q('COMMIT');
 
@@ -745,4 +857,224 @@ function phpini_to_bytes($size_str) {
 		case 'G': case 'g': return (int)$size_str * 1073741824;
 		default: return $size_str;
 	}
+}
+
+// Color names as defined by https://www.w3.org/TR/css3-color/#html4
+$HTML_colors = array(
+"black" => "#000000",
+"silver" => "#C0C0C0",
+"gray" => "#808080",
+"white" => "#FFFFFF",
+"maroon" => "#800000",
+"red" => "#FF0000",
+"purple" => "#800080",
+"fuchsia" => "#FF00FF",
+"green" => "#008000",
+"lime" => "#00FF00",
+"olive" => "#808000",
+"yellow" => "#FFFF00",
+"navy" => "#000080",
+"blue" => "#0000FF",
+"teal" => "#008080",
+"aqua" => "#00FFFF",
+"aliceblue" => "#f0f8ff",
+"antiquewhite" => "#faebd7",
+"aqua" => "#00ffff",
+"aquamarine" => "#7fffd4",
+"azure" => "#f0ffff",
+"beige" => "#f5f5dc",
+"bisque" => "#ffe4c4",
+"black" => "#000000",
+"blanchedalmond" => "#ffebcd",
+"blue" => "#0000ff",
+"blueviolet" => "#8a2be2",
+"brown" => "#a52a2a",
+"burlywood" => "#deb887",
+"cadetblue" => "#5f9ea0",
+"chartreuse" => "#7fff00",
+"chocolate" => "#d2691e",
+"coral" => "#ff7f50",
+"cornflowerblue" => "#6495ed",
+"cornsilk" => "#fff8dc",
+"crimson" => "#dc143c",
+"cyan" => "#00ffff",
+"darkblue" => "#00008b",
+"darkcyan" => "#008b8b",
+"darkgoldenrod" => "#b8860b",
+"darkgray" => "#a9a9a9",
+"darkgreen" => "#006400",
+"darkgrey" => "#a9a9a9",
+"darkkhaki" => "#bdb76b",
+"darkmagenta" => "#8b008b",
+"darkolivegreen" => "#556b2f",
+"darkorange" => "#ff8c00",
+"darkorchid" => "#9932cc",
+"darkred" => "#8b0000",
+"darksalmon" => "#e9967a",
+"darkseagreen" => "#8fbc8f",
+"darkslateblue" => "#483d8b",
+"darkslategray" => "#2f4f4f",
+"darkslategrey" => "#2f4f4f",
+"darkturquoise" => "#00ced1",
+"darkviolet" => "#9400d3",
+"deeppink" => "#ff1493",
+"deepskyblue" => "#00bfff",
+"dimgray" => "#696969",
+"dimgrey" => "#696969",
+"dodgerblue" => "#1e90ff",
+"firebrick" => "#b22222",
+"floralwhite" => "#fffaf0",
+"forestgreen" => "#228b22",
+"fuchsia" => "#ff00ff",
+"gainsboro" => "#dcdcdc",
+"ghostwhite" => "#f8f8ff",
+"gold" => "#ffd700",
+"goldenrod" => "#daa520",
+"gray" => "#808080",
+"green" => "#008000",
+"greenyellow" => "#adff2f",
+"grey" => "#808080",
+"honeydew" => "#f0fff0",
+"hotpink" => "#ff69b4",
+"indianred" => "#cd5c5c",
+"indigo" => "#4b0082",
+"ivory" => "#fffff0",
+"khaki" => "#f0e68c",
+"lavender" => "#e6e6fa",
+"lavenderblush" => "#fff0f5",
+"lawngreen" => "#7cfc00",
+"lemonchiffon" => "#fffacd",
+"lightblue" => "#add8e6",
+"lightcoral" => "#f08080",
+"lightcyan" => "#e0ffff",
+"lightgoldenrodyellow" => "#fafad2",
+"lightgray" => "#d3d3d3",
+"lightgreen" => "#90ee90",
+"lightgrey" => "#d3d3d3",
+"lightpink" => "#ffb6c1",
+"lightsalmon" => "#ffa07a",
+"lightseagreen" => "#20b2aa",
+"lightskyblue" => "#87cefa",
+"lightslategray" => "#778899",
+"lightslategrey" => "#778899",
+"lightsteelblue" => "#b0c4de",
+"lightyellow" => "#ffffe0",
+"lime" => "#00ff00",
+"limegreen" => "#32cd32",
+"linen" => "#faf0e6",
+"magenta" => "#ff00ff",
+"maroon" => "#800000",
+"mediumaquamarine" => "#66cdaa",
+"mediumblue" => "#0000cd",
+"mediumorchid" => "#ba55d3",
+"mediumpurple" => "#9370db",
+"mediumseagreen" => "#3cb371",
+"mediumslateblue" => "#7b68ee",
+"mediumspringgreen" => "#00fa9a",
+"mediumturquoise" => "#48d1cc",
+"mediumvioletred" => "#c71585",
+"midnightblue" => "#191970",
+"mintcream" => "#f5fffa",
+"mistyrose" => "#ffe4e1",
+"moccasin" => "#ffe4b5",
+"navajowhite" => "#ffdead",
+"navy" => "#000080",
+"oldlace" => "#fdf5e6",
+"olive" => "#808000",
+"olivedrab" => "#6b8e23",
+"orange" => "#ffa500",
+"orangered" => "#ff4500",
+"orchid" => "#da70d6",
+"palegoldenrod" => "#eee8aa",
+"palegreen" => "#98fb98",
+"paleturquoise" => "#afeeee",
+"palevioletred" => "#db7093",
+"papayawhip" => "#ffefd5",
+"peachpuff" => "#ffdab9",
+"peru" => "#cd853f",
+"pink" => "#ffc0cb",
+"plum" => "#dda0dd",
+"powderblue" => "#b0e0e6",
+"purple" => "#800080",
+"red" => "#ff0000",
+"rosybrown" => "#bc8f8f",
+"royalblue" => "#4169e1",
+"saddlebrown" => "#8b4513",
+"salmon" => "#fa8072",
+"sandybrown" => "#f4a460",
+"seagreen" => "#2e8b57",
+"seashell" => "#fff5ee",
+"sienna" => "#a0522d",
+"silver" => "#c0c0c0",
+"skyblue" => "#87ceeb",
+"slateblue" => "#6a5acd",
+"slategray" => "#708090",
+"slategrey" => "#708090",
+"snow" => "#fffafa",
+"springgreen" => "#00ff7f",
+"steelblue" => "#4682b4",
+"tan" => "#d2b48c",
+"teal" => "#008080",
+"thistle" => "#d8bfd8",
+"tomato" => "#ff6347",
+"turquoise" => "#40e0d0",
+"violet" => "#ee82ee",
+"wheat" => "#f5deb3",
+"white" => "#ffffff",
+"whitesmoke" => "#f5f5f5",
+"yellow" => "#ffff00",
+"yellowgreen" => "#9acd32",
+);
+
+/**
+ * Convert a HTML extended color name to 6-digit hex RGB value.
+ * If $color is already in hex RGB format, it is returned unchanged.
+ * Returns NULL if $color is not valid.
+ */
+function color_to_hex($color)
+{
+	global $HTML_colors;
+
+	if ( preg_match('/^#([[:xdigit:]]{3}){1,2}$/', $color) ) return $color;
+
+	$color = strtolower(preg_replace('/[[:space:]]/','',$color));
+	if ( isset($HTML_colors[$color]) ) return strtoupper($HTML_colors[$color]);
+	return null;
+}
+
+/**
+ * Convert a hexadecimal RGB color code to the closest HTML color
+ * name. Returns NULL if $hex is not a valid 3 or 6 digit hex RGB
+ * string starting with a '#'.
+ */
+function hex_to_color($hex)
+{
+	global $HTML_colors;
+
+	// Expand short 3 digit hex version.
+	if ( preg_match('/^#[[:xdigit:]]{3}$/', $hex) ) {
+		$new = '#';
+		for($i=1; $i<=3; $i++) $new .= str_repeat($hex[$i],2);
+		$hex = $new;
+	}
+	if ( !preg_match('/^#[[:xdigit:]]{6}$/', $hex) ) return NULL;
+
+	// Find the best match in L1 distance.
+	$bestmatch = '';
+	$bestdist = 999999;
+
+	foreach ( $HTML_colors as $color => $rgb ) {
+		$dist = 0;
+		for($i=1; $i<=3; $i++) {
+			sscanf(substr($hex,2*$i-1,2),'%x',$val1);
+			sscanf(substr($rgb,2*$i-1,2),'%x',$val2);
+			$dist += abs($val1 - $val2);
+		}
+		if ( $dist<$bestdist ) {
+			$bestdist = $dist;
+			$bestmatch = $color;
+		}
+	}
+
+	return $bestmatch;
 }

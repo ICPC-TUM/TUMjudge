@@ -18,6 +18,50 @@ function ch_error($string)
 	$CHECKER_ERRORS[] = $string;
 }
 
+function check_mapping_team($data, $mapping_data, $keydata = null)
+{
+	// Only when user information is providede (i.e. on add)
+	if ( isset($mapping_data[1]) ) {
+		if ( $data['adduser'] === '1' ) {
+			$id = $mapping_data[1]['extra']['username'];
+			if ( ! preg_match ( ID_REGEX, $id ) ) {
+				ch_error("Username may only contain characters " . IDENTIFIER_CHARS . ".");
+			}
+
+			// Set user fullname to team name
+			$mapping_data[1]['extra']['name'] = $data['name'];
+		} else {
+			// Remove user information when not adding a user
+			unset($mapping_data[1]);
+		}
+	}
+
+	return $mapping_data;
+}
+
+function check_team($data, $keydata = null)
+{
+	// Unset adduser checkbox as it is only a helper checkbox
+	if ( isset($data['adduser']) ) {
+		unset($data['adduser']);
+	}
+
+	return $data;
+}
+
+function post_team($prikey, $cmd)
+{
+	if ( $cmd == 'add' ) {
+		global $DB;
+		// Add team user-role to user for this team
+		$DB->q("INSERT INTO userrole (userid, roleid)
+		        SELECT userid, roleid FROM user
+		        LEFT JOIN team USING (teamid)
+		        LEFT JOIN role ON role.role = 'team'
+		        WHERE teamid = %i", $prikey['teamid']);
+	}
+}
+
 function check_user($data, $keydata = null)
 {
 	global $DB;
@@ -29,7 +73,7 @@ function check_user($data, $keydata = null)
 		ch_error("Email not valid.");
 	}
 	if ( !empty($data['password']) ) {
-		$data['password'] = md5("$id#".$data['password']);
+		$data['password'] = dj_password_hash($data['password']);
 	} else {
 		unset($data['password']);
 	}
@@ -60,9 +104,8 @@ function check_problem($data, $keydata = null)
 {
 	global $DB;
 
-	if ( ! is_numeric($data['timelimit']) || $data['timelimit'] < 0 ||
-			(int)$data['timelimit'] != $data['timelimit'] ) {
-		ch_error("Timelimit is not a valid positive integer");
+	if ( ! is_numeric($data['timelimit']) || $data['timelimit'] <= 0 ) {
+		ch_error("Timelimit is not a valid positive number");
 	}
 	if ( isset($data['shortname']) && ! preg_match ( ID_REGEX, $data['shortname'] ) ) {
 		ch_error("Problem shortname may only contain characters " . IDENTIFIER_CHARS . ".");
@@ -142,7 +185,7 @@ function check_judgehost($data, $keydata = null)
 
 function check_language($data, $keydata = null)
 {
-	if ( ! is_numeric($data['time_factor']) || $data['time_factor'] < 0 ) {
+	if ( ! is_numeric($data['time_factor']) || $data['time_factor'] <= 0 ) {
 		ch_error("Timelimit is not a valid positive factor");
 	}
 	$id = (isset($data['langid']) ? $data['langid'] : $keydata['langid']);
@@ -162,7 +205,7 @@ function check_language($data, $keydata = null)
 	}
 	$exts = json_decode($data['extensions'], false, 2);
 	if ( $exts==null || !is_array($exts) || count($exts)==0 ) {
-		ch_error("Language extension list is not a valid JSON array");
+		ch_error("Language extension list is not a valid non-empty JSON array");
 	}
 
 	return $data;
@@ -186,13 +229,13 @@ function check_executable($data, $keydata = null)
 // Regex patterns for absolute/relative contest time formats. These
 // are also used in www/jury/contest.php.
 $pattern_timezone  = "[A-Za-z][A-Za-z0-9_\/+-]{1,35}";
-$pattern_datetime  = "\d\d\d\d\-\d\d\-\d\d \d\d:\d\d:\d\d(\.\d{1,6})? $pattern_timezone";
+$pattern_datetime  = "\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d(\.\d{1,6})? $pattern_timezone";
 $pattern_offset    = "\d{1,4}:\d\d(:\d\d(\.\d{1,6})?)?";
-$pattern_dateorneg = "($pattern_datetime|\-$pattern_offset)";
+$pattern_dateorneg = "($pattern_datetime|-$pattern_offset)";
 $pattern_dateorpos = "($pattern_datetime|\+$pattern_offset)";
 // Human readable versions of the patterns:
 $human_abs_datetime = "YYYY-MM-DD HH:MM:SS[.uuuuuu] timezone";
-$human_rel_datetime = "&pm;[HHH]H:MM[:SS[.uuuuuu]]";
+$human_rel_datetime = "±[HHH]H:MM[:SS[.uuuuuu]]";
 
 // Returns an absolute Unix Epoch timestamp from a formatted absolute
 // or relative (to $basetime timestamp, if set) time. $field is a

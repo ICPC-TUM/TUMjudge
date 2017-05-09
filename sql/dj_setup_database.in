@@ -43,7 +43,6 @@ EOF
 # Wrapper around mysql command to allow setting options, user, etc.
 mysql()
 {
-	local user pass
 	# shellcheck disable=SC2153
 	if [ -n "$DBUSER" ]; then
 		user="-u $DBUSER"
@@ -72,11 +71,11 @@ read_dbpasswords()
 		echo "You may want to run: $0 genpass"
 		return 1
 	fi
-	local OLDIFS="$IFS"
+	OLDIFS="$IFS"
 	IFS=":"
 	# Don't pipe $PASSWDFILE into this while loop as that spawns a
 	# subshell and then variables are not retained in the original shell.
-	while read role host db user passwd; do
+	while read -r role host db user passwd; do
 		# Skip lines beginning with a '#'
 		[ "x$role" != "x${role###}" ] && continue
 		domjudge_DBHOST=$host
@@ -105,10 +104,10 @@ status()
 	printf "Trying to connect to the server as DB admin: "
 	mysql -e 'SELECT "success.";' || return 1
 
-	printf "Trying to connect to the server with user '$domjudge_DBUSER': "
+	printf "Trying to connect to the server with user '%s': " "$domjudge_DBUSER"
 	DBUSER=$domjudge_DBUSER PASSWD=$domjudge_PASSWD mysql -e 'SELECT "success.";' || return 1
 
-	printf "Searching for database \`$DBNAME\`: "
+	printf "Searching for database '%s': " "$DBNAME"
 	mysql -e "USE \`$DBNAME\`; SELECT 'found.';" || return 1
 
 	printf "Searching for data in database: "
@@ -121,7 +120,6 @@ status()
 
 create_db_users()
 {
-	local user pass
 	(
 	# The MySQL character set and collation are hardcoded here, but
 	# can be changed in the database and their configuration settings
@@ -137,7 +135,6 @@ create_db_users()
 
 remove_db_users()
 {
-	local user pass
 	(
 	echo "DROP DATABASE IF EXISTS \`$DBNAME\`;"
 # Also drop "@%" users, since those may have been created by pre-4.0 versions
@@ -230,10 +227,13 @@ bare-install|install)
 			$SQLDIR/mysql_db_examples.sql \
 			$SQLDIR/mysql_db_files_examples.sql"
 	fi
-	RESTPW=`grep -v ^# $RESTPWFILE | cut -f4`
+	RESTPW=$(grep -v ^# $RESTPWFILE | cut -f4)
+	# NOTE: the hash function and cost below have to be kept
+	# synchronised with those used in the code!
+	PWHASH=$(htpasswd -nbB -C 10 foouser "$RESTPW" | sed 's/^foouser://')
 	(
 		cat $FILES
-		echo "UPDATE user SET password = MD5('judgehost#$RESTPW') WHERE username='judgehost';"
+		echo "UPDATE user SET password = '$PWHASH' WHERE username='judgehost';"
 	) | mysql -D "$DBNAME"
 	if [ "$1" = "install" ]; then
 		verbose "SQL structure and default/example data installed."
@@ -250,7 +250,7 @@ upgrade)
 		echo "Warning: please remove all non-jury users from $PASSWDFILE"
 		echo "You may also remove those users from MySQL."
 	fi
-	TMPOUT=`mktemp --tmpdir domjudge-sql.XXXXXX`
+	TMPOUT=$(mktemp --tmpdir domjudge-sql.XXXXXX)
 	read_dbpasswords
 	# Make sure we're in the SQL directory, for relative path 'source'
 	# statements to work.
@@ -262,7 +262,7 @@ upgrade)
 		fi
 		# First find the line where the upgrade check is performed to
 		# filter possible error messages later.
-		UPGRADELINE=`grep -n '@UPGRADE-CHECK@' "$i" | cut -d : -f 1`
+		UPGRADELINE=$(grep -n '@UPGRADE-CHECK@' "$i" | cut -d : -f 1)
 		UPGRADELINE=$((UPGRADELINE+1))
 		if mysql -D "$DBNAME" < "$i" >$TMPOUT 2>&1 ; then
 			echo "Upgraded script '$i'."

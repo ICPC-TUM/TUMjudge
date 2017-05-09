@@ -15,8 +15,11 @@ $title = ucfirst((empty($_GET['cmd']) ? '' : specialchars($_GET['cmd']) . ' ') .
 if ( isset($_GET['cmd'] ) ) {
     $cmd = $_GET['cmd'];
 } else {
-    $refresh = '15;url='.$pagename.'?id='.urlencode($id).
-        (isset($_GET['restrict'])?'&restrict='.urlencode($_GET['restrict']):'');
+	$refresh = array(
+		'after' => 15,
+		'url' => $pagename . '?id=' . urlencode($id) .
+			(isset($_GET['restrict']) ? '&restrict=' . urlencode($_GET['restrict']) : ''),
+	);
 }
 
 require(LIBWWWDIR . '/header.php');
@@ -173,7 +176,7 @@ if ( $row['teamid'] ) {
 if ( IS_ADMIN ) {
     echo "<p class=\"nomorecol\">" .
         editLink('user', $id). "\n" .
-        delLink('user','userid',$id) .
+        delLink('user','userid',$id,$row['name']) .
         "</p>\n\n";
 }
 

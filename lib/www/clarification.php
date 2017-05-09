@@ -402,7 +402,8 @@ function confirmClar() {
 				$options["$cid-$categid"] = $categname;
 			}
 		}
-		if ( difftime($cdata['starttime'], now()) <= 0 ) {
+		$fdata = calcFreezeData($cdata);
+		if ( $fdata['cstarted'] ) {
 			$problem_options =
 				$DB->q('KEYVALUETABLE SELECT CONCAT(cid, "-", probid),
 				                             CONCAT(shortname, ": ", name) as name
@@ -419,14 +420,17 @@ function confirmClar() {
 			$options += $problem_options;
 		}
 	}
-	if ( is_null($clar['probid']) ) {
-		$selected = $clar['category'];
+	if ( $respid ) {
+		if ( is_null($clar['probid']) ) {
+			$selected = $clar['category'];
+		} else {
+			$selected = $clar['probid'];
+		}
 	} else {
-		$selected = $clar['probid'];
+		$selected = $defclar;
 	}
 	echo "<tr><td><b>Subject:</b></td><td>\n" .
-	     addSelect('problem', $options,
-	               ($respid ? $clar['cid'].'-'.$selected : $defclar), true) .
+	     addSelect('problem', $options, $selected, true) .
 	     "</td></tr>\n";
 
 	?>

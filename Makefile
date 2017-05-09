@@ -36,11 +36,16 @@ install:
 	@echo " - make install-docs"
 	@exit 1
 
-all: build docs
+all: build
 build: domserver judgehost
 
 ifeq ($(SUBMITCLIENT_ENABLED),yes)
 build: submitclient
+endif
+
+ifneq ($(DOC_BUILD_ENABLED),no)
+all: docs
+dist: distdocs
 endif
 
 # MAIN TARGETS
@@ -50,7 +55,15 @@ submitclient:
 install-domserver: domserver domserver-create-dirs
 install-judgehost: judgehost judgehost-create-dirs
 install-docs: docs-create-dirs
-dist: configure distdocs
+dist: configure
+
+# Install PHP dependencies
+dist: composer-dependencies
+composer-dependencies:
+ifeq (, $(shell which composer))
+	$(error "'composer' command not found in $(PATH), install it https://getcomposer.org/download/")
+endif
+	composer $(subst 1,-q,$(QUIET)) install --no-dev
 
 # Generate documentation for distribution. Remove this dependency from
 # dist above for quicker building from git sources.
@@ -67,7 +80,7 @@ build-scripts:
 	$(MAKE) -C sql build-scripts
 
 # List of SUBDIRS for recursive targets:
-build:             SUBDIRS=        lib                            misc-tools
+build:             SUBDIRS=        lib                      tests misc-tools
 domserver:         SUBDIRS=etc         sql www                    misc-tools
 install-domserver: SUBDIRS=etc     lib sql www                    misc-tools
 judgehost:         SUBDIRS=etc                 judge              misc-tools
@@ -89,7 +102,7 @@ docs-create-dirs:
 	$(INSTALL_DIR) $(addprefix $(DESTDIR),$(docs_dirs))
 
 install-docs-l:
-	$(INSTALL_DATA) -t $(DESTDIR)$(domjudge_docdir) README ChangeLog COPYING*
+	$(INSTALL_DATA) -t $(DESTDIR)$(domjudge_docdir) README.md ChangeLog COPYING*
 
 # As final step try set ownership and permissions of a few special
 # files/directories. Print a warning and fail gracefully if this
@@ -150,7 +163,7 @@ paths.mk:
 MAINT_CXFLAGS=-g -O1 -Wall -fstack-protector -D_FORTIFY_SOURCE=2 \
               -fPIE -Wformat -Wformat-security -ansi -pedantic
 MAINT_LDFLAGS=-fPIE -pie -Wl,-z,relro -Wl,-z,now
-maintainer-conf: dist
+maintainer-conf: configure
 	./configure $(subst 1,-q,$(QUIET)) --prefix=$(CURDIR) \
 	            --with-domserver_root=$(CURDIR) \
 	            --with-judgehost_root=$(CURDIR) \
@@ -161,8 +174,9 @@ maintainer-conf: dist
 	            --with-judgehost_rundir=$(CURDIR)/output/run \
 	            --with-domserver_tmpdir=$(CURDIR)/output/tmp \
 	            --with-judgehost_tmpdir=$(CURDIR)/output/tmp \
-	            --with-judgehost_judgedir=$(CURDIR)/output/judging \
+	            --with-judgehost_judgedir=$(CURDIR)/output/judgings \
 	            --with-domserver_submitdir=$(CURDIR)/output/submissions \
+	            --with-baseurl='http://localhost/domjudge/' \
 	            CFLAGS='$(MAINT_CXFLAGS)' \
 	            CXXFLAGS='$(MAINT_CXFLAGS)' \
 	            LDFLAGS='$(MAINT_LDFLAGS)' \
@@ -171,19 +185,24 @@ maintainer-conf: dist
 # Install the system in place: don't really copy stuff, but create
 # symlinks where necessary to let it work from the source tree.
 # This stuff is a hack!
-maintainer-install: build domserver-create-dirs judgehost-create-dirs
+maintainer-install: dist build domserver-create-dirs judgehost-create-dirs
 # Replace lib{judge,submit}dir with symlink to prevent lots of symlinks:
 	-rmdir $(judgehost_libjudgedir) $(domserver_libsubmitdir)
 	-rm -f $(judgehost_libjudgedir) $(domserver_libsubmitdir)
 	ln -sf $(CURDIR)/judge  $(judgehost_libjudgedir)
 	ln -sf $(CURDIR)/submit $(domserver_libsubmitdir)
 	ln -sfn $(CURDIR)/doc $(domserver_wwwdir)/jury/doc
-	$(MKDIR_P) $(judgehost_bindir)
+# Add symlinks to binaries:
+	$(MKDIR_P) $(judgehost_bindir) $(domserver_bindir)
+	ln -sf $(CURDIR)/judge/judgedaemon $(judgehost_bindir)
 	ln -sf $(CURDIR)/judge/runguard $(judgehost_bindir)
 	ln -sf $(CURDIR)/judge/runpipe  $(judgehost_bindir)
+	ln -sf $(CURDIR)/sql/dj_setup_database $(domserver_bindir)
+	$(MAKE) -C misc-tools maintainer-install
 # Make tmpdir, submitdir writable for webserver, because
 # judgehost-create-dirs sets wrong permissions:
 	chmod a+rwx $(domserver_tmpdir) $(domserver_submitdir)
+	@echo "Make sure that etc/dbpasswords.secret is readable by the webserver!"
 
 # Removes created symlinks; generated logs, submissions, etc. remain in output subdir.
 maintainer-uninstall:
@@ -191,9 +210,23 @@ maintainer-uninstall:
 	rm -f $(domserver_wwwdir)/jury/doc
 	rm -rf $(judgehost_bindir)
 
+# Rules to configure and build for a Coverity scan.
+coverity-conf:
+	$(MAKE) maintainer-conf
+
+coverity-build: paths.mk
+	$(MAKE) build build-scripts
+	@VERSION=` grep '^VERSION ='   paths.mk | sed 's/^VERSION = *//'` ; \
+	PUBLISHED=`grep '^PUBLISHED =' paths.mk | sed 's/^PUBLISHED = *//'` ; \
+	if [ "$$PUBLISHED" = release ]; then DESC="release" ; \
+	elif [ -n "$$PUBLISHED" ];      then DESC="snapshot $$PUBLISHED" ; \
+	elif [ ! -d .git ];             then DESC="unknown source on `date`" ; fi ; \
+	echo "VERSION=$$VERSION" > cov-submit-data-version.sh ; \
+	if [ -n "$$DESC" ]; then echo "DESC=$$DESC" >> cov-submit-data-version.sh ; fi
+
 clean-l:
 # Remove Coverity scan data:
-	-rm -rf cov-int domjudge-scan.t*
+	-rm -rf cov-int domjudge-scan.t* coverity-scan.tar.xz cov-submit-data-version.sh
 
 distclean-l: clean-autoconf
 	-rm -f paths.mk
@@ -206,4 +239,5 @@ clean-autoconf:
 
 .PHONY: $(addsuffix -create-dirs,domserver judgehost docs) check-root \
         clean-autoconf $(addprefix maintainer-,conf install uninstall) \
-        config submitclient distdocs
+        config submitclient distdocs composer-dependencies \
+        coverity-conf coverity-build

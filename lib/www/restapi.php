@@ -7,7 +7,7 @@
  * under the GNU GPL. See README and COPYING for details.
  */
 
-define('DOMJUDGE_API_VERSION', 2);
+define('DOMJUDGE_API_VERSION', 3);
 
 define('BAD_REQUEST', '400 Bad Request');
 define('FORBIDDEN', '403 Forbidden');
@@ -119,7 +119,7 @@ class RestApi {
 			}
 			if  ( ! $hasrole ) {
 				$this->createError("Permission denied " .
-				                   "' for function '" . $name . "'.", FORBIDDEN);
+				                   " for function '" . $name . "'.", FORBIDDEN);
 			}
 		}
 

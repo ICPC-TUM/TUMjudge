@@ -1,24 +1,23 @@
-<li><a href="index.php"><span class="glyphicon glyphicon-home"></span> home</a></li>
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-	<span class="glyphicon glyphicon-flag"></span> course <span class="caret"></span></a>
-	<ul class="dropdown-menu" role="menu">
-		<li><a href="points.php"> points overview </a></li>
-		<?php if(have_problemtexts()) { ?>
-			<li><a href="problems.php"> problems</a></li>
-		<?php } ?>
-		<?php if(have_printing()) { ?>
-			<li><a href="print.php">print</a></li>
-		<?php } ?>
-		<?php foreach($LIBDBCONFIG['links']['value'] AS $name => $url) { ?>
-			<li><a href="<?php echo $url; ?>" target="_blank"><?php echo $name; ?></a></li>
-		<?php } ?>
-	</ul>
-</li>
-<li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>
-<li><a href="news.php" id="newsLinkMenu"><span class="glyphicon glyphicon-globe"></span> news</a></li>
-<li><a href="help.php"><span class="glyphicon glyphicon-question-sign"></span> help</a></li>
-
 <?php
+
+echo "<nav><div id=\"menutop\">\n";
+
+echo "<a target=\"_top\" href=\"index.php\" accesskey=\"o\"><span class=\"octicon octicon-home\"></span> overview</a>\n";
+
+echo "<a target=\"_top\" href=\"problems.php\" accesskey=\"t\"><span class=\"octicon octicon-book\"></span> problems</a>\n";
+
+if ( have_printing() ) {
+	echo "<a target=\"_top\" href=\"print.php\" accesskey=\"p\"><span class=\"octicon octicon-file-text\"></span> print</a>\n";
+}
+echo "<a target=\"_top\" href=\"scoreboard.php\" accesskey=\"b\"><span class=\"octicon octicon-list-ordered\"></span> scoreboard</a>\n";
+echo "<a target=\"_top\" href=\"news.php\" accesskey=\"n\" id=\"newsLinkMenu\"><span class=\"octicon octicon-mail\"></span> news</a>\n";
+echo "<a target=\"_top\" href=\"help.php\" accesskey=\"h\"><span class=\"octicon octicon-question\"></span> help</a>\n";
+
+if ( checkrole('jury') || checkrole('balloon') ) {
+	echo "<a target=\"_top\" href=\"../jury/\" accesskey=\"j\"><span class=\"octicon octicon-arrow-right\"></span> jury</a>\n";
+}
+
+echo "</div>\n\n<div id=\"menutopright\">\n";
+
 putClock();
 ?>

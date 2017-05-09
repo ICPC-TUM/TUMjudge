@@ -89,10 +89,9 @@ foreach ($contests as $contest) {
 			calcScoreRow($pr['cid'], $team['teamid'], $pr['probid']);
 		}
 
-		// Now recompute the rank for both jury and public
+		// Now recompute the rank
 		echo " rankcache";
-		updateRankCache($contest, $team['teamid'], true);
-		updateRankCache($contest, $team['teamid'], false);
+		updateRankCache($contest, $team['teamid']);
 
 		echo "\n";
 		ob_flush();
@@ -122,23 +121,18 @@ foreach ($contests as $contest) {
 		$teamids = array(-1);
 	}
 	// drop all contests that are not current, teams and problems that do not exist
-	$DB->q('DELETE FROM scorecache_jury   WHERE cid = %i AND probid NOT IN (%Ai)',
+	$DB->q('DELETE FROM scorecache   WHERE cid = %i AND probid NOT IN (%Ai)',
 	       $contest, $probids);
-	$DB->q('DELETE FROM scorecache_public WHERE cid = %i AND probid NOT IN (%Ai)',
-	       $contest, $probids);
-	$DB->q('DELETE FROM scorecache_jury   WHERE cid = %i AND teamid NOT IN (%Ai)',
-	       $contest, $teamids);
-	$DB->q('DELETE FROM scorecache_public WHERE cid = %i AND teamid NOT IN (%Ai)',
+	$DB->q('DELETE FROM scorecache   WHERE cid = %i AND teamid NOT IN (%Ai)',
 	       $contest, $teamids);
 
-	$DB->q('DELETE FROM rankcache_jury   WHERE cid = %i AND teamid NOT IN (%Ai)',
-	       $contest, $teamids);
-	$DB->q('DELETE FROM rankcache_public WHERE cid = %i AND teamid NOT IN (%Ai)',
+	$DB->q('DELETE FROM rankcache    WHERE cid = %i AND teamid NOT IN (%Ai)',
 	       $contest, $teamids);
 }
 
 $time_end = microtime(TRUE);
 
-echo "<p>Scoreboard cache refresh completed in ".round($time_end - $time_start,2)." seconds.</p>\n\n";
+echo "<p>Scoreboard cache refresh completed in " .
+     sprintf('%.2lf',$time_end - $time_start) . " seconds.</p>\n\n";
 
 require(LIBWWWDIR . '/footer.php');

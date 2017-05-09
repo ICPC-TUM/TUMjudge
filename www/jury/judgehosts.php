@@ -10,7 +10,10 @@ require('init.php');
 $title = 'Judgehosts';
 
 if ( !isset($_REQUEST['cmd']) ) {
-	$refresh = '15;url=judgehosts.php';
+	$refresh = array(
+		'after' => 15,
+		'url' => 'judgehosts.php',
+	);
 }
 
 require(LIBWWWDIR . '/header.php');
@@ -136,7 +139,7 @@ if( $res->count() == 0 ) {
 			} else {
 				echo "judgehost-crit";
 			}
-			echo "\" title =\"last checked in $reltime seconds ago\">";
+			echo "\" title =\"last checked in ".printtimediff($row['polltime'])."s ago\">";
 		}
 		echo $link . CIRCLE_SYM . "</a></td>";
 		echo "<td>" . $link . (is_null($row['name']) ? '<i>none</i>' : $row['name']) . '</a></td>';

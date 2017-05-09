@@ -19,7 +19,8 @@ if ( $cmd == 'add' || $cmd == 'edit' ) {
 		);
 		foreach ( $restrictions as $restriction_name => $is_int ) {
 			$restriction = array();
-			foreach ( $_POST['data'][0]['restrictions'][$restriction_name] as $restriction_value ) {
+			$restriction_values = explode(',', $_POST['data'][0]['restrictions'][$restriction_name]);
+			foreach ( $restriction_values as $restriction_value ) {
 				if ( $restriction_value !== '' ) {
 					$restriction[] = $is_int ? intval($restriction_value) : $restriction_value;
 				}
@@ -67,7 +68,8 @@ if( $res->count() == 0 ) {
 		if ( IS_ADMIN ) {
 			echo "<td class=\"editdel\">" .
 			     editLink('judgehost_restriction', $row['restrictionid']) . "&nbsp;" .
-			     delLink('judgehost_restriction', 'restrictionid', $row['restrictionid']) . "</td>";
+			     delLink('judgehost_restriction', 'restrictionid',
+			             $row['restrictionid'], $row['name']) . "</td>";
 		}
 		echo "</tr>\n";
 	}

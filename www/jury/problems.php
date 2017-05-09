@@ -69,7 +69,7 @@ if( $res->count() == 0 ) {
 			"</td><td>" . $link . specialchars($row['topic'])."</a>".
 			"</td><td>".
 			$link . specialchars(isset($activecontests[$row['probid']])?$activecontests[$row['probid']]:0) . "</a>" .
-			"</td><td>" . $link . (int)$row['timelimit'] . "</a>" .
+			"</td><td>" . $link . (float)$row['timelimit'] . "</a>" .
 			"</td><td>" . $link . (isset($row['memlimit']) ? (int)$row['memlimit'] : 'default') . "</a>" .
 			"</td><td>" . $link . (isset($row['outputlimit']) ? (int)$row['outputlimit'] : 'default') . "</a>" .
 			"</td><td><a href=\"testcase.php?probid=" . $row['probid'] .
@@ -84,10 +84,10 @@ if( $res->count() == 0 ) {
 		}
 		if ( IS_ADMIN ) {
 			echo '<td title="export problem as zip-file">' .
-			     exportLink($row['probid']) . '</td>' .
+			     exportProblemLink($row['probid']) . '</td>' .
 			     "<td class=\"editdel\">" .
 			     editLink('problem', $row['probid']) . "&nbsp;" .
-			     delLink('problem','probid',$row['probid']) . "</td>";
+			     delLink('problem','probid',$row['probid'],$row['name']) . "</td>";
 		}
 		echo "</tr>\n";
 	}
@@ -97,6 +97,7 @@ if( $res->count() == 0 ) {
 if ( IS_ADMIN ) {
 	echo "<p>" . addLink('problem') . "</p>\n\n";
 	if ( class_exists("ZipArchive") ) {
+		$selected_cid = ($cid === null) ? -1 : $cid;
 		$contests = $DB->q("KEYVALUETABLE SELECT cid,
 		                    CONCAT('c', cid, ': ', shortname, ' - ', name) FROM contest");
 		$values = array(-1 => 'Do not link to a contest');
@@ -105,7 +106,7 @@ if ( IS_ADMIN ) {
 		}
 		echo "\n" . addForm('problem.php', 'post', null, 'multipart/form-data') .
 		     'Contest: ' .
-		     addSelect('contest', $values, -1, true) .
+		     addSelect('contest', $values, $selected_cid, true) .
 		     'Problem archive(s): ' .
 		     addFileField('problem_archive[]', null, ' required multiple accept="application/zip"') .
 		     addSubmit('Upload', 'upload') .

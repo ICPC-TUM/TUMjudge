@@ -56,6 +56,15 @@ function safe_bool($value)
 	return is_null($value) ? null : (bool)$value;
 }
 
+function give_back_judging($judgingid, $submitid) {
+	global $DB;
+
+	$DB->q('UPDATE judging SET valid = 0, rejudgingid = NULL WHERE judgingid = %i',
+	       $judgingid);
+	$DB->q('UPDATE submission SET judgehost = NULL
+		WHERE submitid = %i', $submitid);
+}
+
 $api = new RestApi();
 
 /**
@@ -197,13 +206,25 @@ function problems($args)
 		$pdatas = array();
 	}
 
+	foreach ( $pdatas as $key => $pdata ) {
+		if ( !isset($pdata['color']) ) {
+			$pdatas[$key]['rgb'] = null;
+		} elseif ( preg_match('/^#[[:xdigit:]]{3,6}$/',$pdata['color']) ) {
+			$pdatas[$key]['rgb'] = $pdata['color'];
+			$pdatas[$key]['color'] = hex_to_color($pdata['color']);
+		} else {
+			$pdatas[$key]['rgb'] = color_to_hex($pdata['color']);
+		}
+	}
+
 	return array_map(function($pdata) {
 		return array(
-			'id'        => safe_int($pdata['id']),
-			'label'     => $pdata['label'],
-			'shortname' => $pdata['shortname'],
-			'name'      => $pdata['name'],
-			'color'     => $pdata['color'],
+			'id'         => safe_int($pdata['id']),
+			'label'      => $pdata['label'],
+			'short_name' => $pdata['shortname'],
+			'name'       => $pdata['name'],
+			'rgb'        => $pdata['rgb'],
+			'color'      => $pdata['color'],
 		);
 	}, $pdatas);
 }
@@ -217,21 +238,35 @@ $api->provideFunction('GET', 'problems', $doc, $args, $exArgs);
  */
 function judgings($args)
 {
-	global $DB;
+	global $DB, $userdata;
 
 	$query = 'SELECT submitid, judgingid, eventtime FROM event WHERE description = "problem judged"';
 
+	// Note that we rely on the events table not listing judgings of
+	// submissions that were received too late.
+	if ( ! checkrole('jury') ) { // This implies we must be a team
+		$query .= ' AND teamid = %i';
+		$teamid = $userdata['teamid'];
+	} else {
+		$query .= ' %_';
+		$teamid = 0;
+	}
+
 	$hasCid = array_key_exists('cid', $args);
-	$query .= ($hasCid ? ' AND cid = %i' : ' AND TRUE %_');
+	$query .= ($hasCid ? ' AND cid = %i' : ' %_');
 	$cid = ($hasCid ? $args['cid'] : 0);
 
 	$hasFromid = array_key_exists('fromid', $args);
-	$query .= ($hasFromid ? ' AND judgingid >= %i' : ' AND TRUE %_');
+	$query .= ($hasFromid ? ' AND judgingid >= %i' : ' %_');
 	$fromId = ($hasFromid ? $args['fromid'] : 0);
 
 	$hasJudgingid = array_key_exists('judgingid', $args);
-	$query .= ($hasJudgingid ? ' AND judgingid = %i' : ' AND TRUE %_');
+	$query .= ($hasJudgingid ? ' AND judgingid = %i' : ' %_');
 	$judgingid = ($hasJudgingid ? $args['judgingid'] : 0);
+
+	$hasSubmitid = array_key_exists('submitid', $args);
+	$query .= ($hasSubmitid ? ' AND submitid = %i' : ' %_');
+	$submitid = ($hasSubmitid ? $args['submitid'] : 0);
 
 	$query .= ' ORDER BY eventid';
 
@@ -240,7 +275,7 @@ function judgings($args)
 	$limit = ($hasLimit ? $args['limit'] : -1);
 	// TODO: validate limit
 
-	$q = $DB->q($query, $cid, $fromId, $judgingid, $limit);
+	$q = $DB->q($query, $teamid, $cid, $fromId, $judgingid, $submitid, $limit);
 	$res = array();
 	while ( $row = $q->next() ) {
 		$data = $DB->q('MAYBETUPLE SELECT s.submittime, j.result FROM judging j
@@ -259,14 +294,15 @@ function judgings($args)
 	}
 	return $res;
 }
-$doc = 'Get all judgings (including those post-freeze, so currently limited to jury).';
+$doc = 'Get all or selected judgings. This includes those post-freeze, so currently limited to jury, or as a team but then restricted your own submissions.';
 $args = array('cid' => 'Contest ID. If not provided, get judgings of all active contests',
               'result' => 'Search only for judgings with a certain result.',
               'fromid' => 'Search from a certain ID',
               'judgingid' => 'Search only for a certain ID',
+              'submitid' => 'Search only for judgings associated to this submission ID',
               'limit' => 'Get only the first N judgings');
 $exArgs = array(array('cid' => 2), array('result' => 'correct'), array('fromid' => 800, 'limit' => 10));
-$roles = array('jury');
+$roles = array('jury','team');
 $api->provideFunction('GET', 'judgings', $doc, $args, $exArgs, $roles);
 
 function judgings_POST($args)
@@ -325,6 +361,7 @@ function judgings_POST($args)
 		$extra_join  .= '%_ ';
 	}
 
+
 	// Prioritize teams according to last judging time
 	$submitid = $DB->q('MAYBEVALUE SELECT s.submitid
 	                    FROM submission s
@@ -355,7 +392,7 @@ function judgings_POST($args)
 	if ( empty($submitid) || $numupd == 0 ) return '';
 
 	$row = $DB->q('TUPLE SELECT s.submitid, s.cid, s.teamid, s.probid, s.langid, s.rejudgingid,
-	               CEILING(time_factor*timelimit) AS maxruntime,
+	               time_factor*timelimit AS maxruntime,
 	               p.memlimit, p.outputlimit,
 	               special_run AS run, special_compare AS compare,
 	               special_compare_args AS compare_args, compile_script
@@ -414,7 +451,7 @@ function judgings_POST($args)
 	$row['probid']      = safe_int($row['probid']);
 	$row['langid']      = $row['langid'];
 	$row['rejudgingid'] = safe_int($row['rejudgingid']);
-	$row['maxruntime']  = safe_int($row['maxruntime']);
+	$row['maxruntime']  = safe_float($row['maxruntime'],6);
 	$row['memlimit']    = safe_int($row['memlimit']);
 	$row['outputlimit'] = safe_int($row['outputlimit']);
 	$row['judgingid']   = safe_int($jid);
@@ -652,8 +689,8 @@ function submissions($args)
 {
 	global $DB, $cdatas, $api;
 
-	$query = 'SELECT submitid, teamid, probid, langid, submittime, valid
-	          FROM submission WHERE TRUE';
+	$query = 'SELECT submitid, teamid, probid, langid, submittime
+	          FROM submission WHERE valid=1';
 
 	$hasCid = array_key_exists('cid', $args);
 	$query .= ($hasCid ? ' AND cid = %i' : ' AND TRUE %_');
@@ -757,6 +794,7 @@ function submissions_POST($args)
 	}
 
 	$sid = submit_solution($userdata['teamid'], $probid, $cid, $args['langid'], $FILEPATHS, $FILENAMES);
+<<<<<<< HEAD
 	if ( checkrole('jury') ) {
 		$results = getExpectedResults(file_get_contents($FILEPATHS[0]));
 		if ( !empty($results) ) {
@@ -764,6 +802,8 @@ function submissions_POST($args)
 			        WHERE submitid=%i', json_encode($results), $sid);
 		}
 	}
+=======
+>>>>>>> domjudge/master
 
 	auditlog('submission', $sid, 'added', 'via api', null, $cid);
 
@@ -794,6 +834,10 @@ function submission_files($args)
 
 	$sources = $DB->q('SELECT filename, sourcecode FROM submission_file
 	                   WHERE submitid = %i ORDER BY rank', $args['id']);
+
+	if ( $sources->count()==0 ) {
+		$api->createError("Cannot find source files for submission '$args[id]'.");
+	}
 
 	$ret = array();
 	while($src = $sources->next()) {
@@ -868,8 +912,12 @@ function testcase_files($args)
 		$inout = 'input';
 	}
 
-	$content = $DB->q("VALUE SELECT SQL_NO_CACHE $inout FROM testcase
+	$content = $DB->q("MAYBEVALUE SELECT SQL_NO_CACHE $inout FROM testcase
 	                   WHERE testcaseid = %i", $args['testcaseid']);
+
+	if ( is_null($content) ) {
+		$api->createError("Cannot find testcase '$args[testcaseid]'.");
+	}
 
 	return base64_encode($content);
 }
@@ -888,8 +936,12 @@ function executable($args)
 
 	checkargs($args, array('execid'));
 
-	$content = $DB->q("VALUE SELECT SQL_NO_CACHE zipfile FROM executable
+	$content = $DB->q("MAYBEVALUE SELECT SQL_NO_CACHE zipfile FROM executable
 	                   WHERE execid = %s", $args['execid']);
+
+	if ( is_null($content) ) {
+		$api->createError("Cannot find executable '$args[execid]'.");
+	}
 
 	return base64_encode($content);
 }
@@ -1143,10 +1195,7 @@ function judgehosts_POST($args)
 	          AND (j.valid = 1 OR r.valid = 1)';
 	$res = $DB->q($query, $args['hostname']);
 	foreach ( $res as $jud ) {
-		$DB->q('UPDATE judging SET valid = 0, rejudgingid = NULL WHERE judgingid = %i',
-		       $jud['judgingid']);
-		$DB->q('UPDATE submission SET judgehost = NULL
-		        WHERE submitid = %i', $jud['submitid']);
+		give_back_judging($jud['judgingid'], $jud['submitid']);
 		auditlog('judging', $jud['judgingid'], 'given back', null, $args['hostname'], $jud['cid']);
 	}
 
@@ -1194,11 +1243,17 @@ function cmp_prob_label($a, $b) { return $a['label'] > $b['label']; }
  */
 function scoreboard($args)
 {
-	global $DB;
+	global $DB, $api, $cdatas, $cids;
 
-	checkargs($args, array('cid'));
-
-	global $cdatas;
+	if ( isset($args['cid']) ) {
+		$cid = safe_int($args['cid']);
+	} else {
+		if ( count($cids)==1 ) {
+			$cid = reset($cids);
+		} else {
+			$api->createError("No contest ID specified but active contest is ambiguous.");
+		}
+	}
 
 	$filter = array();
 	if ( array_key_exists('category', $args) ) {
@@ -1211,10 +1266,10 @@ function scoreboard($args)
 		$filter['affilid'] = array($args['affiliation']);
 	}
 
-	$scoreboard = genScoreBoard($cdatas[$args['cid']], !$args['public'], $filter);
+	$scoreboard = genScoreBoard($cdatas[$cid], !$args['public'], $filter);
 
 	$prob2label = $DB->q('KEYVALUETABLE SELECT probid, shortname
-	                      FROM contestproblem WHERE cid = %i', $args['cid']);
+	                      FROM contestproblem WHERE cid = %i', $cid);
 
 	$res = array();
 	foreach ( $scoreboard['scores'] as $teamid => $data ) {
@@ -1228,7 +1283,17 @@ function scoreboard($args)
 			              'num_pending' => safe_int($pdata['num_pending']),
 			              'solved'      => safe_bool($pdata['is_correct']));
 
+<<<<<<< HEAD
 			if ( $prob['solved'] ) $prob['time'] = safe_int($pdata['time']);
+=======
+			if ( $prob['solved'] ) {
+				$prob['time'] = scoretime($pdata['time']);
+				$first = first_solved($pdata['time'],
+				                      $scoreboard['summary']['problems'][$probid]
+				                      ['best_time_sort'][$data['sortorder']]);
+				$prob['first_to_solve'] = safe_bool($first);
+			}
+>>>>>>> domjudge/master
 
 			$row['problems'][] = $prob;
 		}
@@ -1245,6 +1310,55 @@ $args = array('cid' => 'ID of the contest to get the scoreboard for.',
 $exArgs = array(array('cid' => 2, 'category' => 1, 'affiliation' => 'UU'),
                 array('cid' => 2, 'country' => 'NLD'));
 $api->provideFunction('GET', 'scoreboard', $doc, $args, $exArgs, null, true);
+
+/**
+ * Internal error reporting (back from judgehost)
+ */
+function internal_error_POST($args)
+{
+	global $DB;
+
+	checkargs($args, array('description', 'judgehostlog', 'disabled'));
+
+	global $cdatas, $api;
+
+	// group together duplicate internal errors
+	// note that it may be good to be able to ignore fields here, e.g. judgingid with compile errors
+	$errorid = $DB->q('MAYBEVALUE SELECT errorid FROM internal_error
+	                   WHERE description=%s AND disabled=%s AND status=%s' .
+	                  ( isset($args['cid']) ? ' AND cid=%i' : '%_' ),
+	                  $args['description'], $args['disabled'], 'open', $args['cid']);
+
+	if ( isset($errorid) ) {
+		// FIXME: in some cases it makes sense to extend the known information, e.g. the judgehostlog
+		return $errorid;
+	}
+
+	$errorid = $DB->q('RETURNID INSERT INTO internal_error
+	                   (judgingid, cid, description, judgehostlog, time, disabled)
+	                   VALUES (%i, %i, %s, %s, %i, %s)',
+	                  $args['judgingid'], $args['cid'], $args['description'],
+	                  $args['judgehostlog'], now(), $args['disabled']);
+
+	$disabled = dj_json_decode($args['disabled']);
+	// disable what needs to be disabled
+	set_internal_error($disabled, $args['cid'], 0);
+	if ( in_array($disabled['kind'], array('problem', 'language')) ) {
+		// give back judging if we have to
+		$submitid = $DB->q('VALUE SELECT submitid FROM judging WHERE judgingid = %i', $args['judgingid']);
+		give_back_judging($args['judgingid'], $submitid);
+	}
+
+	return $errorid;
+}
+$doc = 'Report an internal error from the judgedaemon.';
+$args = array('judgingid' => 'ID of the corresponding judging (if exists).',
+	      'cid' => 'Contest ID.',
+              'description' => 'short description',
+              'judgehostlog' => 'last N lines of judgehost log',
+              'disabled' => 'reason (JSON encoded)');
+$exArgs = array();
+$api->provideFunction('POST', 'internal_error', $doc, $args, $exArgs, null, true);
 
 // Now provide the api, which will handle the request
 $api->provideApi();

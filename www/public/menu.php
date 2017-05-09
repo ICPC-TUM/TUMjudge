@@ -1,10 +1,18 @@
-<li><a href="index.php"><span class="glyphicon glyphicon-home"></span> home</a></li>
-<?php /*if(!logged_in()) { ?>
-	<li><a href="login.php"><span class="glyphicon glyphicon-user"></span> login</a></li>
-<?php }*/ ?>
-<li><a href="scoreboard.php"><span class="glyphicon glyphicon-th-list"></span> scoreboard</a></li>
-
+<nav><div id="menutop">
+<a href="index.php" accesskey="h"><span class="octicon octicon-home"></span> home</a>
+<a href="problems.php" accesskey="p"><span class="octicon octicon-book"></span> problems</a>
+<a href="scoreboard.php"><span class="octicon octicon-list-ordered"></span> scoreboard</a>
 <?php
+logged_in(); // fill userdata
+
+if ( checkrole('team') ) {
+	echo "<a target=\"_top\" href=\"../team/\" accesskey=\"t\"><span class=\"octicon octicon-arrow-right\"></span> team</a>\n";
+}
+if ( checkrole('jury') || checkrole('balloon') ) {
+	echo "<a target=\"_top\" href=\"../jury/\" accesskey=\"j\"><span class=\"octicon octicon-arrow-right\"></span> jury</a>\n";
+}
+if ( !logged_in() ) {
+	echo "<a href=\"login.php\" accesskey=\"l\"><span class=\"octicon octicon-sign-in\"></span> login</a>\n";
+}
 putClock();
 ?>
-

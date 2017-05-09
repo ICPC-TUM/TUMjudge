@@ -9,6 +9,11 @@
 
 require('init.php');
 $title="TUMjudge";
+// set auto refresh
+$refresh=array(
+	"after" => "30",
+	"url" => "./",
+);
 
 if(DOMSERVER_REPLICATION === 'master') {
   header('Location: register.php');

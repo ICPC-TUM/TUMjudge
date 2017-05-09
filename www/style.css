@@ -17,7 +17,7 @@ img {	border: 0; }
 
 .prevsubmit       { color: #696969; }
 
-tr.sub_ignore td {
+tr.ignore td {
 	text-decoration: line-through;
 }
 
@@ -191,7 +191,7 @@ legend {
 	text-align: center;
 }
 .scoreboard tr {
-	border-bottom: 1px solid black; 
+	border-bottom: 1px solid black;
 	height: 42px;
 }
 .scoreboard td, .scoreboard th {
