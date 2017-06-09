@@ -20,6 +20,7 @@ D-85748 Garching
 <h3>v5.1.2.2</h3>
 <ul>
 <li>update compiler versions</li>
+<li>move GCPC instance to new installation</li>
 </ul>
 
 <h3>v5.1.2.1</h3>

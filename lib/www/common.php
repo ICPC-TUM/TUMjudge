@@ -449,7 +449,7 @@ function putClock() {
 		$usericon = "../images/countries/" . urlencode($team['country']) . ".png";
 
 		echo "<li class=\"dropdown\">";
-		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px; height: 17px;\" src=\"".$usericon."\" />".$username."<span class=\"caret\"></span></a>";
+		echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\"><img style=\"position: relative; top: -2px; height: 17px;\" src=\"".$usericon."\" /> ".$username."<span class=\"caret\"></span></a>";
 		echo "<ul class=\"dropdown-menu\" role=\"menu\">";
 
 		if(checkrole('jury') || checkrole('balloon')) {
