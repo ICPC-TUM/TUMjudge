@@ -1,5 +1,8 @@
 -- This is the database upgrade tables file needed for TUMjudge.
 
+-- @UPGRADE-CHECK@
+ALTER TABLE `problem` ADD  COLUMN `difficulty` varchar(255) DEFAULT NULL;
+ALTER TABLE `problem` DROP COLUMN `difficulty`;
 
 --problem table
 ALTER TABLE `problem`
