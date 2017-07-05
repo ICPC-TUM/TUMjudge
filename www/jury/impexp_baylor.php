@@ -34,6 +34,7 @@ if ( isset($_REQUEST['fetch']) ) {
 
 $token = @$_REQUEST['token'];
 $contest = @$_REQUEST['contest'];
+$teamcategory = @$_REQUEST['teamcategory'];
 
 require(LIBWWWDIR . '/header.php');
 require(LIBWWWDIR . '/scoreboard.php');
@@ -113,7 +114,7 @@ if ( $json === NULL ) {
 	error("Error retrieving API data. API gave us: " . $response);
 }
 
-$participants = $DB->q('VALUE SELECT categoryid FROM team_category WHERE name=%s', 'Participants');
+$participants = $DB->q('VALUE SELECT categoryid FROM team_category WHERE name=%s', $teamcategory);
 $teamrole = $DB->q('VALUE SELECT roleid FROM role WHERE role=%s', 'team');
 
 $new_affils = array();

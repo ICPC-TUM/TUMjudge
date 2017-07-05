@@ -55,6 +55,8 @@ echo "<tr><td><label for=\"contest\">Contest ID:</label></td>" .
 	"<td>" . addInput('contest', @$contest, null, null, 'required') . "</td></tr>\n";
 echo "<tr><td><label for=\"token\">Access token:</label></td>" .
 	"<td>" . addInput('token', @$token, null, null, 'required') . "</td></tr>\n";
+echo "<tr><td><label for=\"teamcategory\">Team category of participants:</label></td>" .
+	"<td>" . addInput('teamcategory', @$teamcategory, null, null, 'required') . "</td></tr>\n";
 echo "</table>\n";
 echo addSubmit('Fetch teams', 'fetch') .
      addSubmit('Upload standings', 'upload') . addEndForm();
