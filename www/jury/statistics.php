@@ -845,7 +845,7 @@ $(function () {
 		var charts = [];
 		for(var i = 0; i < answers.length; i++) {
 			var cur = [];
-			for(var j = 0; j < contestlen / <?= $bar_size ?>; j++)
+			for(var j = 0; j <= contestlen / <?= $bar_size ?>; j++)
 				cur.push([1000*(<?php echo $start; ?>+60*(j * <?= $bar_size ?> + 0.1 * <?= $bar_size ?>)),0]);
 			var answer = answers[i].label;
 			for(var j = 0; j < data.length; j++) {
