@@ -50,6 +50,10 @@ function showForm($message = '', $exit = true) {
   echo '<p><input type="submit" value="Create account" class="form-control btn btn-success" /></p>';
   echo '</form>';
 
+  echo "<br /><h2>FAQ</h2>"
+  echo "<h3>Why do I already have an account?</h3>"
+  echo "TUM-Judge uses a single account shared for all instances, so if you already attended a lecture or seminar that used TUMJudge, you can use the same account."
+
   require(LIBWWWDIR . '/footer.php');
   if($exit) {
     exit;
@@ -61,7 +65,7 @@ if(empty($_POST['login'])) showForm();
 //find variables
 $login = mysql_escape_string($_POST['login']);
 $categoryid = mysql_escape_string($_POST['categoryid']);
-if(!in_array($categoryid, array_keys($categories))) showForm('The categroy you selected is invalid.');
+if(!in_array($categoryid, array_keys($categories))) showForm('The category you selected is invalid.');
 $affilid = mysql_escape_string($_POST['affilid']);
 if(!in_array($affilid, array_keys($affiliations))) showForm('The affiliation you selected is invalid.');
 
@@ -101,7 +105,10 @@ ldap_close($conn);
 $count = array_pop($DB->q(sprintf('SELECT COUNT(*) FROM user WHERE username="%s"', $login))->next());
 if($count > 0) showForm('This account is already existing. You can login to it now.');
 $count = array_pop($DB->q(sprintf('SELECT COUNT(*) FROM user WHERE name="%s"', $name))->next());
-if($count > 0) showForm('There is already an account using your name '.$name.'. You can login to it now.');
+if($count > 0) {
+  $username = array_pop($DB->q(sprintf('SELECT username FROM user WHERE name="%s"', $name))->next());
+  showForm('There is already an account using your name '.$name.' with the username ' . $username . '. If this is your account, you can login using that username. Otherwise, please contact icpc@in.tum.de');
+}
 
 //create new user account
 $teamid = $DB->q(sprintf('RETURNID INSERT INTO team(name, categoryid, affilid, members) VALUES ("%s", "%s", "%s", "%s")', $name, $categoryid, $affilid, $name));
