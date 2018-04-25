@@ -107,7 +107,7 @@ if($count > 0) showForm('This account is already existing. You can login to it n
 $count = array_pop($DB->q(sprintf('SELECT COUNT(*) FROM user WHERE name="%s"', $name))->next());
 if($count > 0) {
   $username = array_pop($DB->q(sprintf('SELECT username FROM user WHERE name="%s"', $name))->next());
-  showForm('There is already an account using your name '.$name.' with the username ' . $username . '. If this is your account, you can login using that username. Otherwise, please contact icpc@in.tum.de');
+  showForm('There is already an account using your name '.$name.' with the username <i>' . $username . '</i>. If this is your account, you can login using that username. Otherwise, please contact icpc@in.tum.de');
 }
 
 //create new user account
