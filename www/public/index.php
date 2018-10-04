@@ -342,7 +342,7 @@ In order to keep the judging system stable, prevent abuse and give everyone clea
 
   <li><b>Compile time</b>: Compilation of your program may take no longer than <?php echo $config['script_timelimit'];?> seconds. After that compilation will be aborted and the result will be a compile error. In practice this should never give rise to problems. Should this happen to a normal program, please inform the course instructors right away.</li>
 
-  <li><b>Source size</b>: The total amount of source code in a single submission may not exceed <?php echo $config['sourcesize_limit']?>KB, otherwise your submission will be rejected. Furthermore, only up to <?php $config['sourcefiles_limit']?> files are allowed in a single submission.</li>
+  <li><b>Source size</b>: The total amount of source code in a single submission may not exceed <?php echo $config['sourcesize_limit']?>KB, otherwise your submission will be rejected. Furthermore, only up to <?php echo $config['sourcefiles_limit']?> files are allowed in a single submission.</li>
 
   <li><b>Memory</b>: During execution of your program, there are <?php echo $config['memory_limit']/(1024*1024); ?>GB of memory available. This is the total amount of memory (including program code, statically and dynamically defined variables, stack, Java VM (up to 0.35GB), ...)! If your program tries to use more memory, it will abort, resulting in a run-error.</li>
 
