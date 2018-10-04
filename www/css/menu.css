@@ -115,6 +115,19 @@
 	display: inline;
 }
 
+.tumjudge-theo .navbar {
+	border-bottom-color: #cf9e0c;
+}
+.tumjudge-theo .brand {
+	background-color: #cf9e0c;
+}
+.navbar .brand .dropdown-menu .tumjudge-theo {
+	border-left-color: #cf9e0c;
+}
+.tumjudge-theo .tumjudge-instance.tumjudge-theo {
+	display: inline;
+}
+
 .tumjudge-contest .navbar, .tumjudge-discuss .navbar {
 	border-bottom-color: #0c99ce;
 }

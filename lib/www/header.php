@@ -98,6 +98,7 @@ if ( IS_JURY ) {
             <span class="tumjudge-instance tumjudge-info"><span class="pagetitle">ICPC@TUM</span> Info</span>
             <span class="tumjudge-instance tumjudge-main"><span class="pagetitle">TUMjudge</span> Main</span>
             <span class="tumjudge-instance tumjudge-test"><span class="pagetitle">TUMjudge</span> Test</span>
+            <span class="tumjudge-instance tumjudge-theo"><span class="pagetitle">TUMjudge</span> Theo</span>
             <span class="tumjudge-instance tumjudge-conpra"><span class="pagetitle">TUMjudge</span> ConPra</span>
             <span class="tumjudge-instance tumjudge-contest"><span class="pagetitle">TUMjudge</span> Contest</span>
             <span class="tumjudge-instance tumjudge-gad"><span class="pagetitle">TUMjudge</span> GAD</span>
@@ -122,6 +123,7 @@ if ( IS_JURY ) {
               <li class="page tumjudge-main"><a href="https://judge.in.tum.de/main/">Main <span class="description">Account Management</span></a></li>
               <li class="page tumjudge-test"><a href="https://judge.in.tum.de/test/">Test <span class="description">Testing for TUMjudge Admins</span></a></li>
             <?php endif; ?>
+            <li class="page tumjudge-theo"><a href="https://judge.in.tum.de/theo/">Theo <span class="description">Lecture &ldquo;Introduction to Theoretical Computer Science&rdquo;</span></a></li>
             <li class="page tumjudge-conpra"><a href="https://judge.in.tum.de/conpra/">ConPra <span class="description">Lecture &ldquo;Algorithms for Programming Contests&rdquo;</span></a></li>
             <li class="page tumjudge-contest"><a href="https://judge.in.tum.de/contest/">Contest <span class="description">Preparation for the ACM ICPC</span></a></li>
             <li class="page tumjudge-gad"><a href="https://judge.in.tum.de/gad/">GAD <span class="description">Lecture &ldquo;Foundations: Algorithms and Data Structures&rdquo;</span></a></li>
