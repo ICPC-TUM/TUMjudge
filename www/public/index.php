@@ -58,9 +58,9 @@ $version = array();
 $sample_code = array();
 
 // JAVA 
-$compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE" <br />';
+$compile_command['Java'] = 'javac -encoding UTF-8 -d . "$@" 2> "$TMPFILE"; ';
 $compile_command['Java'] .= sprintf("java -client -Xss8m -Xmx%dk -DONLINE_JUDGE=1 -DDOMJUDGE=1 '\$MAINCLASS'", $config['memory_limit']-350000);
-$version['Java'] = 'java version "1.8.0_121""<br />Java(TM) SE Runtime Environment (build 1.8.0_121-b13)<br />Java HotSpot(TM) 64-Bit Server VM (build 25.121-b13, mixed mode)';
+$version['Java'] = 'java version "10.0.2" 2018-07-17; Java(TM) SE Runtime Environment 18.3 (build 10.0.2+13); Java HotSpot(TM) 64-Bit Server VM 18.3 (build 10.0.2+13, mixed mode)';
 $sample_code['Java'] = 'import java.util.Scanner;
 
 public class HelloWorld {
@@ -88,7 +88,7 @@ mono "$DESTCLI"';
   
 // C++
 $compile_command['C++'] = 'g++ -Wall -std=c++11 -O2 -static -pipe -DONLINE_JUDGE -DDOMJUDGE -o "$DEST" "$@"'; 
-$version['C++'] = 'Target: x86_64-linux-gnu<br />gcc version 4.9.2 (Debian 4.9.2-10)';
+$version['C++'] = 'Target: x86_64-linux-gnu; gcc version 4.9.2 (Debian 4.9.2-10)';
 $sample_code['C++'] = '#include <iostream>
 #include <stdio.h>
 
@@ -149,7 +149,7 @@ $compile_command['Prolog'] = 'swipl --goal=main,halt --stand_alone=true -o "$DES
 
 //Python 2
 $compile_command['Python 2'] = 'pypy "$MAINSOURCE"'; 
-$version['Python 2'] = 'Python 2.7.8 (2.4.0+dfsg-3, Dec 20 2014, 13:30:46)<br />[PyPy 2.4.0 with GCC 4.9.2]';
+$version['Python 2'] = 'Python 2.7.8 (2.4.0+dfsg-3, Dec 20 2014, 13:30:46); [PyPy 2.4.0 with GCC 4.9.2]';
 $sample_code['Python 2'] = '#read input
 i,j=map(int, raw_input().split())
 string1=raw_input()
