@@ -159,6 +159,7 @@ print "Case %d: %s"%(i,string1)';
 
 // Python 3
 $compile_command['Python 3'] = 'python3 "$MAINSOURCE"'; 
+$version['Python 3'] = 'Python 3.4.2';
 
 // Ruby
 $compile_command['Ruby'] = 'ruby "$MAINSOURCE"'; 
