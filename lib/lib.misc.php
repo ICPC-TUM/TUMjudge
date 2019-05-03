@@ -7,7 +7,7 @@
  */
 
 /** Perl regex class of allowed characters in identifier strings. */
-define('IDENTIFIER_CHARS', '[a-zA-Z0-9_-]');
+define('IDENTIFIER_CHARS', '[a-zA-Z0-9_\.-]');
 
 /** Perl regex of allowed filenames. */
 define('FILENAME_REGEX', '/^[a-zA-Z0-9][a-zA-Z0-9+_\.-]*$/');
